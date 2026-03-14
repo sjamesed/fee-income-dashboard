@@ -16,29 +16,64 @@ def get_db():
     db.init_db()
     return db
 
+HEADER_COLOR = "#4a5568"
+
+def fv(val):
+    if abs(val) < 0.05:
+        return "-"
+    return f"{val:.1f}"
+
+def colored_var(val):
+    if abs(val) < 0.05:
+        return "-"
+    if val > 0.05:
+        return f'<span style="color:#c53030;">+{val:.1f}</span>'
+    return f'<span style="color:#2b6cb0;">({abs(val):.1f})</span>'
+
 def show_comparison_table(data, col_a, col_b, label_a, label_b):
     if not data:
         st.info("No data available for this comparison.")
         return
-    df = pd.DataFrame(data)
-    df["variance"] = df[col_a] - df[col_b]
-    df["var_abs"] = df["variance"].abs()
-    df = df.sort_values("var_abs", ascending=False)
 
-    df_display = pd.DataFrame({
-        "Project": df["project_name"], "Platform": df["platform"],
-        label_a: (df[col_a] / 1e6).round(1), label_b: (df[col_b] / 1e6).round(1),
-        "Variance": (df["variance"] / 1e6).round(1),
-    })
+    sorted_data = sorted(data, key=lambda r: abs(r[col_a] - r[col_b]), reverse=True)
 
-    totals = pd.DataFrame([{
-        "Project": "Grand Total", "Platform": "",
-        label_a: df_display[label_a].sum().round(1),
-        label_b: df_display[label_b].sum().round(1),
-        "Variance": df_display["Variance"].sum().round(1),
-    }])
-    df_display = pd.concat([df_display, totals], ignore_index=True)
-    st.dataframe(df_display, use_container_width=True, hide_index=True)
+    html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
+    <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Project</th>
+        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Platform</th>
+        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{label_a}</th>
+        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{label_b}</th>
+        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">Variance</th>
+    </tr></thead><tbody>"""
+
+    total_a = total_b = 0
+    for i, row in enumerate(sorted_data):
+        bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+        a = row[col_a] / 1e6
+        b = row[col_b] / 1e6
+        v = a - b
+        total_a += row[col_a]
+        total_b += row[col_b]
+        html += f"""<tr style="background:{bg};">
+            <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["project_name"]}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["platform"]}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(a)}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(b)}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{colored_var(v)}</td>
+        </tr>"""
+
+    tv = (total_a - total_b) / 1e6
+    html += f"""<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+        <td style="padding:6px 10px; border:1px solid #cbd5e0;">Grand Total</td>
+        <td style="padding:6px 10px; border:1px solid #cbd5e0;"></td>
+        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(total_a/1e6)}</td>
+        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(total_b/1e6)}</td>
+        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{colored_var(tv)}</td>
+    </tr>"""
+
+    html += "</tbody></table>"
+    st.markdown(html, unsafe_allow_html=True)
+    st.caption("Unit: USD millions")
 
 def main():
     st.title("Comparison")

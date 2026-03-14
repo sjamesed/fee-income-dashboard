@@ -154,12 +154,12 @@ def main():
     HEADER_COLOR = "#4a5568"
 
     def fmt_var(v):
-        """Format variance: negative in parentheses."""
+        """Format variance with color: red for positive, blue for negative."""
         if v < -0.05:
-            return f"({abs(v):.1f})"
+            return f'<span style="color:#2b6cb0;">({abs(v):.1f})</span>'
         elif v > 0.05:
-            return f"+{v:.1f}"
-        return "0.0"
+            return f'<span style="color:#c53030;">+{v:.1f}</span>'
+        return "-"
 
     def render_variance_table(title, table_key, data, col_a, col_b, label_a, label_b, top_n=5):
         """Render a styled HTML variance table with editable drivers."""

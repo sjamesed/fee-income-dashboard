@@ -34,6 +34,18 @@ def fv(val_raw):
         return f"{val_raw:,.0f}"
 
 
+def colored_var(val_raw):
+    """Format variance value with red (positive) / blue (negative) color."""
+    text = fv(val_raw)
+    if text == "-":
+        return "-"
+    if val_raw > 0.05:
+        return f'<span style="color:#c53030;">+{text}</span>'
+    elif val_raw < -0.05:
+        return f'<span style="color:#2b6cb0;">({text.lstrip("-")})</span>'
+    return "-"
+
+
 def get_db():
     db = FeeIncomeDB()
     db.init_db()
@@ -190,11 +202,7 @@ def build_comparison_table_html(data_a, data_b, label_a, label_b):
     all_projects = sort_by_platform(all_projects)
 
     def fmt_var(v):
-        if v < -0.05:
-            return f"({abs(v):.1f})"
-        elif v > 0.05:
-            return f"+{v:.1f}"
-        return "-"
+        return colored_var(v)
 
     html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
     <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
@@ -312,11 +320,7 @@ def build_fee_type_comparison_html(data_a, data_b, label_a, label_b, selected_pr
     all_keys = [k for k in all_keys if abs(agg_a.get(k, 0)) >= 500 or abs(agg_b.get(k, 0)) >= 500]
 
     def fmt_var(v):
-        if v < -0.05:
-            return f"({abs(v):.1f})"
-        elif v > 0.05:
-            return f"+{v:.1f}"
-        return "-"
+        return colored_var(v)
 
     html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
     <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
@@ -491,12 +495,7 @@ def main():
             return ""
 
         def fmt_var_val(v):
-            vm = v / d
-            if vm < -0.05:
-                return f"({abs(vm):.1f})" if _use_millions else f"({abs(v):,.0f})"
-            elif vm > 0.05:
-                return f"+{vm:.1f}" if _use_millions else f"+{v:,.0f}"
-            return "-"
+            return colored_var(v / d)
 
         # Build HTML with two header rows + Variance column
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
@@ -677,11 +676,7 @@ def main():
         </tr></thead><tbody>"""
 
         def fmt_var_cell(v):
-            if v < -0.05:
-                return f"({abs(v):.1f})"
-            elif v > 0.05:
-                return f"+{v:.1f}"
-            return "-"
+            return colored_var(v)
 
         def build_subtotal_row(sub_label, sub_totals, colspan):
             """Build a platform subtotal HTML row."""
