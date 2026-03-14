@@ -542,13 +542,18 @@ def main():
         ft_headers_b = ft_headers_a
 
         sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
+        # Frozen column styles (sticky left)
+        frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz1 = f"position:sticky; left:100px; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz0_data = "position:sticky; left:0; z-index:1;"
+        frz1_data = "position:sticky; left:100px; z-index:1;"
 
-        html = f"""<div style="max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;">
-        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
+        <table style="border-collapse:separate; border-spacing:0; width:max-content; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Project</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">Project</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Variance</th>
@@ -569,7 +574,7 @@ def main():
         prev_plat = None
 
         def render_subtotal_row(label, sub_a, sub_b):
-            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="2">{label}</td>'
+            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="2">{label}</td>'
             total_a = sum(sub_a.values())
             for ft in FT_COLS:
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
@@ -595,8 +600,8 @@ def main():
 
             plat_display = f"<b>{plat}</b>" if plat != (all_proj_keys[idx-1][0] if idx > 0 else None) else ""
 
-            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{plat_display}</td>'
-            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{proj}</td>'
+            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {frz0_data} background:{bg}; min-width:100px;">{plat_display}</td>'
+            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {frz1_data} background:{bg}; min-width:120px;">{proj}</td>'
 
             ft_vals_a = lookup_a.get(key, {})
             ft_vals_b = lookup_b.get(key, {})
@@ -636,7 +641,7 @@ def main():
             html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
 
         # Grand Total
-        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="2">Grand Total</td>'
+        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; {frz0_data} background:{HEADER_COLOR};" colspan="2">Grand Total</td>'
         gt_total_a = sum(grand_a.values())
         for ft in FT_COLS:
             gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
