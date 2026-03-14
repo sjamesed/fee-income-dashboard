@@ -463,7 +463,7 @@ def main():
     option_labels = list(options.keys())
 
     # --- View mode ---
-    mode = st.radio("View", ["Single Metric", "Comparison", "Fee by Project (FY)"], horizontal=True)
+    mode = st.radio("View", ["Single Metric", "Fee by Project (FY)", "Monthly Detail"], horizontal=True)
 
     if mode == "Single Metric":
         chosen = st.selectbox("Select Metric", option_labels, index=option_labels.index("FY26 Bud"))
@@ -698,186 +698,210 @@ def main():
             exp_rows.append(row)
         export_button(pd.DataFrame(exp_rows), "fee_by_project_fee_type.xlsx")
 
-    elif mode == "Comparison":
-        prefix = "cmp"
+    elif mode == "Monthly Detail":
+        # Monthly data by Project or Fee Type, with metric selector
+        n = get_snapshot_n_value(selected)
+        month_names_short = [MONTH_NAMES[m] for m in range(1, 13)]
 
-        num_metrics = st.radio("Number of metrics", [2, 3, 4], horizontal=True, key=f"{prefix}_num")
-        defaults = [f"FY26 Fcst ({selected})", "FY26 Bud", "FY25 Act", "FY24 Act"]
-        cols = st.columns(num_metrics)
-        labels = []
-        for i, c in enumerate(cols):
-            with c:
-                default_idx = option_labels.index(defaults[i]) if defaults[i] in option_labels else i
-                labels.append(st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"{prefix}_{i}"))
+        view_by = st.radio("View by", ["Project", "Fee Type"], horizontal=True, key="monthly_view")
 
-        # Load notes for this comparison
-        cmp_note_key_pre = f"cmp_{labels[0]}_vs_{labels[1]}" if len(labels) >= 2 else "cmp"
-        cmp_notes = db.get_drivers(selected, cmp_note_key_pre)
+        metric_options = {
+            "Actual": "actual",
+            "Budget": "budget",
+            "Forecast": "forecast",
+        }
+        mc1, mc2 = st.columns([2, 3])
+        with mc1:
+            chosen_metric = st.selectbox("Metric", list(metric_options.keys()), key="monthly_metric")
+        with mc2:
+            year = st.selectbox("Year", ["2026", "2025", "2024", "2023"], key="monthly_year")
 
-        # Query data (project-level comparison)
-        all_data = {}
-        all_keys_set = set()
-        for lbl in labels:
-            rows = query_metric(db, selected, lbl, options[lbl])
-            lookup = {}
+        period_type = metric_options[chosen_metric]
+
+        # Query monthly data
+        months = [f"{year}-{m:02d}" for m in range(1, 13)]
+        placeholders = ",".join(["?"] * len(months))
+
+        if view_by == "Project":
+            rows = db.query(f"""
+                SELECT platform, project_name, period, SUM(amount_usd) as value
+                FROM fee_income
+                WHERE snapshot = ? AND period IN ({placeholders}) AND period_type = ?
+                GROUP BY platform, project_name, period
+            """, (selected, *months, period_type))
+
+            # Build pivot: (platform, project) -> {month: value}
+            pivot = {}
+            all_keys_set = set()
             for r in rows:
                 key = (r["platform"], r["project_name"])
-                lookup[key] = r["value"]
+                if key not in pivot:
+                    pivot[key] = {}
+                pivot[key][r["period"]] = r["value"]
                 all_keys_set.add(key)
-            all_data[lbl] = lookup
 
-        all_keys_raw = [{"platform": k[0], "project_name": k[1]} for k in all_keys_set]
-        all_keys_raw = sort_by_platform(all_keys_raw)
-        all_keys = [(p["platform"], p["project_name"]) for p in all_keys_raw]
-        all_keys = [k for k in all_keys
-                    if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
+            all_keys = sort_by_platform([{"platform": k[0], "project_name": k[1]} for k in all_keys_set])
+            all_keys = [(p["platform"], p["project_name"]) for p in all_keys]
+            all_keys = [k for k in all_keys if any(abs(pivot.get(k, {}).get(m, 0)) >= 500 for m in months)]
 
-        row_label_keys = ["Platform", "Project"]
-        def get_row_labels(key):
-            return key  # (platform, project)
-        def get_row_value(key, lbl):
-            return all_data[lbl].get(key, 0)
+            label_cols = ["Platform", "Project"]
+            def get_labels(k): return k
+        else:
+            # Filter by project first
+            all_projects = db.query("""
+                SELECT DISTINCT project_name FROM fee_income WHERE snapshot = ? ORDER BY project_name
+            """, (selected,))
+            proj_names = [r["project_name"] for r in all_projects]
+            filter_proj = st.selectbox("Filter by Project", ["All"] + proj_names, key="monthly_proj_filter")
 
-        # Build header: for each metric pair (i vs i+1), show Metric_i | Metric_i+1 | Var | %
-        # First metric is always shown, then each subsequent metric adds: value | var | %
-        sty_cmp = f"background:{HEADER_COLOR}; color:white; position:sticky; top:0; z-index:2;"
-        header_html = ""
-        for col_name in row_label_keys:
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left; {sty_cmp}">{col_name}</th>'
-        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{labels[0]}</th>'
-        for i in range(1, len(labels)):
-            short_a = labels[0].split("(")[0].strip() if "(" in labels[0] else labels[0]
-            short_b = labels[i].split("(")[0].strip() if "(" in labels[i] else labels[i]
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{labels[i]}</th>'
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{short_a} vs {short_b}</th>'
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">%</th>'
-        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left; {sty_cmp}">Note</th>'
+            query_extra = ""
+            params = [selected, *months, period_type]
+            if filter_proj != "All":
+                query_extra = " AND project_name = ?"
+                params.append(filter_proj)
 
-        html = f"""<div style="max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;">
+            rows = db.query(f"""
+                SELECT platform, project_name, fee_type, period, SUM(amount_usd) as value
+                FROM fee_income
+                WHERE snapshot = ? AND period IN ({placeholders}) AND period_type = ?{query_extra}
+                GROUP BY platform, project_name, fee_type, period
+            """, tuple(params))
+
+            pivot = {}
+            all_keys_set = set()
+            for r in rows:
+                key = (r["platform"], r["project_name"], r["fee_type"])
+                if key not in pivot:
+                    pivot[key] = {}
+                pivot[key][r["period"]] = r["value"]
+                all_keys_set.add(key)
+
+            FT_ORDER = ["Asset Mgmt Fee", "Development Mgmt Fee", "Leasing Fee", "Acq / Div Fee", "Promote Fee", "Other Fee"]
+            all_keys = sorted(all_keys_set,
+                key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
+                               FT_ORDER.index(k[2]) if k[2] in FT_ORDER else 99))
+            all_keys = [k for k in all_keys if any(abs(pivot.get(k, {}).get(m, 0)) >= 500 for m in months)]
+
+            label_cols = ["Platform", "Project", "Fee Type"]
+            def get_labels(k): return k
+
+        d = divisor()
+
+        # Build HTML table
+        sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2; top:0;"
+        frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz1 = f"position:sticky; left:100px; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz0_data = "position:sticky; left:0; z-index:1;"
+        frz1_data = "position:sticky; left:100px; z-index:1;"
+
+        month_headers = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th}">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
+
+        html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
         <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
-        <thead><tr style="font-weight:bold;">
-            {header_html}
-        </tr></thead><tbody>"""
+        <thead><tr style="font-weight:bold; text-align:center;">"""
 
-        def fmt_var_cell(v):
-            return colored_var(v)
+        for i, col in enumerate(label_cols):
+            if i == 0:
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} {frz0} min-width:100px;">{col}</th>'
+            elif i == 1:
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} {frz1} min-width:120px;">{col}</th>'
+            else:
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th}">{col}</th>'
 
-        def build_subtotal_row(sub_label, sub_totals, colspan):
-            """Build a platform subtotal HTML row."""
-            d = divisor()
-            sub_base = sub_totals[labels[0]]
-            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="{colspan}">{sub_label}</td>'
-            cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_base / d)}</td>'
-            for i in range(1, len(labels)):
-                t = sub_totals[labels[i]]
-                tv = (sub_base - t) / d
-                tp = f"{(sub_base - t) / abs(t) * 100:+.0f}%" if t != 0 else "-"
-                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(t / d)}</td>'
-                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_cell(tv)}</td>'
-                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{tp}</td>'
-            cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; background:#edf2f7;"></td>'
-            return f'<tr>{cells}</tr>'
+        html += month_headers
+        html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} font-weight:bold;">Total</th>'
+        html += "</tr></thead><tbody>"
 
-        totals = {lbl: 0.0 for lbl in labels}
-        plat_subtotals = {lbl: 0.0 for lbl in labels}
-        prev_platform = None
-        prev_parts = [None] * len(row_label_keys)
+        grand_totals = {m: 0.0 for m in months}
+        prev_plat = None
+        plat_totals = {m: 0.0 for m in months}
 
         for idx, key in enumerate(all_keys):
             bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
-            parts = get_row_labels(key)
-            current_platform = parts[0]
+            parts = get_labels(key)
+            current_plat = parts[0]
 
-            # Insert platform subtotal when platform changes
-            if prev_platform is not None and current_platform != prev_platform:
-                html += build_subtotal_row(f"Subtotal — {prev_platform}", plat_subtotals, len(row_label_keys))
-                plat_subtotals = {lbl: 0.0 for lbl in labels}
-
-            prev_platform = current_platform
+            # Subtotal on platform change
+            if prev_plat is not None and current_plat != prev_plat:
+                sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {prev_plat}</td>'
+                row_sum = 0
+                for m in months:
+                    v = plat_totals[m]
+                    row_sum += v
+                    sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum/d)}</td>'
+                html += f'<tr>{sub_cells}</tr>'
+                plat_totals = {m: 0.0 for m in months}
+            prev_plat = current_plat
 
             # Label cells
-            label_cells = ""
-            for j, part in enumerate(parts):
-                display = f"<b>{part}</b>" if part != prev_parts[j] else ""
-                prev_parts[j] = part
-                label_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{display}</td>'
+            cells = ""
+            for i, part in enumerate(parts):
+                if i == 0:
+                    plat_display = f"<b>{part}</b>" if part != (all_keys[idx-1][0] if idx > 0 else None) else ""
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz0_data} background:{bg}; min-width:100px;">{plat_display}</td>'
+                elif i == 1:
+                    proj_display = f"{part}" if len(label_cols) == 2 or part != (all_keys[idx-1][1] if idx > 0 else None) else ""
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz1_data} background:{bg}; min-width:120px;">{proj_display}</td>'
+                else:
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px;">{part}</td>'
 
-            # Value cells
-            d = divisor()
-            base_val = get_row_value(key, labels[0])
-            totals[labels[0]] += base_val
-            plat_subtotals[labels[0]] += base_val
-            val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
+            # Monthly values
+            month_vals = pivot.get(key, {})
+            row_total = 0
+            for m in months:
+                v = month_vals.get(m, 0)
+                row_total += v
+                plat_totals[m] += v
+                grand_totals[m] += v
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total/d)}</td>'
 
-            row_proj = parts[1] if len(parts) > 1 else parts[0]
-            for i in range(1, len(labels)):
-                v = get_row_value(key, labels[i])
-                totals[labels[i]] += v
-                plat_subtotals[labels[i]] += v
-                var = (base_val - v) / d
-                pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{colored_var(var)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
+            html += f'<tr style="background:{bg};">{cells}</tr>'
 
-            cmp_note = cmp_notes.get(row_proj, "")
-            val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; font-size:10px; color:#555; min-width:200px;">{cmp_note}</td>'
-            html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
+        # Last subtotal
+        if prev_plat is not None:
+            sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {prev_plat}</td>'
+            row_sum = 0
+            for m in months:
+                v = plat_totals[m]
+                row_sum += v
+                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum/d)}</td>'
+            html += f'<tr>{sub_cells}</tr>'
 
-        # Last platform subtotal
-        if prev_platform is not None:
-            html += build_subtotal_row(f"Subtotal — {prev_platform}", plat_subtotals, len(row_label_keys))
+        # Grand Total
+        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; {frz0_data} background:{HEADER_COLOR};" colspan="{len(label_cols)}">Grand Total</td>'
+        gt_sum = 0
+        for m in months:
+            v = grand_totals[m]
+            gt_sum += v
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum/d)}</td>'
+        html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
-        # Grand Total row
-        d = divisor()
-        base_total = totals[labels[0]]
-        empty_label_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="{len(row_label_keys) - 1}"></td>'
-        empty_label_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;">Grand Total</td>'
-        total_val_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_total / d)}</td>'
-        for i in range(1, len(labels)):
-            t = totals[labels[i]]
-            tv = (base_total - t) / d
-            tp = f"{(base_total - t) / abs(t) * 100:+.0f}%" if t != 0 else "-"
-            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(t / d)}</td>'
-            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(tv)}</td>'
-            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{tp}</td>'
-
-        total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;"></td>'
-        html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{empty_label_cells}{total_val_cells}</tr>'
         html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
-        st.caption(f"Unit: {unit_label()}")
+        st.caption(f"Unit: {unit_label()} | {chosen_metric} {year}")
 
-        # Full HTML view for copy & paste
-        full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
-        full_html = full_html.replace('position:sticky; top:0; z-index:2;', '')
+        # Full table for copy & paste
+        full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
+        full_html = full_html.replace('position:sticky;', '').replace('z-index:1;', '').replace('z-index:2;', '').replace('z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
         with st.expander("Open Full Table (for copy & paste)"):
             st.markdown(full_html, unsafe_allow_html=True)
 
-        # Inline note editor for Comparison
-        cmp_note_key = f"cmp_{labels[0]}_vs_{labels[1]}"
-        cmp_saved_notes = db.get_drivers(selected, cmp_note_key)
-
-        cmp_proj_list = [get_row_labels(k)[1] if len(get_row_labels(k)) > 1 else get_row_labels(k)[0]
-                         for k in all_keys]
-        cc1, cc2, cc3 = st.columns([2, 5, 1])
-        with cc1:
-            cmp_note_proj = st.selectbox("Add/edit note for:", [""] + cmp_proj_list, key="cmp_note_proj")
-        with cc2:
-            cmp_note_text = st.text_input("Note:", value=cmp_saved_notes.get(cmp_note_proj, "") if cmp_note_proj else "",
-                                           key="cmp_note_text", label_visibility="collapsed",
-                                           placeholder="Type variance note here...")
-        with cc3:
-            st.markdown("<div style='padding-top:4px;'></div>", unsafe_allow_html=True)
-            if st.button("💾", key="cmp_save_note") and cmp_note_proj:
-                cmp_saved_notes[cmp_note_proj] = cmp_note_text
-                db.save_drivers(selected, cmp_note_key, cmp_saved_notes)
-                st.rerun()
-
-        # Export button
-        exp_df = build_export_df(all_keys, labels, get_row_labels, get_row_value, row_label_keys)
-        export_button(exp_df, f"fee_comparison_{mode.replace(' ', '_').lower()}.xlsx")
+        # Export
+        exp_rows = []
+        for key in all_keys:
+            parts = get_labels(key)
+            row = {col: parts[i] for i, col in enumerate(label_cols)}
+            month_vals = pivot.get(key, {})
+            for m in months:
+                row[MONTH_NAMES[int(m.split("-")[1])]] = month_vals.get(m, 0) / d
+            row["Total"] = sum(month_vals.get(m, 0) for m in months) / d
+            exp_rows.append(row)
+        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{chosen_metric}_{year}.xlsx")
 
 
 main()
