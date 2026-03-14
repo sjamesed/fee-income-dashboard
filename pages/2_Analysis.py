@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 from src.db import FeeIncomeDB
 
-@st.cache_resource
+
 def get_db():
     db = FeeIncomeDB()
     db.init_db()

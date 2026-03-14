@@ -4,7 +4,6 @@ from src.db import FeeIncomeDB
 
 st.set_page_config(page_title="Fee Income Dashboard", page_icon="📊", layout="wide")
 
-@st.cache_resource
 def get_db():
     db = FeeIncomeDB()
     db.init_db()

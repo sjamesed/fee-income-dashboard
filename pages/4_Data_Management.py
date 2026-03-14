@@ -6,7 +6,7 @@ import os
 from src.db import FeeIncomeDB
 from src.parser import parse_excel_file
 
-@st.cache_resource
+
 def get_db():
     db = FeeIncomeDB()
     db.init_db()

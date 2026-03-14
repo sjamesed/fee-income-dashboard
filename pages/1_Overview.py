@@ -5,7 +5,7 @@ import plotly.express as px
 from src.db import FeeIncomeDB
 from src.queries import get_fee_by_project_fy, get_fee_by_platform_fy
 
-@st.cache_resource
+
 def get_db():
     db = FeeIncomeDB()
     db.init_db()
