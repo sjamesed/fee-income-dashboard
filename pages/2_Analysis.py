@@ -541,7 +541,7 @@ def main():
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        sth = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
+        sth = f"background:{HEADER_COLOR} !important; color:white !important; position:sticky; z-index:2;"
         sth1 = sth + " top:0;"
         sth2 = sth + " top:28px;"
 
@@ -742,7 +742,7 @@ def main():
         header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;">Note</th>'
 
         # Make header sticky
-        sth_cmp = f"background:{HEADER_COLOR}; color:white; position:sticky; top:0; z-index:2;"
+        sth_cmp = f"background:{HEADER_COLOR} !important; color:white !important; position:sticky; top:0; z-index:2;"
         header_html = header_html.replace('style="padding:6px 8px;', f'style="{sth_cmp} padding:6px 8px;')
 
         html = f"""<table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
