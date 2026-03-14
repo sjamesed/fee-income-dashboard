@@ -549,7 +549,7 @@ def main():
         frz1_data = "position:sticky; left:100px; z-index:1;"
 
         html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
-        <table style="border-collapse:separate; border-spacing:0; width:max-content; font-size:11px; font-family:Calibri,sans-serif;">
+        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="font-weight:bold; text-align:center;">
             <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">Platform</th>
