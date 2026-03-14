@@ -737,19 +737,41 @@ def main():
         # Project search
         search = st.text_input("Search project...", key="monthly_search")
 
+        def query_monthly(group_cols, months, year, pt, extra_where="", extra_params=()):
+            """Query monthly data. For 'forecast' in current FY year, use actual for months 1..N and forecast for rest."""
+            gcols = ", ".join(group_cols)
+            ph = ",".join(["?"] * len(months))
+            if pt == "forecast" and year == "2026":
+                # Blend: actual for months 1..N, forecast for N+1..12
+                act_months = [f"{year}-{m:02d}" for m in range(1, n + 1)]
+                fcst_months = [f"{year}-{m:02d}" for m in range(n + 1, 13)]
+                parts = []
+                params = []
+                if act_months:
+                    ph_a = ",".join(["?"] * len(act_months))
+                    parts.append(f"(snapshot = ? AND period IN ({ph_a}) AND period_type = 'actual'{extra_where})")
+                    params.extend([selected, *act_months, *extra_params])
+                if fcst_months:
+                    ph_f = ",".join(["?"] * len(fcst_months))
+                    parts.append(f"(snapshot = ? AND period IN ({ph_f}) AND period_type = 'forecast'{extra_where})")
+                    params.extend([selected, *fcst_months, *extra_params])
+                where = " OR ".join(parts)
+                return db.query(f"""
+                    SELECT {gcols}, period, SUM(amount_usd) as value
+                    FROM fee_income WHERE {where}
+                    GROUP BY {gcols}, period
+                """, tuple(params))
+            else:
+                return db.query(f"""
+                    SELECT {gcols}, period, SUM(amount_usd) as value
+                    FROM fee_income
+                    WHERE snapshot = ? AND period IN ({ph}) AND period_type = ?{extra_where}
+                    GROUP BY {gcols}, period
+                """, (selected, *months, pt, *extra_params))
+
         if view_by == "Project":
-            rows1 = db.query(f"""
-                SELECT platform, project_name, period, SUM(amount_usd) as value
-                FROM fee_income
-                WHERE snapshot = ? AND period IN ({ph1}) AND period_type = ?
-                GROUP BY platform, project_name, period
-            """, (selected, *months1, pt1))
-            rows2 = db.query(f"""
-                SELECT platform, project_name, period, SUM(amount_usd) as value
-                FROM fee_income
-                WHERE snapshot = ? AND period IN ({ph2}) AND period_type = ?
-                GROUP BY platform, project_name, period
-            """, (selected, *months2, pt2))
+            rows1 = query_monthly(["platform", "project_name"], months1, m1_year, pt1)
+            rows2 = query_monthly(["platform", "project_name"], months2, m2_year, pt2)
 
             pivot1 = {}
             pivot2 = {}
@@ -784,26 +806,14 @@ def main():
             proj_names = [r["project_name"] for r in all_projects]
             filter_proj = st.selectbox("Filter by Project", ["All"] + proj_names, key="monthly_proj_filter")
 
-            query_extra = ""
-            params1 = [selected, *months1, pt1]
-            params2 = [selected, *months2, pt2]
+            extra_where = ""
+            extra_params = ()
             if filter_proj != "All":
-                query_extra = " AND project_name = ?"
-                params1.append(filter_proj)
-                params2.append(filter_proj)
+                extra_where = " AND project_name = ?"
+                extra_params = (filter_proj,)
 
-            rows1 = db.query(f"""
-                SELECT platform, project_name, fee_type, period, SUM(amount_usd) as value
-                FROM fee_income
-                WHERE snapshot = ? AND period IN ({ph1}) AND period_type = ?{query_extra}
-                GROUP BY platform, project_name, fee_type, period
-            """, tuple(params1))
-            rows2 = db.query(f"""
-                SELECT platform, project_name, fee_type, period, SUM(amount_usd) as value
-                FROM fee_income
-                WHERE snapshot = ? AND period IN ({ph2}) AND period_type = ?{query_extra}
-                GROUP BY platform, project_name, fee_type, period
-            """, tuple(params2))
+            rows1 = query_monthly(["platform", "project_name", "fee_type"], months1, m1_year, pt1, extra_where, extra_params)
+            rows2 = query_monthly(["platform", "project_name", "fee_type"], months2, m2_year, pt2, extra_where, extra_params)
 
             pivot1 = {}
             pivot2 = {}
@@ -1000,7 +1010,7 @@ def main():
             row[f"Total ({m2_label})"] = total2
             row["Variance"] = total1 - total2
             exp_rows.append(row)
-        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{m1_metric}_{m1_year}_vs_{m2_metric}_{m2_year}.xlsx")
+        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{m1_label}_vs_{m2_label}.xlsx")
 
 
 main()
