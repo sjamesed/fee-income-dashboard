@@ -1,7 +1,6 @@
-"""Page 1: Overview — summary cards, charts, FY tables, variance commentary, and watch list."""
+"""Page 1: Overview — summary cards, FY tables, variance commentary, and watch list."""
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from src.db import FeeIncomeDB
 from src.queries import (
     get_fee_by_project_fy, get_fee_by_platform_fy,
@@ -22,11 +21,9 @@ def format_millions(value: float) -> str:
     return f"{value / 1_000_000:.1f}"
 
 def fmt_m(value: float) -> str:
-    """Format a raw USD value as $X.XM string."""
     return f"${value / 1_000_000:.1f}M"
 
 def add_grand_total(df: pd.DataFrame, label_col: str, numeric_cols: list[str]) -> pd.DataFrame:
-    """Append a Grand Total row summing numeric_cols."""
     totals = {label_col: "Grand Total"}
     for col in df.columns:
         if col in numeric_cols:
@@ -37,12 +34,25 @@ def add_grand_total(df: pd.DataFrame, label_col: str, numeric_cols: list[str]) -
     return pd.concat([df, totals_df], ignore_index=True)
 
 
+def render_metric_card(label, actual, budget, color_up="red", color_down="blue"):
+    """Render a metric card with colored variance."""
+    var = actual - budget
+    var_pct = (var / budget * 100) if budget != 0 else 0
+    color = color_up if var >= 0 else color_down
+    sign = "+" if var >= 0 else ""
+    st.markdown(f"""
+    <div style="background:#f8f9fa; border-radius:8px; padding:12px; text-align:center; border-left:4px solid {color};">
+        <div style="font-size:12px; color:#666;">{label}</div>
+        <div style="font-size:18px; font-weight:bold;">${format_millions(actual)}M vs ${format_millions(budget)}M</div>
+        <div style="font-size:14px; color:{color}; font-weight:bold;">{sign}{format_millions(var)}M ({sign}{var_pct:.1f}%)</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_variance_section(title, items, col_a, col_b, label_a, label_b, use_numbers=True):
-    """Render a variance commentary sub-section."""
     if not items:
         st.write("No data available.")
         return
-    # Sort by absolute variance descending, take top 5
     sorted_items = sorted(items, key=lambda r: abs(r[col_a] - r[col_b]), reverse=True)[:5]
     markers = ["\u2460", "\u2461", "\u2462", "\u2463", "\u2464"] if use_numbers else ["A.", "B.", "C.", "D.", "E."]
     lines = []
@@ -74,40 +84,60 @@ def main():
     n = get_snapshot_n_value(selected)
     month_name = MONTH_NAMES.get(n, str(n))
 
-    # Summary Cards
-    totals = db.query("""
+    # --- FY26 Summary Cards ---
+    fy_totals = db.query("""
         SELECT
             SUM(CASE WHEN period = 'FY26' AND period_type = 'forecast' THEN amount_usd ELSE 0 END) as fy_fcst,
-            SUM(CASE WHEN period = 'FY26' AND period_type = 'budget' THEN amount_usd ELSE 0 END) as fy_bud
-        FROM fee_income WHERE snapshot = ? AND period = 'FY26'
+            SUM(CASE WHEN period = 'FY26' AND period_type = 'budget' THEN amount_usd ELSE 0 END) as fy_bud,
+            SUM(CASE WHEN period = 'FY25' AND period_type = 'actual' THEN amount_usd ELSE 0 END) as fy25_act
+        FROM fee_income WHERE snapshot = ? AND period IN ('FY25', 'FY26')
     """, (selected,))
 
-    if totals:
-        t = totals[0]
-        fy_fcst = t["fy_fcst"] or 0
-        fy_bud = t["fy_bud"] or 0
-        variance = fy_fcst - fy_bud
-        var_pct = (variance / fy_bud * 100) if fy_bud != 0 else 0
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric("FY26 Forecast", f"${format_millions(fy_fcst)}M")
-        c2.metric("FY26 Budget", f"${format_millions(fy_bud)}M")
-        c3.metric("Variance", f"${format_millions(variance)}M", delta=f"{var_pct:+.1f}%")
-        c4.metric("Variance %", f"{var_pct:+.1f}%")
+    # MTD/YTD totals
+    mtd_data = get_mtd_comparison(db, selected)
+    ytd_data = get_ytd_comparison(db, selected)
 
-    # Platform Bar Chart
-    st.subheader("Fee Income by Platform")
+    mtd_act_total = sum(r["mtd_act"] for r in mtd_data) if mtd_data else 0
+    mtd_bud_total = sum(r["mtd_bud"] for r in mtd_data) if mtd_data else 0
+    ytd_act_total = sum(r["ytd_act"] for r in ytd_data) if ytd_data else 0
+    ytd_bud_total = sum(r["ytd_bud"] for r in ytd_data) if ytd_data else 0
+
+    fy_fcst = fy_totals[0]["fy_fcst"] or 0 if fy_totals else 0
+    fy_bud = fy_totals[0]["fy_bud"] or 0 if fy_totals else 0
+    fy25_act = fy_totals[0]["fy25_act"] or 0 if fy_totals else 0
+
+    # Row 1: FY26 Forecast / Budget / Variance
+    st.subheader("FY26 Fee Income")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric("FY26 Forecast", f"${format_millions(fy_fcst)}M")
+    with c2:
+        st.metric("FY26 Budget", f"${format_millions(fy_bud)}M")
+    with c3:
+        var = fy_fcst - fy_bud
+        var_pct = (var / fy_bud * 100) if fy_bud != 0 else 0
+        color = "red" if var >= 0 else "blue"
+        st.markdown(f"""
+        <div style="padding:8px;">
+            <div style="font-size:14px; color:#555;">Variance</div>
+            <div style="font-size:24px; font-weight:bold; color:{color};">${format_millions(var)}M ({var_pct:+.1f}%)</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Row 2: MTD / YTD / FY26 Fcst vs FY25
+    st.markdown("")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        render_metric_card(f"MTD {month_name} Act vs Bud", mtd_act_total, mtd_bud_total)
+    with c2:
+        render_metric_card(f"YTD Jan-{month_name} Act vs Bud", ytd_act_total, ytd_bud_total)
+    with c3:
+        render_metric_card("FY26 Fcst vs FY25 Act", fy_fcst, fy25_act)
+
+    # --- Tables ---
+    st.markdown("---")
     platform_data = get_fee_by_platform_fy(db, selected)
     project_data = get_fee_by_project_fy(db, selected)
-
-    if platform_data:
-        df_plat = pd.DataFrame(platform_data)
-        df_chart = pd.DataFrame({
-            "Platform": df_plat["platform"].tolist() * 2,
-            "Amount (USD M)": [v / 1e6 for v in df_plat["fy26_fcst"]] + [v / 1e6 for v in df_plat["fy26_bud"]],
-            "Type": ["FY26 Fcst"] * len(df_plat) + ["FY26 Bud"] * len(df_plat),
-        })
-        fig = px.bar(df_chart, x="Platform", y="Amount (USD M)", color="Type", barmode="group", height=400)
-        st.plotly_chart(fig, use_container_width=True)
 
     # Fee by Project (FY) Table
     st.subheader("Fee by Project (FY)")
@@ -146,8 +176,6 @@ def main():
     st.markdown("---")
     st.header("Key Variance Commentary")
 
-    mtd_data = get_mtd_comparison(db, selected)
-    ytd_data = get_ytd_comparison(db, selected)
     fy_data = get_fy_comparison(db, selected)
     yoy_data = get_yoy_comparison(db, selected)
 
@@ -168,10 +196,8 @@ def main():
     st.header("Watch List FY2026")
 
     watch_items = db.get_watch_list()
-
     pnl_items = [w for w in watch_items if w.get("category") == "P&L"]
     cf_items = [w for w in watch_items if w.get("category") == "CF"]
-
     watch_cols = ["fund_project", "impact_mil", "lost_delay", "comment"]
     watch_labels = {"fund_project": "Fund/Project", "impact_mil": "Impact($mil)", "lost_delay": "Lost/Delay", "comment": "Comment"}
 
