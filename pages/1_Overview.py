@@ -248,7 +248,11 @@ def main():
                 st.success("Saved!")
                 st.rerun()
 
-    # 4 tables
+    # 4 tables (same order as metric rows: FY26 vs Bud → MTD → YTD → FY26 vs FY25)
+    render_variance_table(
+        "FY26 Fcst vs FY26 Bud", "fy_bud",
+        fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
+
     render_variance_table(
         f"MTD {month_name} Act vs MTD {month_name} Bud", "mtd",
         mtd_data, "mtd_act", "mtd_bud", "MTD Act", "MTD Bud")
@@ -256,10 +260,6 @@ def main():
     render_variance_table(
         f"YTD {month_name} Act vs YTD {month_name} Bud", "ytd",
         ytd_data, "ytd_act", "ytd_bud", "YTD Act", "YTD Bud")
-
-    render_variance_table(
-        "FY26 Fcst vs FY26 Bud", "fy_bud",
-        fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
 
     render_variance_table(
         "FY26 Fcst vs FY25 Act", "fy_yoy",
