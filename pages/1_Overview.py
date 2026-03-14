@@ -107,17 +107,25 @@ def main():
     fy25_act = fy_totals[0]["fy25_act"] or 0 if fy_totals else 0
 
     def metric_row(label, actual, actual_label, budget, budget_label):
-        """Render one row: Actual | Budget | Variance with colored variance."""
+        """Render one row as styled cards matching table color tone."""
         var = actual - budget
         var_pct = (var / budget * 100) if budget != 0 else 0
-        color = "red" if var >= 0 else "blue"
-        c1, c2, c3 = st.columns(3)
-        c1.metric(actual_label, f"${format_millions(actual)}M")
-        c2.metric(budget_label, f"${format_millions(budget)}M")
-        c3.markdown(f"""
-        <div style="padding:14px 0;">
-            <div style="font-size:14px; color:#555;">Variance</div>
-            <div style="font-size:24px; font-weight:bold; color:{color};">{"+" if var >= 0 else ""}{format_millions(var)}M ({var_pct:+.1f}%)</div>
+        var_color = "#c53030" if var >= 0 else "#2b6cb0"
+        sign = "+" if var >= 0 else ""
+        st.markdown(f"""
+        <div style="display:flex; gap:12px; margin-bottom:8px;">
+            <div style="flex:1; background:#f7fafc; border-radius:6px; padding:14px 16px; border-top:3px solid #4a5568;">
+                <div style="font-size:12px; color:#718096; text-transform:uppercase;">{actual_label}</div>
+                <div style="font-size:22px; font-weight:bold; color:#2d3748;">${format_millions(actual)}M</div>
+            </div>
+            <div style="flex:1; background:#f7fafc; border-radius:6px; padding:14px 16px; border-top:3px solid #4a5568;">
+                <div style="font-size:12px; color:#718096; text-transform:uppercase;">{budget_label}</div>
+                <div style="font-size:22px; font-weight:bold; color:#2d3748;">${format_millions(budget)}M</div>
+            </div>
+            <div style="flex:1; background:#f7fafc; border-radius:6px; padding:14px 16px; border-top:3px solid {var_color};">
+                <div style="font-size:12px; color:#718096; text-transform:uppercase;">Variance</div>
+                <div style="font-size:22px; font-weight:bold; color:{var_color};">{sign}{format_millions(var)}M ({sign}{var_pct:.1f}%)</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
