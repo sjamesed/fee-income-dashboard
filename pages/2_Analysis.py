@@ -704,29 +704,31 @@ def main():
 
         view_by = st.radio("View by", ["Project", "Fee Type"], horizontal=True, key="monthly_view")
 
-        metric_options = {
-            "Actual": "actual",
-            "Budget": "budget",
-            "Forecast": "forecast",
+        # Build monthly metric options: label → (year, period_type)
+        monthly_metrics = {
+            "FY26 Actual": ("2026", "actual"),
+            "FY26 Budget": ("2026", "budget"),
+            f"FY26 Forecast ({selected})": ("2026", "forecast"),
+            "FY25 Actual": ("2025", "actual"),
+            "FY25 Budget": ("2025", "budget"),
+            "FY24 Actual": ("2024", "actual"),
+            "FY24 Budget": ("2024", "budget"),
+            "FY23 Actual": ("2023", "actual"),
         }
-        metric_keys = list(metric_options.keys())
-        year_choices = ["2026", "2025", "2024", "2023"]
+        monthly_labels = list(monthly_metrics.keys())
 
-        # Two metric selectors side by side
         mc1, mc2 = st.columns(2)
         with mc1:
-            st.markdown("**Metric 1**")
-            m1_metric = st.selectbox("Metric", metric_keys, key="monthly_m1_metric")
-            m1_year = st.selectbox("Year", year_choices, key="monthly_m1_year")
+            m1_label = st.selectbox("Metric 1", monthly_labels,
+                                     index=monthly_labels.index(f"FY26 Forecast ({selected})"),
+                                     key="monthly_m1")
         with mc2:
-            st.markdown("**Metric 2**")
-            m2_metric = st.selectbox("Metric", metric_keys, index=1, key="monthly_m2_metric")
-            m2_year = st.selectbox("Year", year_choices, key="monthly_m2_year")
+            m2_label = st.selectbox("Metric 2", monthly_labels,
+                                     index=monthly_labels.index("FY26 Budget"),
+                                     key="monthly_m2")
 
-        m1_label = f"{m1_metric} {m1_year}"
-        m2_label = f"{m2_metric} {m2_year}"
-        pt1 = metric_options[m1_metric]
-        pt2 = metric_options[m2_metric]
+        m1_year, pt1 = monthly_metrics[m1_label]
+        m2_year, pt2 = monthly_metrics[m2_label]
         months1 = [f"{m1_year}-{m:02d}" for m in range(1, 13)]
         months2 = [f"{m2_year}-{m:02d}" for m in range(1, 13)]
         ph1 = ",".join(["?"] * len(months1))
