@@ -84,6 +84,15 @@ def main():
     n = get_snapshot_n_value(selected)
     month_name = MONTH_NAMES.get(n, str(n))
 
+    # --- Todo Memo ---
+    with st.expander(f"📝 Todo / Memo — {selected}", expanded=False):
+        saved_todo = db.get_todo(selected)
+        todo_text = st.text_area("", value=saved_todo, height=150, key="todo_memo",
+                                  placeholder="Type your notes here... (saved per snapshot)")
+        if st.button("Save Memo", key="save_todo"):
+            db.save_todo(selected, todo_text)
+            st.success("Saved!")
+
     # --- FY26 Summary Cards ---
     fy_totals = db.query("""
         SELECT

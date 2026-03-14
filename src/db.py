@@ -54,6 +54,24 @@ class FeeIncomeDB:
                 comment TEXT
             )
         """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS todo_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                snapshot TEXT NOT NULL,
+                content TEXT DEFAULT '',
+                UNIQUE(snapshot)
+            )
+        """)
+        self.conn.commit()
+
+    def get_todo(self, snapshot: str) -> str:
+        rows = self.query("SELECT content FROM todo_notes WHERE snapshot = ?", (snapshot,))
+        return rows[0]["content"] if rows else ""
+
+    def save_todo(self, snapshot: str, content: str):
+        self.conn.execute(
+            "INSERT INTO todo_notes (snapshot, content) VALUES (?, ?) ON CONFLICT(snapshot) DO UPDATE SET content = ?",
+            (snapshot, content, content))
         self.conn.commit()
 
     def insert_snapshot(self, snapshot: str, rows: list[dict]):
