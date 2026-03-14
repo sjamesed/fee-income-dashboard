@@ -502,24 +502,28 @@ def main():
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        sticky = "position:sticky; top:0; z-index:2;"
-        sticky2 = "position:sticky; top:28px; z-index:2;"
+        # Sticky columns: Platform (left:0) and Project (left:~120px)
+        scol0 = "position:sticky; left:0; z-index:1; background:inherit;"
+        scol1 = "position:sticky; left:120px; z-index:1; background:inherit;"
+        # Header cells need higher z-index (sticky both top and left)
+        shdr0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR};"
+        shdr1 = f"position:sticky; left:120px; z-index:3; background:{HEADER_COLOR};"
 
-        html = f"""<div style="max-height:75vh; overflow-y:auto; border:1px solid #cbd5e0;">
-        <table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        html = f"""<div style="overflow-x:auto;">
+        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Project</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" colspan="{len(FT_COLS) + 1}">{label_a}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" colspan="{len(FT_COLS) + 1}">{label_b}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Variance</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {shdr0} min-width:120px;" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {shdr1} min-width:140px;" rowspan="2">Project</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
         </tr>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
-            {ft_headers_a.replace('style="', f'style="{sticky2} background:{HEADER_COLOR}; color:white; ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sticky2} background:{HEADER_COLOR}; color:white;">Total</th>
-            {ft_headers_b.replace('style="', f'style="{sticky2} background:{HEADER_COLOR}; color:white; ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sticky2} background:{HEADER_COLOR}; color:white;">Total</th>
+            {ft_headers_a}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            {ft_headers_b}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
         </tr>
         </thead><tbody>"""
 
@@ -530,7 +534,7 @@ def main():
         prev_plat = None
 
         def render_subtotal_row(label, sub_a, sub_b):
-            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="2">{label}</td>'
+            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {scol0}" colspan="2">{label}</td>'
             total_a = sum(sub_a.values())
             for ft in FT_COLS:
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
@@ -555,8 +559,8 @@ def main():
 
             plat_display = f"<b>{plat}</b>" if plat != (all_proj_keys[idx-1][0] if idx > 0 else None) else ""
 
-            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{plat_display}</td>'
-            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{proj}</td>'
+            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {scol0} background:{bg};">{plat_display}</td>'
+            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {scol1} background:{bg};">{proj}</td>'
 
             ft_vals_a = lookup_a.get(key, {})
             ft_vals_b = lookup_b.get(key, {})
@@ -594,7 +598,7 @@ def main():
             html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
 
         # Grand Total
-        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="2">Grand Total</td>'
+        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; {scol0} background:{HEADER_COLOR};" colspan="2">Grand Total</td>'
         gt_total_a = sum(grand_a.values())
         for ft in FT_COLS:
             gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
