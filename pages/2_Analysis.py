@@ -10,6 +10,13 @@ MONTH_NAMES = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
 HEADER_COLOR = "#4a5568"
 
 
+def fv(val_mil):
+    """Format value in millions. 0 → '-'."""
+    if abs(val_mil) < 0.05:
+        return "-"
+    return f"{val_mil:.1f}"
+
+
 def get_db():
     db = FeeIncomeDB()
     db.init_db()
@@ -85,6 +92,9 @@ def build_project_table_html(data, metric_label, show_platform=True):
         <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{metric_label}</th>
     </tr></thead><tbody>"""
 
+    # Filter out rows where value is 0
+    data = [r for r in data if abs(r["value"]) >= 500]
+
     total = 0
     prev_platform = None
     for i, row in enumerate(data):
@@ -104,7 +114,7 @@ def build_project_table_html(data, metric_label, show_platform=True):
         html += f"""<tr style="background:{bg};">
             {plat_td}
             <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["project_name"]}</td>
-            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{val:.1f}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(val)}</td>
         </tr>"""
 
     # Grand Total
@@ -137,6 +147,9 @@ def build_comparison_table_html(data_a, data_b, label_a, label_b):
         if key not in seen:
             all_projects.append({"platform": r["platform"], "project_name": r["project_name"],
                                   "val_a": 0, "val_b": r["value"]})
+
+    # Filter out rows where both values are 0
+    all_projects = [r for r in all_projects if abs(r["val_a"]) >= 500 or abs(r["val_b"]) >= 500]
 
     # Sort by platform order
     all_projects = sort_by_platform(all_projects)
@@ -176,8 +189,8 @@ def build_comparison_table_html(data_a, data_b, label_a, label_b):
         html += f"""<tr style="background:{bg};">
             <td style="padding:5px 10px; border:1px solid #cbd5e0;">{plat_display}</td>
             <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["project_name"]}</td>
-            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{a:.1f}</td>
-            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{b:.1f}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(a)}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(b)}</td>
             <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(v)}</td>
             <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>
         </tr>"""
@@ -260,6 +273,9 @@ def build_fee_type_comparison_html(data_a, data_b, label_a, label_b, selected_pr
                        key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
                                        FEE_TYPE_ORDER.index(k[2]) if k[2] in FEE_TYPE_ORDER else 99))
 
+    # Filter out rows where both values are 0
+    all_keys = [k for k in all_keys if abs(agg_a.get(k, 0)) >= 500 or abs(agg_b.get(k, 0)) >= 500]
+
     def fmt_var(v):
         if v < -0.05:
             return f"({abs(v):.1f})"
@@ -298,8 +314,8 @@ def build_fee_type_comparison_html(data_a, data_b, label_a, label_b, selected_pr
             <td style="padding:4px 10px; border:1px solid #cbd5e0;">{plat_display}</td>
             <td style="padding:4px 10px; border:1px solid #cbd5e0;">{proj_display}</td>
             <td style="padding:4px 10px; border:1px solid #cbd5e0; font-size:11px;">{ft}</td>
-            <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{a:.1f}</td>
-            <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{b:.1f}</td>
+            <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(a)}</td>
+            <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(b)}</td>
             <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(v)}</td>
             <td style="padding:4px 10px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>
         </tr>"""
