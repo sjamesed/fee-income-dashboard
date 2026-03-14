@@ -423,7 +423,7 @@ def main():
     option_labels = list(options.keys())
 
     # --- View mode ---
-    mode = st.radio("View", ["Single Metric", "Comparison", "Comparison by Fee Type"], horizontal=True)
+    mode = st.radio("View", ["Single Metric", "Comparison", "Fee by Project (FY)"], horizontal=True)
 
     if mode == "Single Metric":
         chosen = st.selectbox("Select Metric", option_labels, index=option_labels.index("FY26 Bud"))
@@ -438,9 +438,159 @@ def main():
             exp_rows = [{"Platform": r["platform"], "Project": r["project_name"], chosen: r["value"] / divisor()} for r in data]
             export_button(pd.DataFrame(exp_rows), f"fee_by_project_{chosen}.xlsx")
 
-    elif mode in ("Comparison", "Comparison by Fee Type"):
-        is_fee_type = mode == "Comparison by Fee Type"
-        prefix = "ft" if is_fee_type else "cmp"
+    elif mode == "Fee by Project (FY)":
+        # Pivoted table: rows = Platform/Project, cols = Fee Type, with two metric blocks side by side
+        FT_COLS = ["Asset Mgmt Fee", "Development Mgmt Fee", "Leasing Fee", "Acq / Div Fee", "Promote Fee", "Other Fee"]
+        FT_SHORT = {"Asset Mgmt Fee": "AM Fee", "Development Mgmt Fee": "Dev Mgmt Fee",
+                     "Leasing Fee": "Leasing", "Acq / Div Fee": "Acq/Div", "Promote Fee": "Promote", "Other Fee": "Other"}
+
+        col1, col2 = st.columns(2)
+        with col1:
+            label_a = st.selectbox("Metric 1", option_labels,
+                                    index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a")
+        with col2:
+            label_b = st.selectbox("Metric 2", option_labels,
+                                    index=option_labels.index("FY26 Bud"), key="ftp_b")
+
+        data_a = query_metric_by_fee_type(db, selected, options[label_a])
+        data_b = query_metric_by_fee_type(db, selected, options[label_b])
+
+        # Build lookup: (platform, project) -> {fee_type: value}
+        def build_ft_lookup(data):
+            lookup = {}
+            for r in data:
+                key = (r["platform"], r["project_name"])
+                if key not in lookup:
+                    lookup[key] = {}
+                lookup[key][r["fee_type"]] = lookup[key].get(r["fee_type"], 0) + r["value"]
+            return lookup
+
+        lookup_a = build_ft_lookup(data_a)
+        lookup_b = build_ft_lookup(data_b)
+        all_proj_keys = sorted(set(lookup_a.keys()) | set(lookup_b.keys()),
+            key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1]))
+
+        # Filter: at least one fee type has value in either metric
+        all_proj_keys = [k for k in all_proj_keys
+                         if any(abs(lookup_a.get(k, {}).get(ft, 0)) >= 500 or abs(lookup_b.get(k, {}).get(ft, 0)) >= 500 for ft in FT_COLS)]
+
+        d = divisor()
+        short_a = label_a.split("(")[0].strip() if "(" in label_a else label_a
+        short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
+
+        # Build HTML with two header rows
+        ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
+        ft_headers_b = ft_headers_a
+
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        <thead>
+        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
+            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+        </tr>
+        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
+            {ft_headers_a}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            {ft_headers_b}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+        </tr>
+        </thead><tbody>"""
+
+        plat_sub_a = {ft: 0.0 for ft in FT_COLS}
+        plat_sub_b = {ft: 0.0 for ft in FT_COLS}
+        grand_a = {ft: 0.0 for ft in FT_COLS}
+        grand_b = {ft: 0.0 for ft in FT_COLS}
+        prev_plat = None
+
+        def render_subtotal_row(label, sub_a, sub_b):
+            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="2">{label}</td>'
+            total_a = sum(sub_a.values())
+            for ft in FT_COLS:
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_a/d)}</td>'
+            total_b = sum(sub_b.values())
+            for ft in FT_COLS:
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
+            return f'<tr>{cells}</tr>'
+
+        for idx, key in enumerate(all_proj_keys):
+            plat, proj = key
+            bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
+
+            # Platform subtotal on change
+            if prev_plat is not None and plat != prev_plat:
+                html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
+                plat_sub_a = {ft: 0.0 for ft in FT_COLS}
+                plat_sub_b = {ft: 0.0 for ft in FT_COLS}
+            prev_plat = plat
+
+            plat_display = f"<b>{plat}</b>" if plat != (all_proj_keys[idx-1][0] if idx > 0 else None) else ""
+
+            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{plat_display}</td>'
+            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{proj}</td>'
+
+            ft_vals_a = lookup_a.get(key, {})
+            ft_vals_b = lookup_b.get(key, {})
+            row_total_a = 0
+            for ft in FT_COLS:
+                v = ft_vals_a.get(ft, 0)
+                row_total_a += v
+                plat_sub_a[ft] += v
+                grand_a[ft] += v
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
+
+            row_total_b = 0
+            for ft in FT_COLS:
+                v = ft_vals_b.get(ft, 0)
+                row_total_b += v
+                plat_sub_b[ft] += v
+                grand_b[ft] += v
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
+
+            html += f'<tr style="background:{bg};">{cells}</tr>'
+
+        # Last platform subtotal
+        if prev_plat is not None:
+            html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
+
+        # Grand Total
+        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="2">Grand Total</td>'
+        gt_total_a = sum(grand_a.values())
+        for ft in FT_COLS:
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_a/d)}</td>'
+        gt_total_b = sum(grand_b.values())
+        for ft in FT_COLS:
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
+        html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
+
+        html += "</tbody></table>"
+        st.markdown(html, unsafe_allow_html=True)
+        st.caption(f"Unit: {unit_label()}")
+
+        # Export
+        exp_rows = []
+        for key in all_proj_keys:
+            plat, proj = key
+            row = {"Platform": plat, "Project": proj}
+            ft_a = lookup_a.get(key, {})
+            ft_b = lookup_b.get(key, {})
+            for ft in FT_COLS:
+                row[f"{FT_SHORT[ft]} ({short_a})"] = ft_a.get(ft, 0) / d
+                row[f"{FT_SHORT[ft]} ({short_b})"] = ft_b.get(ft, 0) / d
+            row[f"Total ({short_a})"] = sum(ft_a.get(ft, 0) for ft in FT_COLS) / d
+            row[f"Total ({short_b})"] = sum(ft_b.get(ft, 0) for ft in FT_COLS) / d
+            exp_rows.append(row)
+        export_button(pd.DataFrame(exp_rows), "fee_by_project_fee_type.xlsx")
+
+    elif mode == "Comparison":
+        prefix = "cmp"
 
         num_metrics = st.radio("Number of metrics", [2, 3, 4], horizontal=True, key=f"{prefix}_num")
         defaults = [f"FY26 Fcst ({selected})", "FY26 Bud", "FY25 Act", "FY24 Act"]
