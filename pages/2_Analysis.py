@@ -541,25 +541,21 @@ def main():
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        sth = f"background:{HEADER_COLOR} !important; color:white !important; position:sticky; z-index:2;"
-        sth1 = sth + " top:0;"
-        sth2 = sth + " top:28px;"
-
-        html = f"""<table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
-        <tr style="font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sth1}" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sth1}" rowspan="2">Project</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sth1}" colspan="{len(FT_COLS) + 1}">{label_a}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sth1}" colspan="{len(FT_COLS) + 1}">{label_b}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sth1}" rowspan="2">Variance</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sth1}" rowspan="2">Note</th>
+        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
+            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Note</th>
         </tr>
-        <tr style="font-weight:bold; font-size:10px; text-align:center;">
-            {ft_headers_a.replace('style="', f'style="{sth2} ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sth2}">Total</th>
-            {ft_headers_b.replace('style="', f'style="{sth2} ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sth2}">Total</th>
+        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
+            {ft_headers_a}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            {ft_headers_b}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
         </tr>
         </thead><tbody>"""
 
@@ -741,12 +737,8 @@ def main():
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">%</th>'
         header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;">Note</th>'
 
-        # Make header sticky
-        sth_cmp = f"background:{HEADER_COLOR} !important; color:white !important; position:sticky; top:0; z-index:2;"
-        header_html = header_html.replace('style="padding:6px 8px;', f'style="{sth_cmp} padding:6px 8px;')
-
-        html = f"""<table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
-        <thead><tr style="font-weight:bold;">
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
             {header_html}
         </tr></thead><tbody>"""
 
