@@ -604,26 +604,26 @@ def main():
         # Query data (project-level comparison)
         all_data = {}
         all_keys_set = set()
-            for lbl in labels:
-                rows = query_metric(db, selected, lbl, options[lbl])
-                lookup = {}
-                for r in rows:
-                    key = (r["platform"], r["project_name"])
-                    lookup[key] = r["value"]
-                    all_keys_set.add(key)
-                all_data[lbl] = lookup
+        for lbl in labels:
+            rows = query_metric(db, selected, lbl, options[lbl])
+            lookup = {}
+            for r in rows:
+                key = (r["platform"], r["project_name"])
+                lookup[key] = r["value"]
+                all_keys_set.add(key)
+            all_data[lbl] = lookup
 
-            all_keys_raw = [{"platform": k[0], "project_name": k[1]} for k in all_keys_set]
-            all_keys_raw = sort_by_platform(all_keys_raw)
-            all_keys = [(p["platform"], p["project_name"]) for p in all_keys_raw]
-            all_keys = [k for k in all_keys
-                        if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
+        all_keys_raw = [{"platform": k[0], "project_name": k[1]} for k in all_keys_set]
+        all_keys_raw = sort_by_platform(all_keys_raw)
+        all_keys = [(p["platform"], p["project_name"]) for p in all_keys_raw]
+        all_keys = [k for k in all_keys
+                    if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
 
-            row_label_keys = ["Platform", "Project"]
-            def get_row_labels(key):
-                return key  # (platform, project)
-            def get_row_value(key, lbl):
-                return all_data[lbl].get(key, 0)
+        row_label_keys = ["Platform", "Project"]
+        def get_row_labels(key):
+            return key  # (platform, project)
+        def get_row_value(key, lbl):
+            return all_data[lbl].get(key, 0)
 
         # Build header: for each metric pair (i vs i+1), show Metric_i | Metric_i+1 | Var | %
         # First metric is always shown, then each subsequent metric adds: value | var | %
