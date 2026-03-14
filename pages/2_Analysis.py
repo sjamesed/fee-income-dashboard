@@ -441,8 +441,8 @@ def main():
     elif mode == "Fee by Project (FY)":
         # Pivoted table: rows = Platform/Project, cols = Fee Type, with two metric blocks side by side
         FT_COLS = ["Asset Mgmt Fee", "Development Mgmt Fee", "Leasing Fee", "Acq / Div Fee", "Promote Fee", "Other Fee"]
-        FT_SHORT = {"Asset Mgmt Fee": "AM Fee", "Development Mgmt Fee": "Dev Mgmt Fee",
-                     "Leasing Fee": "Leasing", "Acq / Div Fee": "Acq/Div", "Promote Fee": "Promote", "Other Fee": "Other"}
+        FT_SHORT = {"Asset Mgmt Fee": "AM Fee", "Development Mgmt Fee": "DM Fee",
+                     "Leasing Fee": "Leasing Fee", "Acq / Div Fee": "Acq Fee", "Promote Fee": "Promote", "Other Fee": "Other"}
 
         col1, col2 = st.columns(2)
         with col1:
@@ -478,24 +478,17 @@ def main():
         short_a = label_a.split("(")[0].strip() if "(" in label_a else label_a
         short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
 
-        # Determine highlight threshold: top 20% of absolute fee-type variances
-        all_ft_vars = []
-        for k in all_proj_keys:
-            fa = lookup_a.get(k, {})
-            fb = lookup_b.get(k, {})
-            for ft in FT_COLS:
-                v = abs(fa.get(ft, 0) - fb.get(ft, 0))
-                if v >= 500:
-                    all_ft_vars.append(v)
-        all_ft_vars.sort(reverse=True)
-        highlight_threshold = all_ft_vars[max(0, len(all_ft_vars) // 5)] if all_ft_vars else 1e18
+        # Highlight threshold: abs variance >= 0.3M (300,000 USD)
+        HIGHLIGHT_THRESHOLD = 300_000
 
-        def ft_cell_style(val_a, val_b, base_style=""):
-            """Return style with highlight if variance is significant."""
-            var = abs(val_a - val_b)
-            if var >= highlight_threshold:
-                return base_style + " background:#fff3cd;"  # yellow highlight
-            return base_style
+        def is_highlighted(val_a, val_b):
+            return abs(val_a - val_b) >= HIGHLIGHT_THRESHOLD
+
+        def hl_style(val_a, val_b):
+            """Return yellow background if variance >= threshold."""
+            if is_highlighted(val_a, val_b):
+                return " background:#fff3cd;"
+            return ""
 
         def fmt_var_val(v):
             vm = v / d
@@ -570,7 +563,7 @@ def main():
                 row_total_a += va
                 plat_sub_a[ft] += va
                 grand_a[ft] += va
-                hl = ft_cell_style(va, vb)
+                hl = hl_style(va, vb)
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(va/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
 
@@ -581,13 +574,14 @@ def main():
                 row_total_b += vb
                 plat_sub_b[ft] += vb
                 grand_b[ft] += vb
-                hl = ft_cell_style(va, vb)
+                hl = hl_style(va, vb)
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
 
-            # Variance column (Total A - Total B)
+            # Variance column (Total A - Total B) — highlight if any fee type in this row is highlighted
             row_var = row_total_a - row_total_b
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fmt_var_val(row_var)}</td>'
+            row_hl = hl_style(row_total_a, row_total_b)
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{fmt_var_val(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
