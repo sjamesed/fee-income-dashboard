@@ -849,8 +849,10 @@ def main():
         sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
         frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz1 = f"position:sticky; left:100px; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz2 = f"position:sticky; left:220px; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz0_data = "position:sticky; left:0; z-index:1;"
         frz1_data = "position:sticky; left:100px; z-index:1;"
+        frz2_data = "position:sticky; left:220px; z-index:1;"
 
         month_headers1 = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
         month_headers2 = month_headers1
@@ -866,6 +868,8 @@ def main():
                 html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">{col}</th>'
             elif i == 1:
                 html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">{col}</th>'
+            elif i == 2:
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz2} min-width:100px;" rowspan="2">{col}</th>'
             else:
                 html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">{col}</th>'
 
@@ -929,6 +933,8 @@ def main():
                 elif i == 1:
                     proj_display = f"{part}" if len(label_cols) == 2 or part != (all_keys[idx-1][1] if idx > 0 else None) else ""
                     cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz1_data} background:{bg}; min-width:120px;">{proj_display}</td>'
+                elif i == 2:
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz2_data} background:{bg}; min-width:100px; font-size:10px;">{part}</td>'
                 else:
                     cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px;">{part}</td>'
 
