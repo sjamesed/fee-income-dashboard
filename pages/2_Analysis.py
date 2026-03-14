@@ -502,20 +502,24 @@ def main():
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        sticky = "position:sticky; top:0; z-index:2;"
+        sticky2 = "position:sticky; top:28px; z-index:2;"
+
+        html = f"""<div style="max-height:75vh; overflow-y:auto; border:1px solid #cbd5e0;">
+        <table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Project</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sticky}" rowspan="2">Variance</th>
         </tr>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
-            {ft_headers_a}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
-            {ft_headers_b}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            {ft_headers_a.replace('style="', f'style="{sticky2} background:{HEADER_COLOR}; color:white; ')}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sticky2} background:{HEADER_COLOR}; color:white;">Total</th>
+            {ft_headers_b.replace('style="', f'style="{sticky2} background:{HEADER_COLOR}; color:white; ')}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sticky2} background:{HEADER_COLOR}; color:white;">Total</th>
         </tr>
         </thead><tbody>"""
 
@@ -603,7 +607,7 @@ def main():
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
-        html += "</tbody></table>"
+        html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
