@@ -541,21 +541,24 @@ def main():
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
+
+        html = f"""<div style="max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;">
+        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
-        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Note</th>
+        <tr style="font-weight:bold; text-align:center;">
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Platform</th>
+            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Project</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Variance</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Note</th>
         </tr>
-        <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
-            {ft_headers_a}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
-            {ft_headers_b}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+        <tr style="font-weight:bold; font-size:10px; text-align:center;">
+            {ft_headers_a.replace('style="', f'style="{sty_th} top:28px; ')}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
+            {ft_headers_b.replace('style="', f'style="{sty_th} top:28px; ')}
+            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
         </tr>
         </thead><tbody>"""
 
@@ -647,9 +650,16 @@ def main():
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0;"></td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
-        html += "</tbody></table>"
+        html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
+
+        # Full HTML view for copy & paste
+        full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
+        full_html = full_html.replace('position:sticky; z-index:2;', '')
+        full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
+        with st.expander("Open Full Table (for copy & paste)"):
+            st.markdown(full_html, unsafe_allow_html=True)
 
         # Inline note editor — select project, type note, save
         proj_list = [k[1] for k in all_proj_keys]
@@ -725,20 +735,22 @@ def main():
 
         # Build header: for each metric pair (i vs i+1), show Metric_i | Metric_i+1 | Var | %
         # First metric is always shown, then each subsequent metric adds: value | var | %
+        sty_cmp = f"background:{HEADER_COLOR}; color:white; position:sticky; top:0; z-index:2;"
         header_html = ""
         for col_name in row_label_keys:
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;" rowspan="1">{col_name}</th>'
-        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[0]}</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left; {sty_cmp}">{col_name}</th>'
+        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{labels[0]}</th>'
         for i in range(1, len(labels)):
             short_a = labels[0].split("(")[0].strip() if "(" in labels[0] else labels[0]
             short_b = labels[i].split("(")[0].strip() if "(" in labels[i] else labels[i]
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[i]}</th>'
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{short_a} vs {short_b}</th>'
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">%</th>'
-        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;">Note</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{labels[i]}</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">{short_a} vs {short_b}</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right; {sty_cmp}">%</th>'
+        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left; {sty_cmp}">Note</th>'
 
-        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
-        <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+        html = f"""<div style="max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;">
+        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        <thead><tr style="font-weight:bold;">
             {header_html}
         </tr></thead><tbody>"""
 
@@ -827,9 +839,16 @@ def main():
 
         total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;"></td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{empty_label_cells}{total_val_cells}</tr>'
-        html += "</tbody></table>"
+        html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
+
+        # Full HTML view for copy & paste
+        full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
+        full_html = full_html.replace('position:sticky; top:0; z-index:2;', '')
+        full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
+        with st.expander("Open Full Table (for copy & paste)"):
+            st.markdown(full_html, unsafe_allow_html=True)
 
         # Inline note editor for Comparison
         cmp_note_key = f"cmp_{labels[0]}_vs_{labels[1]}"
