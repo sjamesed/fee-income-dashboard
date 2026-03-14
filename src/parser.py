@@ -142,7 +142,11 @@ def parse_excel_file(filepath: str) -> tuple[list[dict], str]:
     empty_streak = 0
 
     for row in ws.iter_rows(min_row=DATA_START_ROW, max_col=max_col):
-        row_dict = {cell.column: cell.value for cell in row}
+        row_dict = {}
+        for cell in row:
+            # read_only mode can produce EmptyCell objects without .column
+            if hasattr(cell, 'column') and cell.column is not None:
+                row_dict[cell.column] = cell.value
         platform = row_dict.get(2)
         project_name = row_dict.get(3)
         project_status = row_dict.get(4)
@@ -187,6 +191,17 @@ def parse_excel_file(filepath: str) -> tuple[list[dict], str]:
             })
 
     wb.close()
+
+    # Deduplicate: if multiple columns map to the same (period, period_type),
+    # keep the last non-zero value (or sum — but last-wins is safer for overlapping annual/monthly)
+    dedup = {}
+    for r in rows:
+        key = (r["snapshot"], r["platform"], r["project_name"], r["fee_type"],
+               r["period_type"], r["period"])
+        if key not in dedup or r["amount_usd"] != 0:
+            dedup[key] = r
+    rows = list(dedup.values())
+
     _validate_fy_cross_check(rows)
     logger.info(f"Parsed {len(rows)} data points from {filename} (snapshot: {snapshot})")
     return rows, snapshot
