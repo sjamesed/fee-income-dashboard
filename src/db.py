@@ -46,6 +46,7 @@ class FeeIncomeDB:
             CREATE TABLE IF NOT EXISTS watch_list (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 category TEXT NOT NULL,
+                pnl_item TEXT DEFAULT '',
                 fund_project TEXT NOT NULL,
                 impact_mil REAL,
                 lost_delay TEXT,
@@ -115,8 +116,9 @@ class FeeIncomeDB:
         self.conn.execute("DELETE FROM watch_list")
         for item in items:
             self.conn.execute(
-                "INSERT INTO watch_list (category, fund_project, impact_mil, lost_delay, comment) VALUES (?, ?, ?, ?, ?)",
-                (item["category"], item["fund_project"], item.get("impact_mil"), item.get("lost_delay"), item.get("comment"))
+                "INSERT INTO watch_list (category, pnl_item, fund_project, impact_mil, lost_delay, comment) VALUES (?, ?, ?, ?, ?, ?)",
+                (item["category"], item.get("pnl_item", ""), item["fund_project"],
+                 item.get("impact_mil"), item.get("lost_delay"), item.get("comment"))
             )
         self.conn.commit()
 

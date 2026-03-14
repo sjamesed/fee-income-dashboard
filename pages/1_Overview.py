@@ -442,65 +442,106 @@ def main():
     st.markdown(html, unsafe_allow_html=True)
     st.caption("Unit: USD millions")
 
-    # --- Fee by Platform Table (collapsible with project detail) ---
-    st.markdown("---")
-    platform_data = get_fee_by_platform_fy(db, selected)
-    project_data = get_fee_by_project_fy(db, selected)
-
-    st.subheader("Fee by Platform (FY)")
-    if platform_data and project_data:
-        value_col_names = ["FY23 Act", "FY24 Act", "FY25 Act", "FY26 Bud", "FY26 Fcst"]
-        raw_cols = ["fy23_act", "fy24_act", "fy25_act", "fy26_bud", "fy26_fcst"]
-        for plat_row in platform_data:
-            plat_name = plat_row["platform"]
-            plat_vals = " | ".join(f"{round(plat_row[c] / 1e6, 1)}" for c in raw_cols)
-            with st.expander(f"**{plat_name}** — {plat_vals}"):
-                plat_projects = [p for p in project_data if p["platform"] == plat_name]
-                if plat_projects:
-                    df_pp = pd.DataFrame(plat_projects)
-                    df_pp_display = df_pp[["project_name"] + raw_cols].rename(
-                        columns=dict(zip(["project_name"] + raw_cols, ["Project"] + value_col_names)))
-                    for col in value_col_names:
-                        df_pp_display[col] = df_pp_display[col].apply(lambda x: round(x / 1e6, 1))
-                    df_pp_display = add_grand_total(df_pp_display, "Project", value_col_names)
-                    st.dataframe(df_pp_display, use_container_width=True, hide_index=True)
-
-    # --- Watch List ---
+    # --- Watch List FY2026 (styled HTML table + editable) ---
     st.markdown("---")
     st.header("Watch List FY2026")
 
     watch_items = db.get_watch_list()
     pnl_items = [w for w in watch_items if w.get("category") == "P&L"]
     cf_items = [w for w in watch_items if w.get("category") == "CF"]
-    watch_cols = ["fund_project", "impact_mil", "lost_delay", "comment"]
-    watch_labels = {"fund_project": "Fund/Project", "impact_mil": "Impact($mil)", "lost_delay": "Lost/Delay", "comment": "Comment"}
 
-    if pnl_items:
-        st.subheader("P&L Watch List")
-        df_pnl = pd.DataFrame(pnl_items)[watch_cols].rename(columns=watch_labels)
-        st.dataframe(df_pnl, use_container_width=True, hide_index=True)
-    if cf_items:
-        st.subheader("CF Watch List")
-        df_cf = pd.DataFrame(cf_items)[watch_cols].rename(columns=watch_labels)
-        st.dataframe(df_cf, use_container_width=True, hide_index=True)
+    def render_watch_html(title, items):
+        if not items:
+            return
+        wh = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif; margin-bottom:16px;">
+        <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">{title}</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Fund/Project</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Impact($mil)</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Lost/Delay</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Comment</th>
+        </tr></thead><tbody>"""
+        for i, w in enumerate(items):
+            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+            impact = w.get("impact_mil")
+            impact_str = f"{impact:.1f}" if impact is not None else "-"
+            wh += f"""<tr style="background:{bg};">
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("fund_project", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("fund_project", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{impact_str}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("lost_delay", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("comment", "")}</td>
+            </tr>"""
+        wh += "</tbody></table>"
+        st.markdown(wh, unsafe_allow_html=True)
+
+    # Fix: first column should show the P&L line item, not fund_project again
+    def render_watch_html_v2(title, items):
+        if not items:
+            return
+        wh = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif; margin-bottom:16px;">
+        <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">{title}</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Fund/Project</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Impact($mil)</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Lost/Delay</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Comment</th>
+        </tr></thead><tbody>"""
+        for i, w in enumerate(items):
+            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+            impact = w.get("impact_mil")
+            impact_str = f"{impact:.1f}" if impact is not None else ""
+            wh += f"""<tr style="background:{bg};">
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("pnl_item", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("fund_project", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{impact_str}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("lost_delay", "")}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;">{w.get("comment", "")}</td>
+            </tr>"""
+        # Empty rows to match PPT style
+        for _ in range(max(0, 4 - len(items))):
+            wh += f"""<tr><td style="padding:6px 12px; border:1px solid #cbd5e0;">&nbsp;</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td></tr>"""
+        wh += "</tbody></table>"
+        st.markdown(wh, unsafe_allow_html=True)
+
+    # Render P&L and CF watch lists
+    pnl_display = [{"pnl_item": w.get("pnl_item", ""), "fund_project": w["fund_project"],
+                     "impact_mil": w.get("impact_mil"), "lost_delay": w.get("lost_delay", ""),
+                     "comment": w.get("comment", "")} for w in pnl_items]
+    cf_display = [{"pnl_item": w.get("pnl_item", ""), "fund_project": w["fund_project"],
+                    "impact_mil": w.get("impact_mil"), "lost_delay": w.get("lost_delay", ""),
+                    "comment": w.get("comment", "")} for w in cf_items]
+
+    render_watch_html_v2("P&L", pnl_display)
+    render_watch_html_v2("CF", cf_display)
+
     if not pnl_items and not cf_items:
         st.info("No watch list items. Use the editor below to add items.")
 
     with st.expander("Edit Watch List"):
         if watch_items:
-            edit_data = [{"category": w["category"], "fund_project": w["fund_project"],
-                          "impact_mil": w.get("impact_mil"), "lost_delay": w.get("lost_delay", ""),
+            edit_data = [{"category": w["category"],
+                          "pnl_item": w.get("pnl_item", ""),
+                          "fund_project": w["fund_project"],
+                          "impact_mil": w.get("impact_mil"),
+                          "lost_delay": w.get("lost_delay", ""),
                           "comment": w.get("comment", "")} for w in watch_items]
         else:
-            edit_data = [{"category": "P&L", "fund_project": "", "impact_mil": None, "lost_delay": "", "comment": ""}]
+            edit_data = [{"category": "P&L", "pnl_item": "", "fund_project": "",
+                          "impact_mil": None, "lost_delay": "", "comment": ""}]
         edited_df = st.data_editor(
             pd.DataFrame(edit_data),
             num_rows="dynamic",
             column_config={
                 "category": st.column_config.SelectboxColumn("P&L/CF", options=["P&L", "CF"], required=True),
+                "pnl_item": st.column_config.TextColumn("P&L Line Item (e.g. Acq Fee)"),
                 "fund_project": st.column_config.TextColumn("Fund/Project", required=True),
                 "impact_mil": st.column_config.NumberColumn("Impact($mil)"),
-                "lost_delay": st.column_config.TextColumn("Lost/Delay"),
+                "lost_delay": st.column_config.SelectboxColumn("Lost/Delay", options=["Lost", "Delay", ""]),
                 "comment": st.column_config.TextColumn("Comment"),
             },
             use_container_width=True,
