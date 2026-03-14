@@ -42,9 +42,9 @@ def colored_var(val_raw, note=""):
     if text == "-":
         return "-"
     if val_raw > 0.0005:
-        var_html = f'<span style="color:#c53030;">+{text}</span>'
+        var_html = f'<span style="color:#38a169;">+{text}</span>'
     elif val_raw < -0.0005:
-        var_html = f'<span style="color:#2b6cb0;">({text.lstrip("-")})</span>'
+        var_html = f'<span style="color:#c53030;">({text.lstrip("-")})</span>'
     else:
         return "-"
     if note:

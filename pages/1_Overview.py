@@ -119,7 +119,7 @@ def main():
         """Render one row as styled cards matching table color tone."""
         var = actual - budget
         var_pct = (var / budget * 100) if budget != 0 else 0
-        var_color = "#c53030" if var >= 0 else "#2b6cb0"
+        var_color = "#38a169" if var >= 0 else "#c53030"
         sign = "+" if var >= 0 else ""
         st.markdown(f"""
         <div style="display:flex; gap:12px; margin-bottom:8px;">
@@ -165,9 +165,9 @@ def main():
     def fmt_var(v):
         """Format variance with color: red for positive, blue for negative."""
         if v < -0.05:
-            return f'<span style="color:#2b6cb0;">({abs(v):.1f})</span>'
+            return f'<span style="color:#c53030;">({abs(v):.1f})</span>'
         elif v > 0.05:
-            return f'<span style="color:#c53030;">+{v:.1f}</span>'
+            return f'<span style="color:#38a169;">+{v:.1f}</span>'
         return "-"
 
     def render_variance_table(title, table_key, data, col_a, col_b, label_a, label_b, top_n=5):
