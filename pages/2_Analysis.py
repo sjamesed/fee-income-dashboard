@@ -436,8 +436,10 @@ def main():
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;" rowspan="1">{col_name}</th>'
         header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[0]}</th>'
         for i in range(1, len(labels)):
+            short_a = labels[0].split("(")[0].strip() if "(" in labels[0] else labels[0]
+            short_b = labels[i].split("(")[0].strip() if "(" in labels[i] else labels[i]
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[i]}</th>'
-            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">Var ({i} vs 1)</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{short_a} vs {short_b}</th>'
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">%</th>'
 
         html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
