@@ -509,8 +509,8 @@ def main():
         shdr0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR};"
         shdr1 = f"position:sticky; left:120px; z-index:3; background:{HEADER_COLOR};"
 
-        html = f"""<div style="overflow-x:auto;">
-        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        html = f"""<div style="overflow-x:auto; max-width:none;">
+        <table style="border-collapse:separate; border-spacing:0; font-size:11px; font-family:Calibri,sans-serif; white-space:nowrap;">
         <thead>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
             <th style="padding:6px 8px; border:1px solid #cbd5e0; {shdr0} min-width:120px;" rowspan="2">Platform</th>
