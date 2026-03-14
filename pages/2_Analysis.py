@@ -499,31 +499,25 @@ def main():
             return "-"
 
         # Build HTML with two header rows + Variance column
-        ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
+        ft_headers_a = "".join(f'<th style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-size:9px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
-        # Sticky columns: Platform (left:0) and Project (left:~120px)
-        scol0 = "position:sticky; left:0; z-index:1; background:inherit;"
-        scol1 = "position:sticky; left:120px; z-index:1; background:inherit;"
-        # Header cells need higher z-index (sticky both top and left)
-        shdr0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR};"
-        shdr1 = f"position:sticky; left:120px; z-index:3; background:{HEADER_COLOR};"
+        # (no sticky needed — table fits in one page)
 
-        html = f"""<div style="overflow-x:auto; max-width:none;">
-        <table style="border-collapse:separate; border-spacing:0; font-size:11px; font-family:Calibri,sans-serif; white-space:nowrap;">
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:10px; font-family:Calibri,sans-serif; table-layout:fixed;">
         <thead>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {shdr0} min-width:120px;" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {shdr1} min-width:140px;" rowspan="2">Project</th>
+            <th style="padding:4px 5px; border:1px solid #cbd5e0;" rowspan="2">Platform</th>
+            <th style="padding:4px 5px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
         </tr>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
             {ft_headers_a}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            <th style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">Total</th>
             {ft_headers_b}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">Total</th>
+            <th style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">Total</th>
         </tr>
         </thead><tbody>"""
 
@@ -534,17 +528,17 @@ def main():
         prev_plat = None
 
         def render_subtotal_row(label, sub_a, sub_b):
-            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {scol0}" colspan="2">{label}</td>'
+            cells = f'<td style="padding:3px 4px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="2">{label}</td>'
             total_a = sum(sub_a.values())
             for ft in FT_COLS:
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_a/d)}</td>'
+                cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_a/d)}</td>'
             total_b = sum(sub_b.values())
             for ft in FT_COLS:
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
+                cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
             var = total_a - total_b
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
             return f'<tr>{cells}</tr>'
 
         for idx, key in enumerate(all_proj_keys):
@@ -559,8 +553,8 @@ def main():
 
             plat_display = f"<b>{plat}</b>" if plat != (all_proj_keys[idx-1][0] if idx > 0 else None) else ""
 
-            cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {scol0} background:{bg};">{plat_display}</td>'
-            cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; {scol1} background:{bg};">{proj}</td>'
+            cells = f'<td style="padding:3px 4px; border:1px solid #cbd5e0;">{plat_display}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0;">{proj}</td>'
 
             ft_vals_a = lookup_a.get(key, {})
             ft_vals_b = lookup_b.get(key, {})
@@ -572,8 +566,8 @@ def main():
                 plat_sub_a[ft] += va
                 grand_a[ft] += va
                 hl = hl_style(va, vb)
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(va/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
+                cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(va/d)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
 
             row_total_b = 0
             for ft in FT_COLS:
@@ -583,13 +577,13 @@ def main():
                 plat_sub_b[ft] += vb
                 grand_b[ft] += vb
                 hl = hl_style(va, vb)
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
+                cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
 
             # Variance column (Total A - Total B) — highlight if any fee type in this row is highlighted
             row_var = row_total_a - row_total_b
             row_hl = hl_style(row_total_a, row_total_b)
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{fmt_var_val(row_var)}</td>'
+            cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{fmt_var_val(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -598,20 +592,20 @@ def main():
             html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
 
         # Grand Total
-        gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; {scol0} background:{HEADER_COLOR};" colspan="2">Grand Total</td>'
+        gt_cells = f'<td style="padding:3px 4px; border:1px solid #cbd5e0;" colspan="2">Grand Total</td>'
         gt_total_a = sum(grand_a.values())
         for ft in FT_COLS:
-            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_a/d)}</td>'
+            gt_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
+        gt_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_a/d)}</td>'
         gt_total_b = sum(grand_b.values())
         for ft in FT_COLS:
-            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
+            gt_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
+        gt_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
         gt_var = gt_total_a - gt_total_b
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
+        gt_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
-        html += "</tbody></table></div>"
+        html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
@@ -728,14 +722,14 @@ def main():
             for j, part in enumerate(parts):
                 display = f"<b>{part}</b>" if part != prev_parts[j] else ""
                 prev_parts[j] = part
-                label_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{display}</td>'
+                label_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0;">{display}</td>'
 
             # Value cells
             d = divisor()
             base_val = get_row_value(key, labels[0])
             totals[labels[0]] += base_val
             plat_subtotals[labels[0]] += base_val
-            val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
+            val_cells = f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
 
             for i in range(1, len(labels)):
                 v = get_row_value(key, labels[i])
@@ -743,9 +737,9 @@ def main():
                 plat_subtotals[labels[i]] += v
                 var = (base_val - v) / d
                 pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(var)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
+                val_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
+                val_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(var)}</td>'
+                val_cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
 
