@@ -606,6 +606,29 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
+        # Variance notes
+        note_key = f"ftp_{label_a}_{label_b}"
+        saved_notes = db.get_drivers(selected, note_key)
+        # Show projects with significant variance
+        sig_projects = [(k[0], k[1]) for k in all_proj_keys
+                        if abs(sum(lookup_a.get(k, {}).values()) - sum(lookup_b.get(k, {}).values())) >= HIGHLIGHT_THRESHOLD]
+        if sig_projects:
+            with st.expander("Variance Notes"):
+                updated_notes = {}
+                for plat, proj in sig_projects:
+                    ta = sum(lookup_a.get((plat, proj), {}).values())
+                    tb = sum(lookup_b.get((plat, proj), {}).values())
+                    var_m = (ta - tb) / 1e6
+                    updated_notes[proj] = st.text_input(
+                        f"{proj} (var {colored_var(var_m).replace('<span', '').replace('</span>', '').split('>')[1] if var_m != 0 else '-'})",
+                        value=saved_notes.get(proj, ""),
+                        key=f"note_ftp_{proj}",
+                    )
+                if st.button("Save Notes", key="save_ftp_notes"):
+                    db.save_drivers(selected, note_key, updated_notes)
+                    st.success("Saved!")
+                    st.rerun()
+
         # Export
         exp_rows = []
         for key in all_proj_keys:
@@ -618,6 +641,7 @@ def main():
                 row[f"{FT_SHORT[ft]} ({short_b})"] = ft_b.get(ft, 0) / d
             row[f"Total ({short_a})"] = sum(ft_a.get(ft, 0) for ft in FT_COLS) / d
             row[f"Total ({short_b})"] = sum(ft_b.get(ft, 0) for ft in FT_COLS) / d
+            row["Note"] = saved_notes.get(proj, "")
             exp_rows.append(row)
         export_button(pd.DataFrame(exp_rows), "fee_by_project_fee_type.xlsx")
 
@@ -758,6 +782,32 @@ def main():
         html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
+
+        # Variance notes
+        note_key = f"cmp_{labels[0]}_{labels[1]}"
+        saved_notes = db.get_drivers(selected, note_key)
+        # Projects with significant variance (base vs second metric)
+        sig_keys = [k for k in all_keys
+                    if abs(get_row_value(k, labels[0]) - get_row_value(k, labels[1])) >= 300_000]
+        if sig_keys:
+            with st.expander("Variance Notes"):
+                updated_notes = {}
+                for k in sig_keys:
+                    parts = get_row_labels(k)
+                    proj = parts[1] if len(parts) > 1 else parts[0]
+                    base = get_row_value(k, labels[0])
+                    comp = get_row_value(k, labels[1])
+                    var_m = (base - comp) / 1e6
+                    label_text = f"{proj} (var {var_m:+.1f}M)" if abs(var_m) >= 0.05 else proj
+                    updated_notes[proj] = st.text_input(
+                        label_text,
+                        value=saved_notes.get(proj, ""),
+                        key=f"note_cmp_{proj}",
+                    )
+                if st.button("Save Notes", key="save_cmp_notes"):
+                    db.save_drivers(selected, note_key, updated_notes)
+                    st.success("Saved!")
+                    st.rerun()
 
         # Export button
         exp_df = build_export_df(all_keys, labels, get_row_labels, get_row_value, row_label_keys)
