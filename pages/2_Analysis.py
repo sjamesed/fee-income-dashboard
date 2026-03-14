@@ -67,6 +67,9 @@ def main():
     if not filtered.empty:
         pivot = filtered.pivot_table(values="amount_usd", index=group_col, columns="period", aggfunc="sum", fill_value=0)
         pivot_display = (pivot / 1e6).round(1)
+        grand_total = pivot_display.sum().to_frame().T
+        grand_total.index = ["Grand Total"]
+        pivot_display = pd.concat([pivot_display, grand_total])
         st.subheader("Pivot Table (USD millions)")
         st.dataframe(pivot_display, use_container_width=True)
 

@@ -32,6 +32,16 @@ class FeeIncomeDB:
         """)
         self.conn.execute("CREATE INDEX IF NOT EXISTS idx_snapshot ON fee_income (snapshot)")
         self.conn.execute("CREATE INDEX IF NOT EXISTS idx_period ON fee_income (period_type, period)")
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS watch_list (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category TEXT NOT NULL,
+                fund_project TEXT NOT NULL,
+                impact_mil REAL,
+                lost_delay TEXT,
+                comment TEXT
+            )
+        """)
         self.conn.commit()
 
     def insert_snapshot(self, snapshot: str, rows: list[dict]):
@@ -68,6 +78,18 @@ class FeeIncomeDB:
         if not snapshots:
             return None
         return max(snapshots, key=lambda s: int(s.split("+")[0]))
+
+    def get_watch_list(self) -> list[dict]:
+        return self.query("SELECT * FROM watch_list ORDER BY id")
+
+    def update_watch_list(self, items: list[dict]):
+        self.conn.execute("DELETE FROM watch_list")
+        for item in items:
+            self.conn.execute(
+                "INSERT INTO watch_list (category, fund_project, impact_mil, lost_delay, comment) VALUES (?, ?, ?, ?, ?)",
+                (item["category"], item["fund_project"], item.get("impact_mil"), item.get("lost_delay"), item.get("comment"))
+            )
+        self.conn.commit()
 
     def close(self):
         self.conn.close()

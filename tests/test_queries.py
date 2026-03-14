@@ -9,6 +9,9 @@ from src.queries import (
     get_yoy_comparison,
     get_prior_snapshot_comparison,
     get_snapshot_n_value,
+    get_mtd_comparison,
+    sort_by_platform,
+    PLATFORM_ORDER,
 )
 
 TEST_DB = "data/test_queries.db"
@@ -122,6 +125,38 @@ def test_yoy_comparison(db):
 def test_prior_snapshot_returns_none_when_missing(db):
     result = get_prior_snapshot_comparison(db, "2+10")
     assert result is None
+
+def test_mtd_comparison(db):
+    result = get_mtd_comparison(db, "2+10")
+    assert len(result) == 2
+    proj_a = [r for r in result if r["project_name"] == "Project A"][0]
+    assert abs(proj_a["mtd_act"] - 1500000.0) < 1
+    assert abs(proj_a["mtd_bud"] - 1300000.0) < 1
+
+
+def test_sort_by_platform():
+    data = [
+        {"platform": "Promote", "project_name": "Z"},
+        {"platform": "Core Fund", "project_name": "B"},
+        {"platform": "Core Fund", "project_name": "A"},
+        {"platform": "Dev JV2", "project_name": "C"},
+    ]
+    result = sort_by_platform(data)
+    assert result[0]["platform"] == "Core Fund"
+    assert result[0]["project_name"] == "A"
+    assert result[1]["platform"] == "Core Fund"
+    assert result[1]["project_name"] == "B"
+    assert result[2]["platform"] == "Dev JV2"
+    assert result[3]["platform"] == "Promote"
+
+
+def test_platform_ordering_in_results(db):
+    """Verify query results are sorted by platform order."""
+    result = get_fee_by_platform_fy(db, "2+10")
+    platforms = [r["platform"] for r in result]
+    # Core Fund should come before Dev JV1
+    assert platforms.index("Core Fund") < platforms.index("Dev JV1")
+
 
 def test_prior_snapshot_comparison(db):
     prior_rows = [
