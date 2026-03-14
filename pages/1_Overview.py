@@ -129,9 +129,11 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
+    fcst_label = f"FY26 Fcst ({selected})"
+
     # Row 1: FY26 Forecast vs Budget
     st.subheader("FY26 Fee Income")
-    metric_row("FY26", fy_fcst, "FY26 Forecast", fy_bud, "FY26 Budget")
+    metric_row("FY26", fy_fcst, fcst_label, fy_bud, "FY26 Budget")
 
     # Row 2: MTD Act vs Bud
     st.markdown("")
@@ -141,7 +143,7 @@ def main():
     metric_row("YTD", ytd_act_total, f"YTD Jan-{month_name} Actual", ytd_bud_total, f"YTD Jan-{month_name} Budget")
 
     # Row 4: FY26 Fcst vs FY25 Act
-    metric_row("YoY", fy_fcst, "FY26 Forecast", fy25_act, "FY25 Actual")
+    metric_row("YoY", fy_fcst, fcst_label, fy25_act, "FY25 Actual")
 
     # --- Variance Tables (email-style with styled HTML + editable drivers) ---
     st.markdown("---")
@@ -258,8 +260,8 @@ def main():
 
     # 4 tables (same order as metric rows: FY26 vs Bud → MTD → YTD → FY26 vs FY25)
     render_variance_table(
-        "FY26 Fcst vs FY26 Bud", "fy_bud",
-        fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
+        f"{fcst_label} vs FY26 Bud", "fy_bud",
+        fy_data, "fy_fcst", "fy_bud", fcst_label, "FY26 Bud")
 
     render_variance_table(
         f"MTD {month_name} Act vs MTD {month_name} Bud", "mtd",
@@ -270,8 +272,8 @@ def main():
         ytd_data, "ytd_act", "ytd_bud", "YTD Act", "YTD Bud")
 
     render_variance_table(
-        "FY26 Fcst vs FY25 Act", "fy_yoy",
-        yoy_data, "fy26", "fy25", "FY26 Fcst", "FY25 Act")
+        f"{fcst_label} vs FY25 Act", "fy_yoy",
+        yoy_data, "fy26", "fy25", fcst_label, "FY25 Act")
 
     # --- Fee by Platform Table (collapsible with project detail) ---
     st.markdown("---")
