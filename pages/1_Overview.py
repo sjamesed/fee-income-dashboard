@@ -135,26 +135,97 @@ def main():
     # Row 4: FY26 Fcst vs FY25 Act
     metric_row("YoY", fy_fcst, "FY26 Forecast", fy25_act, "FY25 Actual")
 
-    # --- Tables ---
+    # --- Variance Tables (email-style: top projects + subtotal + other + grand total) ---
+    st.markdown("---")
+
+    fy_data = get_fy_comparison(db, selected)
+    yoy_data = get_yoy_comparison(db, selected)
+
+    def build_variance_table(data, col_a, col_b, label_a, label_b, top_n=5):
+        """Build a DataFrame like the email variance table with key items, subtotal, other, grand total."""
+        if not data:
+            return None
+        for r in data:
+            r["_var"] = r[col_a] - r[col_b]
+        sorted_data = sorted(data, key=lambda x: abs(x["_var"]), reverse=True)
+        key_items = sorted_data[:top_n]
+        other_items = sorted_data[top_n:]
+
+        rows = []
+        for item in key_items:
+            v = item["_var"]
+            rows.append({
+                "Project": item["project_name"],
+                label_a: round(item[col_a] / 1e6, 1),
+                label_b: round(item[col_b] / 1e6, 1),
+                "Variance": round(v / 1e6, 1),
+            })
+
+        # Subtotal (Key Items)
+        sub_a = sum(item[col_a] for item in key_items)
+        sub_b = sum(item[col_b] for item in key_items)
+        rows.append({
+            "Project": "Subtotal (Key Items)",
+            label_a: round(sub_a / 1e6, 1),
+            label_b: round(sub_b / 1e6, 1),
+            "Variance": round((sub_a - sub_b) / 1e6, 1),
+        })
+
+        # Other (net)
+        other_a = sum(item[col_a] for item in other_items)
+        other_b = sum(item[col_b] for item in other_items)
+        rows.append({
+            "Project": "Other (net)",
+            label_a: round(other_a / 1e6, 1),
+            label_b: round(other_b / 1e6, 1),
+            "Variance": round((other_a - other_b) / 1e6, 1),
+        })
+
+        # Grand Total
+        total_a = sum(item[col_a] for item in data)
+        total_b = sum(item[col_b] for item in data)
+        rows.append({
+            "Project": "Grand Total",
+            label_a: round(total_a / 1e6, 1),
+            label_b: round(total_b / 1e6, 1),
+            "Variance": round((total_a - total_b) / 1e6, 1),
+        })
+
+        return pd.DataFrame(rows)
+
+    # Table 1: MTD Act vs Bud
+    st.subheader(f"MTD {month_name} Act vs MTD {month_name} Bud")
+    df_mtd = build_variance_table(mtd_data, "mtd_act", "mtd_bud", f"MTD Act", f"MTD Bud")
+    if df_mtd is not None:
+        st.dataframe(df_mtd, use_container_width=True, hide_index=True)
+    st.caption("Unit: USD millions")
+
+    # Table 2: YTD Act vs Bud
+    st.subheader(f"YTD {month_name} Act vs YTD {month_name} Bud")
+    df_ytd = build_variance_table(ytd_data, "ytd_act", "ytd_bud", f"YTD Act", f"YTD Bud")
+    if df_ytd is not None:
+        st.dataframe(df_ytd, use_container_width=True, hide_index=True)
+    st.caption("Unit: USD millions")
+
+    # Table 3: FY26 Fcst vs FY26 Bud
+    st.subheader("FY26 Fcst vs FY26 Bud")
+    df_fy = build_variance_table(fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
+    if df_fy is not None:
+        st.dataframe(df_fy, use_container_width=True, hide_index=True)
+    st.caption("Unit: USD millions")
+
+    # Table 4: FY26 Fcst vs FY25 Act
+    st.subheader("FY26 Fcst vs FY25 Act")
+    df_yoy = build_variance_table(yoy_data, "fy26", "fy25", "FY26 Fcst", "FY25 Act")
+    if df_yoy is not None:
+        st.dataframe(df_yoy, use_container_width=True, hide_index=True)
+    st.caption("Unit: USD millions")
+
+    # --- Fee by Platform Table (collapsible with project detail) ---
     st.markdown("---")
     platform_data = get_fee_by_platform_fy(db, selected)
     project_data = get_fee_by_project_fy(db, selected)
 
-    # Fee by Project (FY) Table
-    st.subheader("Fee by Project (FY)")
-    if project_data:
-        df_proj = pd.DataFrame(project_data)
-        display_cols = {"platform": "Platform", "project_name": "Project",
-            "fy23_act": "FY23 Act", "fy24_act": "FY24 Act", "fy25_act": "FY25 Act",
-            "fy26_bud": "FY26 Bud", "fy26_fcst": "FY26 Fcst"}
-        df_display = df_proj[list(display_cols.keys())].rename(columns=display_cols)
-        value_cols = ["FY23 Act", "FY24 Act", "FY25 Act", "FY26 Bud", "FY26 Fcst"]
-        for col in value_cols:
-            df_display[col] = df_display[col].apply(lambda x: round(x / 1e6, 1))
-        df_display = add_grand_total(df_display, "Project", value_cols)
-        st.dataframe(df_display, use_container_width=True, hide_index=True)
-
-    # Fee by Platform Table (collapsible with project detail)
     st.subheader("Fee by Platform (FY)")
     if platform_data and project_data:
         value_col_names = ["FY23 Act", "FY24 Act", "FY25 Act", "FY26 Bud", "FY26 Fcst"]
@@ -172,25 +243,6 @@ def main():
                         df_pp_display[col] = df_pp_display[col].apply(lambda x: round(x / 1e6, 1))
                     df_pp_display = add_grand_total(df_pp_display, "Project", value_col_names)
                     st.dataframe(df_pp_display, use_container_width=True, hide_index=True)
-
-    # --- Key Variance Commentary ---
-    st.markdown("---")
-    st.header("Key Variance Commentary")
-
-    fy_data = get_fy_comparison(db, selected)
-    yoy_data = get_yoy_comparison(db, selected)
-
-    st.subheader(f"MTD key variances vs Budget ({month_name})")
-    render_variance_section("MTD", mtd_data, "mtd_act", "mtd_bud", "Act", "Bud", use_numbers=True)
-
-    st.subheader(f"YTD key variances vs Budget (Jan-{month_name})")
-    render_variance_section("YTD", ytd_data, "ytd_act", "ytd_bud", "YTD Act", "YTD Bud", use_numbers=True)
-
-    st.subheader("Full year key variances vs Budget")
-    render_variance_section("FY vs Bud", fy_data, "fy_fcst", "fy_bud", "Fcst", "Bud", use_numbers=False)
-
-    st.subheader("Full year key variances vs FY25")
-    render_variance_section("FY vs FY25", yoy_data, "fy26", "fy25", "FY26", "FY25", use_numbers=False)
 
     # --- Watch List ---
     st.markdown("---")
