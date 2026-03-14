@@ -34,16 +34,50 @@ def fv(val_raw):
         return f"{val_raw:,.0f}"
 
 
-def colored_var(val_raw):
-    """Format variance value with red (positive) / blue (negative) color."""
+def colored_var(val_raw, note=""):
+    """Format variance value with red/blue color. If note exists, show 📝 with tooltip."""
     text = fv(val_raw)
     if text == "-":
         return "-"
     if val_raw > 0.05:
-        return f'<span style="color:#c53030;">+{text}</span>'
+        var_html = f'<span style="color:#c53030;">+{text}</span>'
     elif val_raw < -0.05:
-        return f'<span style="color:#2b6cb0;">({text.lstrip("-")})</span>'
-    return "-"
+        var_html = f'<span style="color:#2b6cb0;">({text.lstrip("-")})</span>'
+    else:
+        return "-"
+    if note:
+        safe_note = note.replace('"', '&quot;').replace("'", "&#39;")
+        var_html += (f' <span class="note-icon" title="{safe_note}">'
+                     f'📝</span>')
+    return var_html
+
+
+# CSS for note tooltips
+NOTE_CSS = """
+<style>
+.note-icon {
+    cursor: help;
+    font-size: 11px;
+    position: relative;
+}
+.note-icon:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3748;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: pre-wrap;
+    max-width: 300px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+</style>
+"""
 
 
 def get_db():
@@ -423,6 +457,8 @@ def main():
         unit_choice = st.radio("Unit", ["USD millions", "USD"], horizontal=True, key="unit_toggle")
         _use_millions = (unit_choice == "USD millions")
 
+    st.markdown(NOTE_CSS, unsafe_allow_html=True)
+
     options = build_metric_options(selected)
     option_labels = list(options.keys())
 
@@ -481,6 +517,10 @@ def main():
         d = divisor()
         short_a = label_a.split("(")[0].strip() if "(" in label_a else label_a
         short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
+
+        # Load saved notes for this metric pair
+        ftp_note_key = f"ftp_{label_a}_vs_{label_b}"
+        saved_notes = db.get_drivers(selected, ftp_note_key)
 
         # Highlight threshold: abs variance >= 0.3M (300,000 USD)
         HIGHLIGHT_THRESHOLD = 300_000
@@ -577,10 +617,11 @@ def main():
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
 
-            # Variance column (Total A - Total B) — highlight if any fee type in this row is highlighted
+            # Variance column (Total A - Total B) — with note tooltip if exists
             row_var = row_total_a - row_total_b
             row_hl = hl_style(row_total_a, row_total_b)
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{fmt_var_val(row_var)}</td>'
+            proj_note = saved_notes.get(proj, "")
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d, proj_note)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -606,28 +647,21 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
-        # Variance notes
-        note_key = f"ftp_{label_a}_{label_b}"
-        saved_notes = db.get_drivers(selected, note_key)
-        # Show projects with significant variance
-        sig_projects = [(k[0], k[1]) for k in all_proj_keys
-                        if abs(sum(lookup_a.get(k, {}).values()) - sum(lookup_b.get(k, {}).values())) >= HIGHLIGHT_THRESHOLD]
-        if sig_projects:
-            with st.expander("Variance Notes"):
-                updated_notes = {}
-                for plat, proj in sig_projects:
-                    ta = sum(lookup_a.get((plat, proj), {}).values())
-                    tb = sum(lookup_b.get((plat, proj), {}).values())
-                    var_m = (ta - tb) / 1e6
-                    updated_notes[proj] = st.text_input(
-                        f"{proj} (var {colored_var(var_m).replace('<span', '').replace('</span>', '').split('>')[1] if var_m != 0 else '-'})",
-                        value=saved_notes.get(proj, ""),
-                        key=f"note_ftp_{proj}",
-                    )
-                if st.button("Save Notes", key="save_ftp_notes"):
-                    db.save_drivers(selected, note_key, updated_notes)
-                    st.success("Saved!")
-                    st.rerun()
+        # Inline note editor — select project, type note, save
+        proj_list = [k[1] for k in all_proj_keys]
+        nc1, nc2, nc3 = st.columns([2, 5, 1])
+        with nc1:
+            note_proj = st.selectbox("Add/edit note for:", [""] + proj_list, key="ftp_note_proj")
+        with nc2:
+            note_text = st.text_input("Note:", value=saved_notes.get(note_proj, "") if note_proj else "",
+                                       key="ftp_note_text", label_visibility="collapsed",
+                                       placeholder="Type variance note here...")
+        with nc3:
+            st.markdown("<div style='padding-top:4px;'></div>", unsafe_allow_html=True)
+            if st.button("💾", key="ftp_save_note") and note_proj:
+                saved_notes[note_proj] = note_text
+                db.save_drivers(selected, ftp_note_key, saved_notes)
+                st.rerun()
 
         # Export
         exp_rows = []
@@ -656,6 +690,10 @@ def main():
             with c:
                 default_idx = option_labels.index(defaults[i]) if defaults[i] in option_labels else i
                 labels.append(st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"{prefix}_{i}"))
+
+        # Load notes for this comparison
+        cmp_note_key_pre = f"cmp_{labels[0]}_vs_{labels[1]}" if len(labels) >= 2 else "cmp"
+        cmp_notes = db.get_drivers(selected, cmp_note_key_pre)
 
         # Query data (project-level comparison)
         all_data = {}
@@ -748,14 +786,16 @@ def main():
             plat_subtotals[labels[0]] += base_val
             val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
 
+            row_proj = parts[1] if len(parts) > 1 else parts[0]
             for i in range(1, len(labels)):
                 v = get_row_value(key, labels[i])
                 totals[labels[i]] += v
                 plat_subtotals[labels[i]] += v
                 var = (base_val - v) / d
                 pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
+                note = cmp_notes.get(row_proj, "") if i == 1 else ""
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(var)}</td>'
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{colored_var(var, note)}</td>'
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
@@ -783,31 +823,25 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
-        # Variance notes
-        note_key = f"cmp_{labels[0]}_{labels[1]}"
-        saved_notes = db.get_drivers(selected, note_key)
-        # Projects with significant variance (base vs second metric)
-        sig_keys = [k for k in all_keys
-                    if abs(get_row_value(k, labels[0]) - get_row_value(k, labels[1])) >= 300_000]
-        if sig_keys:
-            with st.expander("Variance Notes"):
-                updated_notes = {}
-                for k in sig_keys:
-                    parts = get_row_labels(k)
-                    proj = parts[1] if len(parts) > 1 else parts[0]
-                    base = get_row_value(k, labels[0])
-                    comp = get_row_value(k, labels[1])
-                    var_m = (base - comp) / 1e6
-                    label_text = f"{proj} (var {var_m:+.1f}M)" if abs(var_m) >= 0.05 else proj
-                    updated_notes[proj] = st.text_input(
-                        label_text,
-                        value=saved_notes.get(proj, ""),
-                        key=f"note_cmp_{proj}",
-                    )
-                if st.button("Save Notes", key="save_cmp_notes"):
-                    db.save_drivers(selected, note_key, updated_notes)
-                    st.success("Saved!")
-                    st.rerun()
+        # Inline note editor for Comparison
+        cmp_note_key = f"cmp_{labels[0]}_vs_{labels[1]}"
+        cmp_saved_notes = db.get_drivers(selected, cmp_note_key)
+
+        cmp_proj_list = [get_row_labels(k)[1] if len(get_row_labels(k)) > 1 else get_row_labels(k)[0]
+                         for k in all_keys]
+        cc1, cc2, cc3 = st.columns([2, 5, 1])
+        with cc1:
+            cmp_note_proj = st.selectbox("Add/edit note for:", [""] + cmp_proj_list, key="cmp_note_proj")
+        with cc2:
+            cmp_note_text = st.text_input("Note:", value=cmp_saved_notes.get(cmp_note_proj, "") if cmp_note_proj else "",
+                                           key="cmp_note_text", label_visibility="collapsed",
+                                           placeholder="Type variance note here...")
+        with cc3:
+            st.markdown("<div style='padding-top:4px;'></div>", unsafe_allow_html=True)
+            if st.button("💾", key="cmp_save_note") and cmp_note_proj:
+                cmp_saved_notes[cmp_note_proj] = cmp_note_text
+                db.save_drivers(selected, cmp_note_key, cmp_saved_notes)
+                st.rerun()
 
         # Export button
         exp_df = build_export_df(all_keys, labels, get_row_labels, get_row_value, row_label_keys)
