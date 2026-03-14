@@ -275,6 +275,173 @@ def main():
         f"{fcst_label} vs FY25 Act", "fy_yoy",
         yoy_data, "fy26", "fy25", fcst_label, "FY25 Act")
 
+    # --- Monthly P&L — Fee Income by Fee Type (PPT Slide 2 table format) ---
+    st.markdown("---")
+    st.header("Monthly P&L — Fee Income")
+
+    FEE_TYPE_ORDER = [
+        "Asset Mgmt Fee",
+        "Leasing Fee",
+        "Development Mgmt Fee",
+        "Acq / Div Fee",
+        "Other Fee",
+    ]
+
+    def query_fee_by_type(db, snapshot, period_filter, period_type_filter):
+        """Sum amount by fee_type for given period/period_type filters."""
+        if isinstance(period_filter, list):
+            placeholders = ",".join(["?"] * len(period_filter))
+            rows = db.query(f"""
+                SELECT fee_type, SUM(amount_usd) as total
+                FROM fee_income
+                WHERE snapshot = ? AND period IN ({placeholders}) AND period_type = ?
+                GROUP BY fee_type
+            """, (snapshot, *period_filter, period_type_filter))
+        else:
+            rows = db.query("""
+                SELECT fee_type, SUM(amount_usd) as total
+                FROM fee_income
+                WHERE snapshot = ? AND period = ? AND period_type = ?
+                GROUP BY fee_type
+            """, (snapshot, period_filter, period_type_filter))
+        return {r["fee_type"]: r["total"] for r in rows}
+
+    mtd_month = f"2026-{n:02d}"
+    ytd_months = [f"2026-{m:02d}" for m in range(1, n + 1)]
+
+    mtd_act_by_type = query_fee_by_type(db, selected, mtd_month, "actual")
+    mtd_bud_by_type = query_fee_by_type(db, selected, mtd_month, "budget")
+    ytd_act_by_type = query_fee_by_type(db, selected, ytd_months, "actual")
+    ytd_bud_by_type = query_fee_by_type(db, selected, ytd_months, "budget")
+    fy_fcst_by_type = query_fee_by_type(db, selected, "FY26", "forecast")
+    fy_bud_by_type = query_fee_by_type(db, selected, "FY26", "budget")
+    fy25_act_by_type = query_fee_by_type(db, selected, "FY25", "actual")
+
+    def pct(a, b):
+        if b == 0:
+            return "-"
+        v = (a - b) / abs(b) * 100
+        return f"{v:+.0f}%"
+
+    def fv(val):
+        """Format value in millions."""
+        if abs(val) < 500:
+            return "-"
+        return f"{val/1e6:.1f}"
+
+    # Build HTML table
+    hdr = HEADER_COLOR
+    html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
+    <thead>
+    <tr style="background:{hdr}; color:white; font-weight:bold; text-align:center;">
+        <th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;" rowspan="2">(in US$'mil)</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="4">MTD {month_name}</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="4">YTD {month_name}</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="4">{fcst_label} vs FY26 Bud</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="4">{fcst_label} vs FY25</th>
+    </tr>
+    <tr style="background:{hdr}; color:white; font-weight:bold; text-align:center; font-size:11px;">
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Actual</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Budget</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Var</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">%Δ</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Actual</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Budget</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Var</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">%Δ</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Fcst</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Budget</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Var</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">%Δ</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Fcst</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">FY25</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">Var</th>
+        <th style="padding:4px 6px; border:1px solid #cbd5e0;">%Δ</th>
+    </tr>
+    </thead><tbody>"""
+
+    # Accumulators for subtotals
+    excl_promote = {"mtd_a": 0, "mtd_b": 0, "ytd_a": 0, "ytd_b": 0,
+                    "fy_f": 0, "fy_b": 0, "fy25": 0}
+
+    def add_row(label, mtd_a, mtd_b, ytd_a, ytd_b, fy_f, fy_b, fy25, bold=False, bg="#ffffff"):
+        fw = "font-weight:bold;" if bold else ""
+        style = f"background:{bg}; {fw}"
+        mtd_v = mtd_a - mtd_b
+        ytd_v = ytd_a - ytd_b
+        fy_v = fy_f - fy_b
+        yoy_v = fy_f - fy25
+        return f"""<tr style="{style}">
+            <td style="padding:5px 8px; border:1px solid #cbd5e0;">{label}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(mtd_a)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(mtd_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(mtd_v)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{pct(mtd_a, mtd_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(ytd_a)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(ytd_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(ytd_v)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{pct(ytd_a, ytd_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(fy_f)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(fy_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(fy_v)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{pct(fy_f, fy_b)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(fy_f)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(fy25)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(yoy_v)}</td>
+            <td style="padding:5px 6px; border:1px solid #cbd5e0; text-align:right;">{pct(fy_f, fy25)}</td>
+        </tr>"""
+
+    for i, ft in enumerate(FEE_TYPE_ORDER):
+        bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+        ma = mtd_act_by_type.get(ft, 0)
+        mb = mtd_bud_by_type.get(ft, 0)
+        ya = ytd_act_by_type.get(ft, 0)
+        yb = ytd_bud_by_type.get(ft, 0)
+        ff = fy_fcst_by_type.get(ft, 0)
+        fb = fy_bud_by_type.get(ft, 0)
+        f5 = fy25_act_by_type.get(ft, 0)
+        html += add_row(ft, ma, mb, ya, yb, ff, fb, f5, bg=bg)
+        excl_promote["mtd_a"] += ma
+        excl_promote["mtd_b"] += mb
+        excl_promote["ytd_a"] += ya
+        excl_promote["ytd_b"] += yb
+        excl_promote["fy_f"] += ff
+        excl_promote["fy_b"] += fb
+        excl_promote["fy25"] += f5
+
+    # Fee Income excl. Promote
+    html += add_row("Fee Income excl. Promote",
+                     excl_promote["mtd_a"], excl_promote["mtd_b"],
+                     excl_promote["ytd_a"], excl_promote["ytd_b"],
+                     excl_promote["fy_f"], excl_promote["fy_b"],
+                     excl_promote["fy25"], bold=True, bg="#edf2f7")
+
+    # Promote Fee
+    pm_a = mtd_act_by_type.get("Promote Fee", 0)
+    pm_b = mtd_bud_by_type.get("Promote Fee", 0)
+    py_a = ytd_act_by_type.get("Promote Fee", 0)
+    py_b = ytd_bud_by_type.get("Promote Fee", 0)
+    pf_f = fy_fcst_by_type.get("Promote Fee", 0)
+    pf_b = fy_bud_by_type.get("Promote Fee", 0)
+    pf_5 = fy25_act_by_type.get("Promote Fee", 0)
+    html += add_row("Promote Fee", pm_a, pm_b, py_a, py_b, pf_f, pf_b, pf_5)
+
+    # Fee Income (total)
+    html += add_row("Fee Income",
+                     excl_promote["mtd_a"] + pm_a, excl_promote["mtd_b"] + pm_b,
+                     excl_promote["ytd_a"] + py_a, excl_promote["ytd_b"] + py_b,
+                     excl_promote["fy_f"] + pf_f, excl_promote["fy_b"] + pf_b,
+                     excl_promote["fy25"] + pf_5,
+                     bold=True, bg=HEADER_COLOR)
+
+    # Override last row to white text
+    html = html.rsplit("<tr", 1)
+    html = html[0] + '<tr style="background:' + HEADER_COLOR + '; font-weight:bold; color:white;">' + html[1].split(">", 1)[1]
+
+    html += "</tbody></table>"
+    st.markdown(html, unsafe_allow_html=True)
+    st.caption("Unit: USD millions")
+
     # --- Fee by Platform Table (collapsible with project detail) ---
     st.markdown("---")
     platform_data = get_fee_by_platform_fy(db, selected)
