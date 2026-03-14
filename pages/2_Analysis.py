@@ -360,20 +360,76 @@ def main():
         st.caption("Unit: USD millions")
 
     elif mode == "Comparison":
-        col1, col2 = st.columns(2)
-        with col1:
-            label_a = st.selectbox("Left", option_labels,
-                                    index=option_labels.index(f"FY26 Fcst ({selected})"),
-                                    key="left_metric")
-        with col2:
-            label_b = st.selectbox("Right", option_labels,
-                                    index=option_labels.index("FY26 Bud"),
-                                    key="right_metric")
+        num_metrics = st.radio("Number of metrics", [2, 3, 4], horizontal=True, key="num_metrics")
 
-        data_a = query_metric(db, selected, label_a, options[label_a])
-        data_b = query_metric(db, selected, label_b, options[label_b])
+        defaults = [f"FY26 Fcst ({selected})", "FY26 Bud", "FY25 Act", "FY24 Act"]
+        cols = st.columns(num_metrics)
+        labels = []
+        for i, c in enumerate(cols):
+            with c:
+                default_idx = option_labels.index(defaults[i]) if defaults[i] in option_labels else i
+                lbl = st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"cmp_{i}")
+                labels.append(lbl)
 
-        html = build_comparison_table_html(data_a, data_b, label_a, label_b)
+        # Query all selected metrics
+        all_data = {}
+        all_projects_set = set()
+        for lbl in labels:
+            data = query_metric(db, selected, lbl, options[lbl])
+            lookup = {}
+            for r in data:
+                key = (r["platform"], r["project_name"])
+                lookup[key] = r["value"]
+                all_projects_set.add(key)
+            all_data[lbl] = lookup
+
+        # Build sorted project list
+        all_proj_list = sort_by_platform([{"platform": k[0], "project_name": k[1]} for k in all_projects_set])
+        # Filter: at least one metric has a value
+        all_proj_list = [p for p in all_proj_list
+                         if any(abs(all_data[lbl].get((p["platform"], p["project_name"]), 0)) >= 500 for lbl in labels)]
+
+        # Build multi-column HTML table
+        metric_headers = "".join(
+            f'<th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{lbl}</th>' for lbl in labels
+        )
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
+        <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Platform</th>
+            <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Project</th>
+            {metric_headers}
+        </tr></thead><tbody>"""
+
+        totals = {lbl: 0 for lbl in labels}
+        prev_plat = None
+        for i, p in enumerate(all_proj_list):
+            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+            key = (p["platform"], p["project_name"])
+            plat_display = f"<b>{p['platform']}</b>" if p["platform"] != prev_plat else ""
+            prev_plat = p["platform"]
+
+            val_cells = ""
+            for lbl in labels:
+                v = all_data[lbl].get(key, 0)
+                totals[lbl] += v
+                val_cells += f'<td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(v / 1e6)}</td>'
+
+            html += f"""<tr style="background:{bg};">
+                <td style="padding:5px 10px; border:1px solid #cbd5e0;">{plat_display}</td>
+                <td style="padding:5px 10px; border:1px solid #cbd5e0;">{p["project_name"]}</td>
+                {val_cells}
+            </tr>"""
+
+        total_cells = "".join(
+            f'<td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(totals[lbl] / 1e6)}</td>'
+            for lbl in labels
+        )
+        html += f"""<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <td style="padding:6px 10px; border:1px solid #cbd5e0;"></td>
+            <td style="padding:6px 10px; border:1px solid #cbd5e0;">Grand Total</td>
+            {total_cells}
+        </tr>"""
+        html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption("Unit: USD millions")
 
