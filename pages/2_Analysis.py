@@ -25,11 +25,13 @@ def unit_label():
 def fv(val_raw):
     """Format value. 0 → '-'. val_raw is already divided by divisor."""
     if _use_millions:
-        if abs(val_raw) < 0.05:
+        if abs(val_raw) < 0.0005:  # less than $500
             return "-"
+        if abs(val_raw) < 0.1:
+            return f"{val_raw:.2f}"  # show 0.02 for small values
         return f"{val_raw:.1f}"
     else:
-        if abs(val_raw) < 0.5:
+        if abs(val_raw) < 1:
             return "-"
         return f"{val_raw:,.0f}"
 
@@ -39,9 +41,9 @@ def colored_var(val_raw, note=""):
     text = fv(val_raw)
     if text == "-":
         return "-"
-    if val_raw > 0.05:
+    if val_raw > 0.0005:
         var_html = f'<span style="color:#c53030;">+{text}</span>'
-    elif val_raw < -0.05:
+    elif val_raw < -0.0005:
         var_html = f'<span style="color:#2b6cb0;">({text.lstrip("-")})</span>'
     else:
         return "-"
