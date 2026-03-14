@@ -601,42 +601,9 @@ def main():
                 default_idx = option_labels.index(defaults[i]) if defaults[i] in option_labels else i
                 labels.append(st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"{prefix}_{i}"))
 
-        # Project filter for fee type mode
-        selected_project = None
-        if is_fee_type:
-            all_projects_raw = query_metric(db, selected, labels[0], options[labels[0]])
-            project_names = ["All Projects"] + [r["project_name"] for r in all_projects_raw]
-            selected_project = st.selectbox("Filter by Project", project_names)
-
-        # Query data
-        if is_fee_type:
-            all_data = {}
-            all_keys_set = set()
-            for lbl in labels:
-                rows = query_metric_by_fee_type(db, selected, options[lbl])
-                if selected_project and selected_project != "All Projects":
-                    rows = [r for r in rows if r["project_name"] == selected_project]
-                lookup = {}
-                for r in rows:
-                    key = (r["platform"], r["project_name"], r["fee_type"])
-                    lookup[key] = lookup.get(key, 0) + r["value"]
-                    all_keys_set.add(key)
-                all_data[lbl] = lookup
-
-            all_keys = sorted(all_keys_set,
-                key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
-                               FEE_TYPE_ORDER.index(k[2]) if k[2] in FEE_TYPE_ORDER else 99))
-            all_keys = [k for k in all_keys
-                        if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
-
-            row_label_keys = ["Platform", "Project", "Fee Type"]
-            def get_row_labels(key):
-                return key  # (platform, project, fee_type)
-            def get_row_value(key, lbl):
-                return all_data[lbl].get(key, 0)
-        else:
-            all_data = {}
-            all_keys_set = set()
+        # Query data (project-level comparison)
+        all_data = {}
+        all_keys_set = set()
             for lbl in labels:
                 rows = query_metric(db, selected, lbl, options[lbl])
                 lookup = {}
