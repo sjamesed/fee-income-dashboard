@@ -192,14 +192,15 @@ def parse_excel_file(filepath: str) -> tuple[list[dict], str]:
 
     wb.close()
 
-    # Deduplicate: if multiple columns map to the same (period, period_type),
-    # keep the last non-zero value (or sum — but last-wins is safer for overlapping annual/monthly)
+    # Deduplicate: sum values for duplicate keys (same project/fee_type can span multiple Excel rows)
     dedup = {}
     for r in rows:
         key = (r["snapshot"], r["platform"], r["project_name"], r["fee_type"],
                r["period_type"], r["period"])
-        if key not in dedup or r["amount_usd"] != 0:
-            dedup[key] = r
+        if key in dedup:
+            dedup[key]["amount_usd"] += r["amount_usd"]
+        else:
+            dedup[key] = r.copy()
     rows = list(dedup.values())
 
     _validate_fy_cross_check(rows)
