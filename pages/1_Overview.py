@@ -106,33 +106,34 @@ def main():
     fy_bud = fy_totals[0]["fy_bud"] or 0 if fy_totals else 0
     fy25_act = fy_totals[0]["fy25_act"] or 0 if fy_totals else 0
 
-    # Row 1: FY26 Forecast / Budget / Variance
-    st.subheader("FY26 Fee Income")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric("FY26 Forecast", f"${format_millions(fy_fcst)}M")
-    with c2:
-        st.metric("FY26 Budget", f"${format_millions(fy_bud)}M")
-    with c3:
-        var = fy_fcst - fy_bud
-        var_pct = (var / fy_bud * 100) if fy_bud != 0 else 0
+    def metric_row(label, actual, actual_label, budget, budget_label):
+        """Render one row: Actual | Budget | Variance with colored variance."""
+        var = actual - budget
+        var_pct = (var / budget * 100) if budget != 0 else 0
         color = "red" if var >= 0 else "blue"
-        st.markdown(f"""
-        <div style="padding:8px;">
+        c1, c2, c3 = st.columns(3)
+        c1.metric(actual_label, f"${format_millions(actual)}M")
+        c2.metric(budget_label, f"${format_millions(budget)}M")
+        c3.markdown(f"""
+        <div style="padding:14px 0;">
             <div style="font-size:14px; color:#555;">Variance</div>
-            <div style="font-size:24px; font-weight:bold; color:{color};">${format_millions(var)}M ({var_pct:+.1f}%)</div>
+            <div style="font-size:24px; font-weight:bold; color:{color};">{"+" if var >= 0 else ""}{format_millions(var)}M ({var_pct:+.1f}%)</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Row 2: MTD / YTD / FY26 Fcst vs FY25
+    # Row 1: FY26 Forecast vs Budget
+    st.subheader("FY26 Fee Income")
+    metric_row("FY26", fy_fcst, "FY26 Forecast", fy_bud, "FY26 Budget")
+
+    # Row 2: MTD Act vs Bud
     st.markdown("")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        render_metric_card(f"MTD {month_name} Act vs Bud", mtd_act_total, mtd_bud_total)
-    with c2:
-        render_metric_card(f"YTD Jan-{month_name} Act vs Bud", ytd_act_total, ytd_bud_total)
-    with c3:
-        render_metric_card("FY26 Fcst vs FY25 Act", fy_fcst, fy25_act)
+    metric_row("MTD", mtd_act_total, f"MTD {month_name} Actual", mtd_bud_total, f"MTD {month_name} Budget")
+
+    # Row 3: YTD Act vs Bud
+    metric_row("YTD", ytd_act_total, f"YTD Jan-{month_name} Actual", ytd_bud_total, f"YTD Jan-{month_name} Budget")
+
+    # Row 4: FY26 Fcst vs FY25 Act
+    metric_row("YoY", fy_fcst, "FY26 Forecast", fy25_act, "FY25 Actual")
 
     # --- Tables ---
     st.markdown("---")
