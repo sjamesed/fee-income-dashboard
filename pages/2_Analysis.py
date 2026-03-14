@@ -848,28 +848,28 @@ def main():
         # Build HTML table with dual metrics
         sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
         frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
-        frz1 = f"position:sticky; left:100px; z-index:3; background:{HEADER_COLOR}; color:white;"
-        frz2 = f"position:sticky; left:220px; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz1 = f"position:sticky; left:80px; z-index:3; background:{HEADER_COLOR}; color:white;"
+        frz2 = f"position:sticky; left:180px; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz0_data = "position:sticky; left:0; z-index:1;"
-        frz1_data = "position:sticky; left:100px; z-index:1;"
-        frz2_data = "position:sticky; left:220px; z-index:1;"
+        frz1_data = "position:sticky; left:80px; z-index:1;"
+        frz2_data = "position:sticky; left:180px; z-index:1;"
 
-        month_headers1 = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
+        month_headers1 = "".join(f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px; font-size:9px;">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
         month_headers2 = month_headers1
 
         html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
-        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:10px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="font-weight:bold; text-align:center;">"""
 
         # Row 1: label columns + metric group headers + Var
         for i, col in enumerate(label_cols):
             if i == 0:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">{col}</th>'
+                html += f'<th style="padding:4px 5px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:80px;" rowspan="2">{col}</th>'
             elif i == 1:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">{col}</th>'
+                html += f'<th style="padding:4px 5px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:100px;" rowspan="2">{col}</th>'
             elif i == 2:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz2} min-width:100px;" rowspan="2">{col}</th>'
+                html += f'<th style="padding:4px 5px; border:1px solid #cbd5e0; {sty_th} top:0; {frz2} min-width:80px;" rowspan="2">{col}</th>'
             else:
                 html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">{col}</th>'
 
@@ -881,9 +881,9 @@ def main():
         # Row 2: month sub-headers + Total for each metric
         html += '<tr style="font-weight:bold; text-align:center;">'
         html += month_headers1
-        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
+        html += f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
         html += month_headers2
-        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
+        html += f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
         html += "</tr></thead><tbody>"
 
         grand_totals1 = {m: 0.0 for m in months1}
@@ -895,21 +895,21 @@ def main():
         num_month_cols = 13  # 12 months + Total
 
         def render_monthly_subtotal(label, pt1_totals, pt2_totals):
-            sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {label}</td>'
+            sub_cells = f'<td style="padding:2px 3px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {label}</td>'
             row_sum1 = 0
             for m in months1:
                 v = pt1_totals[m]
                 row_sum1 += v
-                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
-            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum1/d)}</td>'
+                sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+            sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum1/d)}</td>'
             row_sum2 = 0
             for m in months2:
                 v = pt2_totals[m]
                 row_sum2 += v
-                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
-            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum2/d)}</td>'
+                sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+            sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum2/d)}</td>'
             var_val = (row_sum1 - row_sum2) / d
-            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{colored_var(var_val)}</td>'
+            sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{colored_var(var_val)}</td>'
             return f'<tr>{sub_cells}</tr>'
 
         for idx, key in enumerate(all_keys):
@@ -929,12 +929,12 @@ def main():
             for i, part in enumerate(parts):
                 if i == 0:
                     plat_display = f"<b>{part}</b>" if part != (all_keys[idx-1][0] if idx > 0 else None) else ""
-                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz0_data} background:{bg}; min-width:100px;">{plat_display}</td>'
+                    cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; {frz0_data} background:{bg}; min-width:80px;">{plat_display}</td>'
                 elif i == 1:
                     proj_display = f"{part}" if len(label_cols) == 2 or part != (all_keys[idx-1][1] if idx > 0 else None) else ""
-                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz1_data} background:{bg}; min-width:120px;">{proj_display}</td>'
+                    cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; {frz1_data} background:{bg}; min-width:100px;">{proj_display}</td>'
                 elif i == 2:
-                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; {frz2_data} background:{bg}; min-width:100px; font-size:10px;">{part}</td>'
+                    cells += f'<td style="padding:3px 4px; border:1px solid #cbd5e0; {frz2_data} background:{bg}; min-width:80px; font-size:9px;">{part}</td>'
                 else:
                     cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px;">{part}</td>'
 
@@ -946,8 +946,8 @@ def main():
                 row_total1 += v
                 plat_totals1[m] += v
                 grand_totals1[m] += v
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total1/d)}</td>'
+                cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total1/d)}</td>'
 
             # Metric 2 monthly values
             month_vals2 = pivot2.get(key, {})
@@ -957,12 +957,12 @@ def main():
                 row_total2 += v
                 plat_totals2[m] += v
                 grand_totals2[m] += v
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total2/d)}</td>'
+                cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total2/d)}</td>'
 
             # Variance = Metric 1 Total - Metric 2 Total
             row_var = (row_total1 - row_total2) / d
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{colored_var(row_var)}</td>'
+            cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{colored_var(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -976,16 +976,16 @@ def main():
         for m in months1:
             v = grand_totals1[m]
             gt_sum1 += v
-            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum1/d)}</td>'
+            gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+        gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum1/d)}</td>'
         gt_sum2 = 0
         for m in months2:
             v = grand_totals2[m]
             gt_sum2 += v
-            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum2/d)}</td>'
+            gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+        gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum2/d)}</td>'
         gt_var = (gt_sum1 - gt_sum2) / d
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{colored_var(gt_var)}</td>'
+        gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{colored_var(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table></div>"
