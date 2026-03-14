@@ -113,6 +113,7 @@ def build_project_table_html(data, metric_label, show_platform=True):
     data = [r for r in data if abs(r["value"]) >= 500]
 
     total = 0
+    plat_subtotal = 0
     prev_platform = None
     for i, row in enumerate(data):
         bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
@@ -120,10 +121,20 @@ def build_project_table_html(data, metric_label, show_platform=True):
         total += row["value"]
         plat = row["platform"]
 
+        # Insert subtotal when platform changes
+        if show_platform and prev_platform is not None and plat != prev_platform:
+            html += f"""<tr style="background:#edf2f7; font-weight:bold;">
+                <td style="padding:5px 10px; border:1px solid #cbd5e0;" colspan="2">Subtotal — {prev_platform}</td>
+                <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(plat_subtotal / divisor())}</td>
+            </tr>"""
+            plat_subtotal = 0
+
+        plat_subtotal += row["value"]
+        prev_platform = plat
+
         # Show platform name only on first row of each platform group
         if show_platform:
-            plat_display = f"<b>{plat}</b>" if plat != prev_platform else ""
-            prev_platform = plat
+            plat_display = f"<b>{plat}</b>" if plat != (data[i-1]["platform"] if i > 0 else None) else ""
             plat_td = f'<td style="padding:5px 10px; border:1px solid #cbd5e0;">{plat_display}</td>'
         else:
             plat_td = ""
@@ -132,6 +143,13 @@ def build_project_table_html(data, metric_label, show_platform=True):
             {plat_td}
             <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["project_name"]}</td>
             <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(val)}</td>
+        </tr>"""
+
+    # Last platform subtotal
+    if show_platform and prev_platform is not None:
+        html += f"""<tr style="background:#edf2f7; font-weight:bold;">
+            <td style="padding:5px 10px; border:1px solid #cbd5e0;" colspan="2">Subtotal — {prev_platform}</td>
+            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(plat_subtotal / divisor())}</td>
         </tr>"""
 
     # Grand Total
@@ -515,36 +533,56 @@ def main():
                 return f"+{v:.1f}"
             return "-"
 
+        def build_subtotal_row(sub_label, sub_totals, colspan):
+            """Build a platform subtotal HTML row."""
+            d = divisor()
+            sub_base = sub_totals[labels[0]]
+            cells = f'<td style="padding:5px 8px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7;" colspan="{colspan}">{sub_label}</td>'
+            cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_base / d)}</td>'
+            for i in range(1, len(labels)):
+                t = sub_totals[labels[i]]
+                tv = (sub_base - t) / d
+                tp = f"{(sub_base - t) / abs(t) * 100:+.0f}%" if t != 0 else "-"
+                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(t / d)}</td>'
+                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_cell(tv)}</td>'
+                cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{tp}</td>'
+            return f'<tr>{cells}</tr>'
+
         totals = {lbl: 0.0 for lbl in labels}
+        plat_subtotals = {lbl: 0.0 for lbl in labels}
+        prev_platform = None
         prev_parts = [None] * len(row_label_keys)
 
         for idx, key in enumerate(all_keys):
             bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
             parts = get_row_labels(key)
+            current_platform = parts[0]
 
-            # Label cells — show only when value changes (group by platform/project)
+            # Insert platform subtotal when platform changes
+            if prev_platform is not None and current_platform != prev_platform:
+                html += build_subtotal_row(f"Subtotal — {prev_platform}", plat_subtotals, len(row_label_keys))
+                plat_subtotals = {lbl: 0.0 for lbl in labels}
+
+            prev_platform = current_platform
+
+            # Label cells
             label_cells = ""
             for j, part in enumerate(parts):
                 display = f"<b>{part}</b>" if part != prev_parts[j] else ""
                 prev_parts[j] = part
                 label_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{display}</td>'
-            # Reset downstream grouping when upstream changes
-            for j in range(len(parts)):
-                if j > 0 and parts[j-1] != (get_row_labels(all_keys[idx-1])[j-1] if idx > 0 else None):
-                    prev_parts[j] = parts[j]
-                    label_cells_list = label_cells.split("</td>")
-                    # Re-render this cell with value shown
-                    # (simpler: just don't group fee_type)
 
             # Value cells
             d = divisor()
             base_val = get_row_value(key, labels[0])
             totals[labels[0]] += base_val
+            plat_subtotals[labels[0]] += base_val
             val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
 
             for i in range(1, len(labels)):
                 v = get_row_value(key, labels[i])
                 totals[labels[i]] += v
+                plat_subtotals[labels[i]] += v
                 var = (base_val - v) / d
                 pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
@@ -552,6 +590,10 @@ def main():
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
+
+        # Last platform subtotal
+        if prev_platform is not None:
+            html += build_subtotal_row(f"Subtotal — {prev_platform}", plat_subtotals, len(row_label_keys))
 
         # Grand Total row
         d = divisor()
