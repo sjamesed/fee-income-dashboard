@@ -33,6 +33,16 @@ class FeeIncomeDB:
         self.conn.execute("CREATE INDEX IF NOT EXISTS idx_snapshot ON fee_income (snapshot)")
         self.conn.execute("CREATE INDEX IF NOT EXISTS idx_period ON fee_income (period_type, period)")
         self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS variance_drivers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                snapshot TEXT NOT NULL,
+                table_type TEXT NOT NULL,
+                project_name TEXT NOT NULL,
+                driver_text TEXT DEFAULT '',
+                UNIQUE(snapshot, table_type, project_name)
+            )
+        """)
+        self.conn.execute("""
             CREATE TABLE IF NOT EXISTS watch_list (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 category TEXT NOT NULL,
@@ -78,6 +88,25 @@ class FeeIncomeDB:
         if not snapshots:
             return None
         return max(snapshots, key=lambda s: int(s.split("+")[0]))
+
+    def get_drivers(self, snapshot: str, table_type: str) -> dict[str, str]:
+        """Return {project_name: driver_text} for a given snapshot and table type."""
+        rows = self.query(
+            "SELECT project_name, driver_text FROM variance_drivers WHERE snapshot = ? AND table_type = ?",
+            (snapshot, table_type),
+        )
+        return {r["project_name"]: r["driver_text"] for r in rows}
+
+    def save_drivers(self, snapshot: str, table_type: str, drivers: dict[str, str]):
+        """Save variance drivers (upsert)."""
+        for project_name, text in drivers.items():
+            self.conn.execute(
+                """INSERT INTO variance_drivers (snapshot, table_type, project_name, driver_text)
+                   VALUES (?, ?, ?, ?)
+                   ON CONFLICT(snapshot, table_type, project_name) DO UPDATE SET driver_text = ?""",
+                (snapshot, table_type, project_name, text, text),
+            )
+        self.conn.commit()
 
     def get_watch_list(self) -> list[dict]:
         return self.query("SELECT * FROM watch_list ORDER BY id")

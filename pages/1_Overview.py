@@ -135,91 +135,135 @@ def main():
     # Row 4: FY26 Fcst vs FY25 Act
     metric_row("YoY", fy_fcst, "FY26 Forecast", fy25_act, "FY25 Actual")
 
-    # --- Variance Tables (email-style: top projects + subtotal + other + grand total) ---
+    # --- Variance Tables (email-style with styled HTML + editable drivers) ---
     st.markdown("---")
 
     fy_data = get_fy_comparison(db, selected)
     yoy_data = get_yoy_comparison(db, selected)
 
-    def build_variance_table(data, col_a, col_b, label_a, label_b, top_n=5):
-        """Build a DataFrame like the email variance table with key items, subtotal, other, grand total."""
+    HEADER_COLOR = "#4a5568"
+
+    def fmt_var(v):
+        """Format variance: negative in parentheses."""
+        if v < -0.05:
+            return f"({abs(v):.1f})"
+        elif v > 0.05:
+            return f"+{v:.1f}"
+        return "0.0"
+
+    def render_variance_table(title, table_key, data, col_a, col_b, label_a, label_b, top_n=5):
+        """Render a styled HTML variance table with editable drivers."""
+        st.subheader(title)
         if not data:
-            return None
+            st.info("No data.")
+            return
+
+        # Load saved drivers
+        saved_drivers = db.get_drivers(selected, table_key)
+
         for r in data:
             r["_var"] = r[col_a] - r[col_b]
         sorted_data = sorted(data, key=lambda x: abs(x["_var"]), reverse=True)
         key_items = sorted_data[:top_n]
         other_items = sorted_data[top_n:]
 
-        rows = []
-        for item in key_items:
-            v = item["_var"]
-            rows.append({
-                "Project": item["project_name"],
-                label_a: round(item[col_a] / 1e6, 1),
-                label_b: round(item[col_b] / 1e6, 1),
-                "Variance": round(v / 1e6, 1),
-            })
+        sub_a = sum(r[col_a] for r in key_items)
+        sub_b = sum(r[col_b] for r in key_items)
+        other_a = sum(r[col_a] for r in other_items)
+        other_b = sum(r[col_b] for r in other_items)
+        total_a = sum(r[col_a] for r in data)
+        total_b = sum(r[col_b] for r in data)
 
-        # Subtotal (Key Items)
-        sub_a = sum(item[col_a] for item in key_items)
-        sub_b = sum(item[col_b] for item in key_items)
-        rows.append({
-            "Project": "Subtotal (Key Items)",
-            label_a: round(sub_a / 1e6, 1),
-            label_b: round(sub_b / 1e6, 1),
-            "Variance": round((sub_a - sub_b) / 1e6, 1),
-        })
+        # Build HTML table
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif;">
+        <thead><tr style="background-color:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Project</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">{label_a}</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">{label_b}</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Variance</th>
+            <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Variance Driver</th>
+        </tr></thead><tbody>"""
 
-        # Other (net)
-        other_a = sum(item[col_a] for item in other_items)
-        other_b = sum(item[col_b] for item in other_items)
-        rows.append({
-            "Project": "Other (net)",
-            label_a: round(other_a / 1e6, 1),
-            label_b: round(other_b / 1e6, 1),
-            "Variance": round((other_a - other_b) / 1e6, 1),
-        })
+        for i, item in enumerate(key_items):
+            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+            name = item["project_name"]
+            driver = saved_drivers.get(name, "")
+            v = item["_var"] / 1e6
+            html += f"""<tr style="background-color:{bg};">
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; font-weight:bold;">{name}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{item[col_a]/1e6:.1f}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{item[col_b]/1e6:.1f}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(v)}</td>
+                <td style="padding:6px 12px; border:1px solid #cbd5e0; font-size:12px;">{driver}</td>
+            </tr>"""
+
+        # Subtotal
+        sv = (sub_a - sub_b) / 1e6
+        html += f"""<tr style="background-color:#edf2f7; font-weight:bold;">
+            <td style="padding:6px 12px; border:1px solid #cbd5e0;">Subtotal (Key Items)</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{sub_a/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{sub_b/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(sv)}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td>
+        </tr>"""
+
+        # Other
+        ov = (other_a - other_b) / 1e6
+        html += f"""<tr>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0;">Other (net)</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{other_a/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{other_b/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(ov)}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; font-size:12px;">기타 프로젝트 순합</td>
+        </tr>"""
 
         # Grand Total
-        total_a = sum(item[col_a] for item in data)
-        total_b = sum(item[col_b] for item in data)
-        rows.append({
-            "Project": "Grand Total",
-            label_a: round(total_a / 1e6, 1),
-            label_b: round(total_b / 1e6, 1),
-            "Variance": round((total_a - total_b) / 1e6, 1),
-        })
+        tv = (total_a - total_b) / 1e6
+        html += f"""<tr style="background-color:{HEADER_COLOR}; color:white; font-weight:bold;">
+            <td style="padding:6px 12px; border:1px solid #cbd5e0;">Grand Total</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{total_a/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{total_b/1e6:.1f}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{fmt_var(tv)}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0;"></td>
+        </tr>"""
 
-        return pd.DataFrame(rows)
+        html += "</tbody></table>"
+        st.markdown(html, unsafe_allow_html=True)
+        st.caption("Unit: USD millions")
 
-    # Table 1: MTD Act vs Bud
-    st.subheader(f"MTD {month_name} Act vs MTD {month_name} Bud")
-    df_mtd = build_variance_table(mtd_data, "mtd_act", "mtd_bud", f"MTD Act", f"MTD Bud")
-    if df_mtd is not None:
-        st.dataframe(df_mtd, use_container_width=True, hide_index=True)
-    st.caption("Unit: USD millions")
+        # Editable drivers
+        with st.expander(f"Edit Variance Drivers — {title}"):
+            updated = {}
+            for item in key_items:
+                name = item["project_name"]
+                v = item["_var"] / 1e6
+                updated[name] = st.text_area(
+                    f"{name} (var {fmt_var(v)}M)",
+                    value=saved_drivers.get(name, ""),
+                    height=68,
+                    key=f"driver_{table_key}_{name}",
+                )
+            if st.button("Save Drivers", key=f"save_{table_key}"):
+                db.save_drivers(selected, table_key, updated)
+                st.success("Saved!")
+                st.rerun()
 
-    # Table 2: YTD Act vs Bud
-    st.subheader(f"YTD {month_name} Act vs YTD {month_name} Bud")
-    df_ytd = build_variance_table(ytd_data, "ytd_act", "ytd_bud", f"YTD Act", f"YTD Bud")
-    if df_ytd is not None:
-        st.dataframe(df_ytd, use_container_width=True, hide_index=True)
-    st.caption("Unit: USD millions")
+    # 4 tables
+    render_variance_table(
+        f"MTD {month_name} Act vs MTD {month_name} Bud", "mtd",
+        mtd_data, "mtd_act", "mtd_bud", "MTD Act", "MTD Bud")
 
-    # Table 3: FY26 Fcst vs FY26 Bud
-    st.subheader("FY26 Fcst vs FY26 Bud")
-    df_fy = build_variance_table(fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
-    if df_fy is not None:
-        st.dataframe(df_fy, use_container_width=True, hide_index=True)
-    st.caption("Unit: USD millions")
+    render_variance_table(
+        f"YTD {month_name} Act vs YTD {month_name} Bud", "ytd",
+        ytd_data, "ytd_act", "ytd_bud", "YTD Act", "YTD Bud")
 
-    # Table 4: FY26 Fcst vs FY25 Act
-    st.subheader("FY26 Fcst vs FY25 Act")
-    df_yoy = build_variance_table(yoy_data, "fy26", "fy25", "FY26 Fcst", "FY25 Act")
-    if df_yoy is not None:
-        st.dataframe(df_yoy, use_container_width=True, hide_index=True)
-    st.caption("Unit: USD millions")
+    render_variance_table(
+        "FY26 Fcst vs FY26 Bud", "fy_bud",
+        fy_data, "fy_fcst", "fy_bud", "FY26 Fcst", "FY26 Bud")
+
+    render_variance_table(
+        "FY26 Fcst vs FY25 Act", "fy_yoy",
+        yoy_data, "fy26", "fy25", "FY26 Fcst", "FY25 Act")
 
     # --- Fee by Platform Table (collapsible with project detail) ---
     st.markdown("---")
