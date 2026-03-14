@@ -1,6 +1,7 @@
 """Page 2: Analysis — Fee by Project interactive table with side-by-side comparison."""
 import streamlit as st
 import pandas as pd
+import io
 from src.db import FeeIncomeDB
 from src.queries import get_snapshot_n_value, PLATFORM_ORDER, sort_by_platform
 
@@ -9,12 +10,28 @@ MONTH_NAMES = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
 
 HEADER_COLOR = "#4a5568"
 
+# Global state for unit toggle
+_use_millions = True
 
-def fv(val_mil):
-    """Format value in millions. 0 → '-'."""
-    if abs(val_mil) < 0.05:
-        return "-"
-    return f"{val_mil:.1f}"
+
+def divisor():
+    return 1e6 if _use_millions else 1
+
+
+def unit_label():
+    return "USD millions" if _use_millions else "USD"
+
+
+def fv(val_raw):
+    """Format value. 0 → '-'. val_raw is already divided by divisor."""
+    if _use_millions:
+        if abs(val_raw) < 0.05:
+            return "-"
+        return f"{val_raw:.1f}"
+    else:
+        if abs(val_raw) < 0.5:
+            return "-"
+        return f"{val_raw:,.0f}"
 
 
 def get_db():
@@ -99,7 +116,7 @@ def build_project_table_html(data, metric_label, show_platform=True):
     prev_platform = None
     for i, row in enumerate(data):
         bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
-        val = row["value"] / 1e6
+        val = row["value"] / divisor()
         total += row["value"]
         plat = row["platform"]
 
@@ -122,7 +139,7 @@ def build_project_table_html(data, metric_label, show_platform=True):
     html += f"""<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
         {plat_td}
         <td style="padding:6px 10px; border:1px solid #cbd5e0;">Grand Total</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{total/1e6:.1f}</td>
+        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(total/divisor())}</td>
     </tr>"""
 
     html += "</tbody></table>"
@@ -334,7 +351,38 @@ def build_fee_type_comparison_html(data_a, data_b, label_a, label_b, selected_pr
     return html
 
 
+def build_export_df(all_keys, labels, get_row_labels, get_row_value, row_label_keys):
+    """Build a DataFrame for Excel export from the table data."""
+    rows = []
+    for key in all_keys:
+        parts = get_row_labels(key)
+        row = {}
+        for j, col_name in enumerate(row_label_keys):
+            row[col_name] = parts[j]
+        base = get_row_value(key, labels[0])
+        row[labels[0]] = base / divisor()
+        for i in range(1, len(labels)):
+            v = get_row_value(key, labels[i])
+            row[labels[i]] = v / divisor()
+            row[f"Var ({labels[0]} vs {labels[i]})"] = (base - v) / divisor()
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def export_button(df, filename="analysis_export.xlsx"):
+    """Render an Excel download button."""
+    buf = io.BytesIO()
+    df.to_excel(buf, index=False, engine="openpyxl")
+    st.download_button(
+        label="Export to Excel",
+        data=buf.getvalue(),
+        file_name=filename,
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
 def main():
+    global _use_millions
     st.title("Fee by Project")
     db = get_db()
     snapshots = db.list_snapshots()
@@ -343,8 +391,15 @@ def main():
         return
 
     latest = db.get_latest_snapshot()
-    selected = st.selectbox("Snapshot", snapshots,
-        index=snapshots.index(latest) if latest in snapshots else 0)
+
+    # Top controls row
+    c1, c2, c3 = st.columns([3, 2, 2])
+    with c1:
+        selected = st.selectbox("Snapshot", snapshots,
+            index=snapshots.index(latest) if latest in snapshots else 0)
+    with c2:
+        unit_choice = st.radio("Unit", ["USD millions", "USD"], horizontal=True, key="unit_toggle")
+        _use_millions = (unit_choice == "USD millions")
 
     options = build_metric_options(selected)
     option_labels = list(options.keys())
@@ -355,9 +410,15 @@ def main():
     if mode == "Single Metric":
         chosen = st.selectbox("Select Metric", option_labels, index=option_labels.index("FY26 Bud"))
         data = query_metric(db, selected, chosen, options[chosen])
+        # Filter zero rows
+        data = [r for r in data if abs(r["value"]) >= 500]
         html = build_project_table_html(data, chosen)
         st.markdown(html, unsafe_allow_html=True)
-        st.caption("Unit: USD millions")
+        st.caption(f"Unit: {unit_label()}")
+        # Export
+        if data:
+            exp_rows = [{"Platform": r["platform"], "Project": r["project_name"], chosen: r["value"] / divisor()} for r in data]
+            export_button(pd.DataFrame(exp_rows), f"fee_by_project_{chosen}.xlsx")
 
     elif mode in ("Comparison", "Comparison by Fee Type"):
         is_fee_type = mode == "Comparison by Fee Type"
@@ -476,38 +537,44 @@ def main():
                     # (simpler: just don't group fee_type)
 
             # Value cells
+            d = divisor()
             base_val = get_row_value(key, labels[0])
             totals[labels[0]] += base_val
-            val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / 1e6)}</td>'
+            val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / d)}</td>'
 
             for i in range(1, len(labels)):
                 v = get_row_value(key, labels[i])
                 totals[labels[i]] += v
-                var = (base_val - v) / 1e6
+                var = (base_val - v) / d
                 pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / 1e6)}</td>'
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(var)}</td>'
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
 
         # Grand Total row
+        d = divisor()
         base_total = totals[labels[0]]
         empty_label_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="{len(row_label_keys) - 1}"></td>'
         empty_label_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;">Grand Total</td>'
-        total_val_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_total / 1e6)}</td>'
+        total_val_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_total / d)}</td>'
         for i in range(1, len(labels)):
             t = totals[labels[i]]
-            tv = (base_total - t) / 1e6
+            tv = (base_total - t) / d
             tp = f"{(base_total - t) / abs(t) * 100:+.0f}%" if t != 0 else "-"
-            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(t / 1e6)}</td>'
+            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(t / d)}</td>'
             total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(tv)}</td>'
             total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{tp}</td>'
 
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{empty_label_cells}{total_val_cells}</tr>'
         html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
-        st.caption("Unit: USD millions")
+        st.caption(f"Unit: {unit_label()}")
+
+        # Export button
+        exp_df = build_export_df(all_keys, labels, get_row_labels, get_row_value, row_label_keys)
+        export_button(exp_df, f"fee_comparison_{mode.replace(' ', '_').lower()}.xlsx")
 
 
 main()
