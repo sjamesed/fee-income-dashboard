@@ -699,9 +699,8 @@ def main():
         export_button(pd.DataFrame(exp_rows), "fee_by_project_fee_type.xlsx")
 
     elif mode == "Monthly Detail":
-        # Monthly data by Project or Fee Type, with metric selector
+        # Monthly data by Project or Fee Type, dual metric comparison
         n = get_snapshot_n_value(selected)
-        month_names_short = [MONTH_NAMES[m] for m in range(1, 13)]
 
         view_by = st.radio("View by", ["Project", "Fee Type"], horizontal=True, key="monthly_view")
 
@@ -710,39 +709,68 @@ def main():
             "Budget": "budget",
             "Forecast": "forecast",
         }
-        mc1, mc2 = st.columns([2, 3])
+        metric_keys = list(metric_options.keys())
+        year_choices = ["2026", "2025", "2024", "2023"]
+
+        # Two metric selectors side by side
+        mc1, mc2 = st.columns(2)
         with mc1:
-            chosen_metric = st.selectbox("Metric", list(metric_options.keys()), key="monthly_metric")
+            st.markdown("**Metric 1**")
+            m1_metric = st.selectbox("Metric", metric_keys, key="monthly_m1_metric")
+            m1_year = st.selectbox("Year", year_choices, key="monthly_m1_year")
         with mc2:
-            year = st.selectbox("Year", ["2026", "2025", "2024", "2023"], key="monthly_year")
+            st.markdown("**Metric 2**")
+            m2_metric = st.selectbox("Metric", metric_keys, index=1, key="monthly_m2_metric")
+            m2_year = st.selectbox("Year", year_choices, key="monthly_m2_year")
 
-        period_type = metric_options[chosen_metric]
+        m1_label = f"{m1_metric} {m1_year}"
+        m2_label = f"{m2_metric} {m2_year}"
+        pt1 = metric_options[m1_metric]
+        pt2 = metric_options[m2_metric]
+        months1 = [f"{m1_year}-{m:02d}" for m in range(1, 13)]
+        months2 = [f"{m2_year}-{m:02d}" for m in range(1, 13)]
+        ph1 = ",".join(["?"] * len(months1))
+        ph2 = ",".join(["?"] * len(months2))
 
-        # Query monthly data
-        months = [f"{year}-{m:02d}" for m in range(1, 13)]
-        placeholders = ",".join(["?"] * len(months))
+        # Project search
+        search = st.text_input("Search project...", key="monthly_search")
 
         if view_by == "Project":
-            rows = db.query(f"""
+            rows1 = db.query(f"""
                 SELECT platform, project_name, period, SUM(amount_usd) as value
                 FROM fee_income
-                WHERE snapshot = ? AND period IN ({placeholders}) AND period_type = ?
+                WHERE snapshot = ? AND period IN ({ph1}) AND period_type = ?
                 GROUP BY platform, project_name, period
-            """, (selected, *months, period_type))
+            """, (selected, *months1, pt1))
+            rows2 = db.query(f"""
+                SELECT platform, project_name, period, SUM(amount_usd) as value
+                FROM fee_income
+                WHERE snapshot = ? AND period IN ({ph2}) AND period_type = ?
+                GROUP BY platform, project_name, period
+            """, (selected, *months2, pt2))
 
-            # Build pivot: (platform, project) -> {month: value}
-            pivot = {}
+            pivot1 = {}
+            pivot2 = {}
             all_keys_set = set()
-            for r in rows:
+            for r in rows1:
                 key = (r["platform"], r["project_name"])
-                if key not in pivot:
-                    pivot[key] = {}
-                pivot[key][r["period"]] = r["value"]
+                pivot1.setdefault(key, {})[r["period"]] = r["value"]
+                all_keys_set.add(key)
+            for r in rows2:
+                key = (r["platform"], r["project_name"])
+                pivot2.setdefault(key, {})[r["period"]] = r["value"]
                 all_keys_set.add(key)
 
             all_keys = sort_by_platform([{"platform": k[0], "project_name": k[1]} for k in all_keys_set])
             all_keys = [(p["platform"], p["project_name"]) for p in all_keys]
-            all_keys = [k for k in all_keys if any(abs(pivot.get(k, {}).get(m, 0)) >= 500 for m in months)]
+            all_keys = [k for k in all_keys if
+                        any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
+                        any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+
+            # Apply project search filter
+            if search:
+                search_lower = search.lower()
+                all_keys = [k for k in all_keys if search_lower in k[1].lower()]
 
             label_cols = ["Platform", "Project"]
             def get_labels(k): return k
@@ -755,66 +783,118 @@ def main():
             filter_proj = st.selectbox("Filter by Project", ["All"] + proj_names, key="monthly_proj_filter")
 
             query_extra = ""
-            params = [selected, *months, period_type]
+            params1 = [selected, *months1, pt1]
+            params2 = [selected, *months2, pt2]
             if filter_proj != "All":
                 query_extra = " AND project_name = ?"
-                params.append(filter_proj)
+                params1.append(filter_proj)
+                params2.append(filter_proj)
 
-            rows = db.query(f"""
+            rows1 = db.query(f"""
                 SELECT platform, project_name, fee_type, period, SUM(amount_usd) as value
                 FROM fee_income
-                WHERE snapshot = ? AND period IN ({placeholders}) AND period_type = ?{query_extra}
+                WHERE snapshot = ? AND period IN ({ph1}) AND period_type = ?{query_extra}
                 GROUP BY platform, project_name, fee_type, period
-            """, tuple(params))
+            """, tuple(params1))
+            rows2 = db.query(f"""
+                SELECT platform, project_name, fee_type, period, SUM(amount_usd) as value
+                FROM fee_income
+                WHERE snapshot = ? AND period IN ({ph2}) AND period_type = ?{query_extra}
+                GROUP BY platform, project_name, fee_type, period
+            """, tuple(params2))
 
-            pivot = {}
+            pivot1 = {}
+            pivot2 = {}
             all_keys_set = set()
-            for r in rows:
+            for r in rows1:
                 key = (r["platform"], r["project_name"], r["fee_type"])
-                if key not in pivot:
-                    pivot[key] = {}
-                pivot[key][r["period"]] = r["value"]
+                pivot1.setdefault(key, {})[r["period"]] = r["value"]
+                all_keys_set.add(key)
+            for r in rows2:
+                key = (r["platform"], r["project_name"], r["fee_type"])
+                pivot2.setdefault(key, {})[r["period"]] = r["value"]
                 all_keys_set.add(key)
 
             FT_ORDER = ["Asset Mgmt Fee", "Development Mgmt Fee", "Leasing Fee", "Acq / Div Fee", "Promote Fee", "Other Fee"]
             all_keys = sorted(all_keys_set,
                 key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
                                FT_ORDER.index(k[2]) if k[2] in FT_ORDER else 99))
-            all_keys = [k for k in all_keys if any(abs(pivot.get(k, {}).get(m, 0)) >= 500 for m in months)]
+            all_keys = [k for k in all_keys if
+                        any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
+                        any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+
+            # Apply project search filter
+            if search:
+                search_lower = search.lower()
+                all_keys = [k for k in all_keys if search_lower in k[1].lower()]
 
             label_cols = ["Platform", "Project", "Fee Type"]
             def get_labels(k): return k
 
         d = divisor()
 
-        # Build HTML table
-        sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2; top:0;"
+        # Build HTML table with dual metrics
+        sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
         frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz1 = f"position:sticky; left:100px; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz0_data = "position:sticky; left:0; z-index:1;"
         frz1_data = "position:sticky; left:100px; z-index:1;"
 
-        month_headers = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th}">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
+        month_headers1 = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
+        month_headers2 = month_headers1
 
         html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
         <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
-        <thead><tr style="font-weight:bold; text-align:center;">"""
+        <thead>
+        <tr style="font-weight:bold; text-align:center;">"""
 
+        # Row 1: label columns + metric group headers + Var
         for i, col in enumerate(label_cols):
             if i == 0:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} {frz0} min-width:100px;">{col}</th>'
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">{col}</th>'
             elif i == 1:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} {frz1} min-width:120px;">{col}</th>'
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">{col}</th>'
             else:
-                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th}">{col}</th>'
+                html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">{col}</th>'
 
-        html += month_headers
-        html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} font-weight:bold;">Total</th>'
+        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="13">{m1_label}</th>'
+        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="13">{m2_label}</th>'
+        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Var</th>'
+        html += "</tr>"
+
+        # Row 2: month sub-headers + Total for each metric
+        html += '<tr style="font-weight:bold; text-align:center;">'
+        html += month_headers1
+        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
+        html += month_headers2
+        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
         html += "</tr></thead><tbody>"
 
-        grand_totals = {m: 0.0 for m in months}
+        grand_totals1 = {m: 0.0 for m in months1}
+        grand_totals2 = {m: 0.0 for m in months2}
         prev_plat = None
-        plat_totals = {m: 0.0 for m in months}
+        plat_totals1 = {m: 0.0 for m in months1}
+        plat_totals2 = {m: 0.0 for m in months2}
+
+        num_month_cols = 13  # 12 months + Total
+
+        def render_monthly_subtotal(label, pt1_totals, pt2_totals):
+            sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {label}</td>'
+            row_sum1 = 0
+            for m in months1:
+                v = pt1_totals[m]
+                row_sum1 += v
+                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum1/d)}</td>'
+            row_sum2 = 0
+            for m in months2:
+                v = pt2_totals[m]
+                row_sum2 += v
+                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum2/d)}</td>'
+            var_val = (row_sum1 - row_sum2) / d
+            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{colored_var(var_val)}</td>'
+            return f'<tr>{sub_cells}</tr>'
 
         for idx, key in enumerate(all_keys):
             bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
@@ -823,15 +903,9 @@ def main():
 
             # Subtotal on platform change
             if prev_plat is not None and current_plat != prev_plat:
-                sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {prev_plat}</td>'
-                row_sum = 0
-                for m in months:
-                    v = plat_totals[m]
-                    row_sum += v
-                    sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
-                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum/d)}</td>'
-                html += f'<tr>{sub_cells}</tr>'
-                plat_totals = {m: 0.0 for m in months}
+                html += render_monthly_subtotal(prev_plat, plat_totals1, plat_totals2)
+                plat_totals1 = {m: 0.0 for m in months1}
+                plat_totals2 = {m: 0.0 for m in months2}
             prev_plat = current_plat
 
             # Label cells
@@ -846,43 +920,59 @@ def main():
                 else:
                     cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px;">{part}</td>'
 
-            # Monthly values
-            month_vals = pivot.get(key, {})
-            row_total = 0
-            for m in months:
-                v = month_vals.get(m, 0)
-                row_total += v
-                plat_totals[m] += v
-                grand_totals[m] += v
+            # Metric 1 monthly values
+            month_vals1 = pivot1.get(key, {})
+            row_total1 = 0
+            for m in months1:
+                v = month_vals1.get(m, 0)
+                row_total1 += v
+                plat_totals1[m] += v
+                grand_totals1[m] += v
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total1/d)}</td>'
+
+            # Metric 2 monthly values
+            month_vals2 = pivot2.get(key, {})
+            row_total2 = 0
+            for m in months2:
+                v = month_vals2.get(m, 0)
+                row_total2 += v
+                plat_totals2[m] += v
+                grand_totals2[m] += v
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total2/d)}</td>'
+
+            # Variance = Metric 1 Total - Metric 2 Total
+            row_var = (row_total1 - row_total2) / d
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{colored_var(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
         # Last subtotal
         if prev_plat is not None:
-            sub_cells = f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {prev_plat}</td>'
-            row_sum = 0
-            for m in months:
-                v = plat_totals[m]
-                row_sum += v
-                sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
-            sub_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum/d)}</td>'
-            html += f'<tr>{sub_cells}</tr>'
+            html += render_monthly_subtotal(prev_plat, plat_totals1, plat_totals2)
 
         # Grand Total
         gt_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; {frz0_data} background:{HEADER_COLOR};" colspan="{len(label_cols)}">Grand Total</td>'
-        gt_sum = 0
-        for m in months:
-            v = grand_totals[m]
-            gt_sum += v
+        gt_sum1 = 0
+        for m in months1:
+            v = grand_totals1[m]
+            gt_sum1 += v
             gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum/d)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum1/d)}</td>'
+        gt_sum2 = 0
+        for m in months2:
+            v = grand_totals2[m]
+            gt_sum2 += v
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum2/d)}</td>'
+        gt_var = (gt_sum1 - gt_sum2) / d
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{colored_var(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
-        st.caption(f"Unit: {unit_label()} | {chosen_metric} {year}")
+        st.caption(f"Unit: {unit_label()} | {m1_label} vs {m2_label}")
 
         # Full table for copy & paste
         full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
@@ -896,12 +986,19 @@ def main():
         for key in all_keys:
             parts = get_labels(key)
             row = {col: parts[i] for i, col in enumerate(label_cols)}
-            month_vals = pivot.get(key, {})
-            for m in months:
-                row[MONTH_NAMES[int(m.split("-")[1])]] = month_vals.get(m, 0) / d
-            row["Total"] = sum(month_vals.get(m, 0) for m in months) / d
+            mv1 = pivot1.get(key, {})
+            mv2 = pivot2.get(key, {})
+            for m_idx in range(1, 13):
+                mname = MONTH_NAMES[m_idx]
+                row[f"{mname} ({m1_label})"] = mv1.get(months1[m_idx - 1], 0) / d
+                row[f"{mname} ({m2_label})"] = mv2.get(months2[m_idx - 1], 0) / d
+            total1 = sum(mv1.get(m, 0) for m in months1) / d
+            total2 = sum(mv2.get(m, 0) for m in months2) / d
+            row[f"Total ({m1_label})"] = total1
+            row[f"Total ({m2_label})"] = total2
+            row["Variance"] = total1 - total2
             exp_rows.append(row)
-        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{chosen_metric}_{year}.xlsx")
+        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{m1_metric}_{m1_year}_vs_{m2_metric}_{m2_year}.xlsx")
 
 
 main()
