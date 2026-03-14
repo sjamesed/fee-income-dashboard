@@ -22,11 +22,6 @@ st.markdown("""
         background-color: #2d3748;
         color: white;
     }
-    .main .block-container {
-        max-width: 100% !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
