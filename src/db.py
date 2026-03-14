@@ -1,5 +1,6 @@
 """SQLite database operations for fee income data."""
 
+import re
 import sqlite3
 from pathlib import Path
 
@@ -88,11 +89,10 @@ class FeeIncomeDB:
         snapshots = self.list_snapshots()
         if not snapshots:
             return None
-        import re
-        def sort_key(s):
+        def _snap_n(s):
             m = re.search(r"(\d+)\+\d+", s)
             return int(m.group(1)) if m else 0
-        return max(snapshots, key=sort_key)
+        return max(snapshots, key=_snap_n)
 
     def get_drivers(self, snapshot: str, table_type: str) -> dict[str, str]:
         """Return {project_name: driver_text} for a given snapshot and table type."""
