@@ -478,7 +478,34 @@ def main():
         short_a = label_a.split("(")[0].strip() if "(" in label_a else label_a
         short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
 
-        # Build HTML with two header rows
+        # Determine highlight threshold: top 20% of absolute fee-type variances
+        all_ft_vars = []
+        for k in all_proj_keys:
+            fa = lookup_a.get(k, {})
+            fb = lookup_b.get(k, {})
+            for ft in FT_COLS:
+                v = abs(fa.get(ft, 0) - fb.get(ft, 0))
+                if v >= 500:
+                    all_ft_vars.append(v)
+        all_ft_vars.sort(reverse=True)
+        highlight_threshold = all_ft_vars[max(0, len(all_ft_vars) // 5)] if all_ft_vars else 1e18
+
+        def ft_cell_style(val_a, val_b, base_style=""):
+            """Return style with highlight if variance is significant."""
+            var = abs(val_a - val_b)
+            if var >= highlight_threshold:
+                return base_style + " background:#fff3cd;"  # yellow highlight
+            return base_style
+
+        def fmt_var_val(v):
+            vm = v / d
+            if vm < -0.05:
+                return f"({abs(vm):.1f})" if _use_millions else f"({abs(v):,.0f})"
+            elif vm > 0.05:
+                return f"+{vm:.1f}" if _use_millions else f"+{v:,.0f}"
+            return "-"
+
+        # Build HTML with two header rows + Variance column
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
         ft_headers_b = ft_headers_a
 
@@ -489,6 +516,7 @@ def main():
             <th style="padding:6px 8px; border:1px solid #cbd5e0;" rowspan="2">Project</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
         </tr>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
             {ft_headers_a}
@@ -514,13 +542,14 @@ def main():
             for ft in FT_COLS:
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
+            var = total_a - total_b
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
             return f'<tr>{cells}</tr>'
 
         for idx, key in enumerate(all_proj_keys):
             plat, proj = key
             bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
 
-            # Platform subtotal on change
             if prev_plat is not None and plat != prev_plat:
                 html += render_subtotal_row(f"Subtotal — {prev_plat}", plat_sub_a, plat_sub_b)
                 plat_sub_a = {ft: 0.0 for ft in FT_COLS}
@@ -536,21 +565,29 @@ def main():
             ft_vals_b = lookup_b.get(key, {})
             row_total_a = 0
             for ft in FT_COLS:
-                v = ft_vals_a.get(ft, 0)
-                row_total_a += v
-                plat_sub_a[ft] += v
-                grand_a[ft] += v
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+                va = ft_vals_a.get(ft, 0)
+                vb = ft_vals_b.get(ft, 0)
+                row_total_a += va
+                plat_sub_a[ft] += va
+                grand_a[ft] += va
+                hl = ft_cell_style(va, vb)
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(va/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
 
             row_total_b = 0
             for ft in FT_COLS:
-                v = ft_vals_b.get(ft, 0)
-                row_total_b += v
-                plat_sub_b[ft] += v
-                grand_b[ft] += v
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+                va = ft_vals_a.get(ft, 0)
+                vb = ft_vals_b.get(ft, 0)
+                row_total_b += vb
+                plat_sub_b[ft] += vb
+                grand_b[ft] += vb
+                hl = ft_cell_style(va, vb)
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
+
+            # Variance column (Total A - Total B)
+            row_var = row_total_a - row_total_b
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fmt_var_val(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -568,6 +605,8 @@ def main():
         for ft in FT_COLS:
             gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
+        gt_var = gt_total_a - gt_total_b
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table>"
