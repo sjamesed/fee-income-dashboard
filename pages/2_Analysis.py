@@ -359,100 +359,151 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption("Unit: USD millions")
 
-    elif mode == "Comparison":
-        num_metrics = st.radio("Number of metrics", [2, 3, 4], horizontal=True, key="num_metrics")
+    elif mode in ("Comparison", "Comparison by Fee Type"):
+        is_fee_type = mode == "Comparison by Fee Type"
+        prefix = "ft" if is_fee_type else "cmp"
 
+        num_metrics = st.radio("Number of metrics", [2, 3, 4], horizontal=True, key=f"{prefix}_num")
         defaults = [f"FY26 Fcst ({selected})", "FY26 Bud", "FY25 Act", "FY24 Act"]
         cols = st.columns(num_metrics)
         labels = []
         for i, c in enumerate(cols):
             with c:
                 default_idx = option_labels.index(defaults[i]) if defaults[i] in option_labels else i
-                lbl = st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"cmp_{i}")
-                labels.append(lbl)
+                labels.append(st.selectbox(f"Metric {i+1}", option_labels, index=default_idx, key=f"{prefix}_{i}"))
 
-        # Query all selected metrics
-        all_data = {}
-        all_projects_set = set()
-        for lbl in labels:
-            data = query_metric(db, selected, lbl, options[lbl])
-            lookup = {}
-            for r in data:
-                key = (r["platform"], r["project_name"])
-                lookup[key] = r["value"]
-                all_projects_set.add(key)
-            all_data[lbl] = lookup
+        # Project filter for fee type mode
+        selected_project = None
+        if is_fee_type:
+            all_projects_raw = query_metric(db, selected, labels[0], options[labels[0]])
+            project_names = ["All Projects"] + [r["project_name"] for r in all_projects_raw]
+            selected_project = st.selectbox("Filter by Project", project_names)
 
-        # Build sorted project list
-        all_proj_list = sort_by_platform([{"platform": k[0], "project_name": k[1]} for k in all_projects_set])
-        # Filter: at least one metric has a value
-        all_proj_list = [p for p in all_proj_list
-                         if any(abs(all_data[lbl].get((p["platform"], p["project_name"]), 0)) >= 500 for lbl in labels)]
+        # Query data
+        if is_fee_type:
+            all_data = {}
+            all_keys_set = set()
+            for lbl in labels:
+                rows = query_metric_by_fee_type(db, selected, options[lbl])
+                if selected_project and selected_project != "All Projects":
+                    rows = [r for r in rows if r["project_name"] == selected_project]
+                lookup = {}
+                for r in rows:
+                    key = (r["platform"], r["project_name"], r["fee_type"])
+                    lookup[key] = lookup.get(key, 0) + r["value"]
+                    all_keys_set.add(key)
+                all_data[lbl] = lookup
 
-        # Build multi-column HTML table
-        metric_headers = "".join(
-            f'<th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{lbl}</th>' for lbl in labels
-        )
-        html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
+            all_keys = sorted(all_keys_set,
+                key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
+                               FEE_TYPE_ORDER.index(k[2]) if k[2] in FEE_TYPE_ORDER else 99))
+            all_keys = [k for k in all_keys
+                        if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
+
+            row_label_keys = ["Platform", "Project", "Fee Type"]
+            def get_row_labels(key):
+                return key  # (platform, project, fee_type)
+            def get_row_value(key, lbl):
+                return all_data[lbl].get(key, 0)
+        else:
+            all_data = {}
+            all_keys_set = set()
+            for lbl in labels:
+                rows = query_metric(db, selected, lbl, options[lbl])
+                lookup = {}
+                for r in rows:
+                    key = (r["platform"], r["project_name"])
+                    lookup[key] = r["value"]
+                    all_keys_set.add(key)
+                all_data[lbl] = lookup
+
+            all_keys_raw = [{"platform": k[0], "project_name": k[1]} for k in all_keys_set]
+            all_keys_raw = sort_by_platform(all_keys_raw)
+            all_keys = [(p["platform"], p["project_name"]) for p in all_keys_raw]
+            all_keys = [k for k in all_keys
+                        if any(abs(all_data[lbl].get(k, 0)) >= 500 for lbl in labels)]
+
+            row_label_keys = ["Platform", "Project"]
+            def get_row_labels(key):
+                return key  # (platform, project)
+            def get_row_value(key, lbl):
+                return all_data[lbl].get(key, 0)
+
+        # Build header: for each metric pair (i vs i+1), show Metric_i | Metric_i+1 | Var | %
+        # First metric is always shown, then each subsequent metric adds: value | var | %
+        header_html = ""
+        for col_name in row_label_keys:
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;" rowspan="1">{col_name}</th>'
+        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[0]}</th>'
+        for i in range(1, len(labels)):
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[i]}</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">Var ({i} vs 1)</th>'
+            header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">%</th>'
+
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
-            <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Platform</th>
-            <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Project</th>
-            {metric_headers}
+            {header_html}
         </tr></thead><tbody>"""
 
-        totals = {lbl: 0 for lbl in labels}
-        prev_plat = None
-        for i, p in enumerate(all_proj_list):
-            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
-            key = (p["platform"], p["project_name"])
-            plat_display = f"<b>{p['platform']}</b>" if p["platform"] != prev_plat else ""
-            prev_plat = p["platform"]
+        def fmt_var_cell(v):
+            if v < -0.05:
+                return f"({abs(v):.1f})"
+            elif v > 0.05:
+                return f"+{v:.1f}"
+            return "-"
 
-            val_cells = ""
-            for lbl in labels:
-                v = all_data[lbl].get(key, 0)
-                totals[lbl] += v
-                val_cells += f'<td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(v / 1e6)}</td>'
+        totals = {lbl: 0.0 for lbl in labels}
+        prev_parts = [None] * len(row_label_keys)
 
-            html += f"""<tr style="background:{bg};">
-                <td style="padding:5px 10px; border:1px solid #cbd5e0;">{plat_display}</td>
-                <td style="padding:5px 10px; border:1px solid #cbd5e0;">{p["project_name"]}</td>
-                {val_cells}
-            </tr>"""
+        for idx, key in enumerate(all_keys):
+            bg = "#f7fafc" if idx % 2 == 0 else "#ffffff"
+            parts = get_row_labels(key)
 
-        total_cells = "".join(
-            f'<td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(totals[lbl] / 1e6)}</td>'
-            for lbl in labels
-        )
-        html += f"""<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
-            <td style="padding:6px 10px; border:1px solid #cbd5e0;"></td>
-            <td style="padding:6px 10px; border:1px solid #cbd5e0;">Grand Total</td>
-            {total_cells}
-        </tr>"""
+            # Label cells — show only when value changes (group by platform/project)
+            label_cells = ""
+            for j, part in enumerate(parts):
+                display = f"<b>{part}</b>" if part != prev_parts[j] else ""
+                prev_parts[j] = part
+                label_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0;">{display}</td>'
+            # Reset downstream grouping when upstream changes
+            for j in range(len(parts)):
+                if j > 0 and parts[j-1] != (get_row_labels(all_keys[idx-1])[j-1] if idx > 0 else None):
+                    prev_parts[j] = parts[j]
+                    label_cells_list = label_cells.split("</td>")
+                    # Re-render this cell with value shown
+                    # (simpler: just don't group fee_type)
+
+            # Value cells
+            base_val = get_row_value(key, labels[0])
+            totals[labels[0]] += base_val
+            val_cells = f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_val / 1e6)}</td>'
+
+            for i in range(1, len(labels)):
+                v = get_row_value(key, labels[i])
+                totals[labels[i]] += v
+                var = (base_val - v) / 1e6
+                pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / 1e6)}</td>'
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(var)}</td>'
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
+
+            html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
+
+        # Grand Total row
+        base_total = totals[labels[0]]
+        empty_label_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0;" colspan="{len(row_label_keys) - 1}"></td>'
+        empty_label_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;">Grand Total</td>'
+        total_val_cells = f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(base_total / 1e6)}</td>'
+        for i in range(1, len(labels)):
+            t = totals[labels[i]]
+            tv = (base_total - t) / 1e6
+            tp = f"{(base_total - t) / abs(t) * 100:+.0f}%" if t != 0 else "-"
+            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(t / 1e6)}</td>'
+            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(tv)}</td>'
+            total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{tp}</td>'
+
+        html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{empty_label_cells}{total_val_cells}</tr>'
         html += "</tbody></table>"
-        st.markdown(html, unsafe_allow_html=True)
-        st.caption("Unit: USD millions")
-
-    else:  # Comparison by Fee Type
-        col1, col2 = st.columns(2)
-        with col1:
-            label_a = st.selectbox("Left", option_labels,
-                                    index=option_labels.index(f"FY26 Fcst ({selected})"),
-                                    key="ft_left")
-        with col2:
-            label_b = st.selectbox("Right", option_labels,
-                                    index=option_labels.index("FY26 Bud"),
-                                    key="ft_right")
-
-        # Project filter
-        all_projects_raw = query_metric(db, selected, label_a, options[label_a])
-        project_names = ["All Projects"] + [r["project_name"] for r in all_projects_raw]
-        selected_project = st.selectbox("Filter by Project", project_names)
-
-        data_a = query_metric_by_fee_type(db, selected, options[label_a])
-        data_b = query_metric_by_fee_type(db, selected, options[label_b])
-
-        html = build_fee_type_comparison_html(data_a, data_b, label_a, label_b, selected_project)
         st.markdown(html, unsafe_allow_html=True)
         st.caption("Unit: USD millions")
 
