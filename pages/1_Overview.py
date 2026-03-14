@@ -183,8 +183,9 @@ def main():
         for r in data:
             r["_var"] = r[col_a] - r[col_b]
         sorted_data = sorted(data, key=lambda x: abs(x["_var"]), reverse=True)
-        key_items = sorted_data[:top_n]
-        other_items = sorted_data[top_n:]
+        # Show items with |variance| >= 0.2M, rest as Other
+        key_items = [r for r in sorted_data if abs(r["_var"]) >= 200_000]
+        other_items = [r for r in sorted_data if abs(r["_var"]) < 200_000]
 
         sub_a = sum(r[col_a] for r in key_items)
         sub_b = sum(r[col_b] for r in key_items)
