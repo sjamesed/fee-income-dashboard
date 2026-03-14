@@ -545,10 +545,7 @@ def main():
         sth1 = sth + " top:0;"
         sth2 = sth + " top:28px;"
 
-        html = f"""<style>
-        .ftp-table thead th {{ background:{HEADER_COLOR}; color:white; }}
-        </style>
-        <table class="ftp-table" style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+        html = f"""<table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead>
         <tr style="font-weight:bold; text-align:center;">
             <th style="padding:6px 8px; border:1px solid #cbd5e0; {sth1}" rowspan="2">Platform</th>
