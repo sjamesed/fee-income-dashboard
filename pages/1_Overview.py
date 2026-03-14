@@ -183,9 +183,9 @@ def main():
         for r in data:
             r["_var"] = r[col_a] - r[col_b]
         sorted_data = sorted(data, key=lambda x: abs(x["_var"]), reverse=True)
-        # Show items with |variance| >= 0.2M, rest as Other
-        key_items = [r for r in sorted_data if abs(r["_var"]) >= 200_000]
-        other_items = [r for r in sorted_data if abs(r["_var"]) < 200_000]
+        # Show items with |variance| >= 0.15M (rounds to 0.2), rest as Other
+        key_items = [r for r in sorted_data if round(abs(r["_var"]) / 1e6, 1) >= 0.2]
+        other_items = [r for r in sorted_data if round(abs(r["_var"]) / 1e6, 1) < 0.2]
 
         sub_a = sum(r[col_a] for r in key_items)
         sub_b = sum(r[col_b] for r in key_items)
