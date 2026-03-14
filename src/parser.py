@@ -27,10 +27,12 @@ EMPTY_ROW_THRESHOLD = 10
 
 
 def extract_snapshot_from_filename(filename: str) -> str:
-    match = re.search(r"\((\d+\+\d+)\)", filename)
-    if not match:
+    nm = re.search(r"\((\d+\+\d+)\)", filename)
+    if not nm:
         raise ValueError(f"Cannot extract snapshot from filename: {filename}")
-    return match.group(1)
+    fy = re.search(r"Revenue[_ ]+(\d{2})", filename)
+    fy_year = f"FY{fy.group(1)}" if fy else "FY26"
+    return f"{fy_year} {nm.group(1)}"
 
 
 def parse_annual_header(header: str) -> tuple[str, str]:

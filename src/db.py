@@ -88,7 +88,11 @@ class FeeIncomeDB:
         snapshots = self.list_snapshots()
         if not snapshots:
             return None
-        return max(snapshots, key=lambda s: int(s.split("+")[0]))
+        import re
+        def sort_key(s):
+            m = re.search(r"(\d+)\+\d+", s)
+            return int(m.group(1)) if m else 0
+        return max(snapshots, key=sort_key)
 
     def get_drivers(self, snapshot: str, table_type: str) -> dict[str, str]:
         """Return {project_name: driver_text} for a given snapshot and table type."""

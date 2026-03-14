@@ -30,7 +30,10 @@ def sort_by_platform(data: list[dict], platform_key: str = "platform") -> list[d
 
 
 def get_snapshot_n_value(snapshot: str) -> int:
-    return int(snapshot.split("+")[0])
+    """Extract N from snapshot like 'FY26 2+10' or '2+10'."""
+    import re
+    match = re.search(r"(\d+)\+\d+", snapshot)
+    return int(match.group(1)) if match else 0
 
 
 def get_fee_by_project_fy(db, snapshot: str) -> list[dict]:
