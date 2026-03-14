@@ -624,7 +624,7 @@ def main():
             row_hl = hl_style(row_total_a, row_total_b)
             proj_note = saved_notes.get(proj, "")
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px; color:#555;">{proj_note}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px; color:#555; min-width:200px;">{proj_note}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -804,7 +804,7 @@ def main():
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
             cmp_note = cmp_notes.get(row_proj, "")
-            val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; font-size:10px; color:#555;">{cmp_note}</td>'
+            val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; font-size:10px; color:#555; min-width:200px;">{cmp_note}</td>'
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
 
         # Last platform subtotal
