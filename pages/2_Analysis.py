@@ -549,6 +549,7 @@ def main():
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
             <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Variance</th>
+            <th style="padding:4px 6px; border:1px solid #cbd5e0;" rowspan="2">Note</th>
         </tr>
         <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; font-size:10px; text-align:center;">
             {ft_headers_a}
@@ -576,6 +577,7 @@ def main():
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
             var = total_a - total_b
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; background:#edf2f7;"></td>'
             return f'<tr>{cells}</tr>'
 
         for idx, key in enumerate(all_proj_keys):
@@ -617,11 +619,12 @@ def main():
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
 
-            # Variance column (Total A - Total B) — with note tooltip if exists
+            # Variance column + Note column
             row_var = row_total_a - row_total_b
             row_hl = hl_style(row_total_a, row_total_b)
             proj_note = saved_notes.get(proj, "")
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d, proj_note)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d)}</td>'
+            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px; color:#555;">{proj_note}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -641,6 +644,7 @@ def main():
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
         gt_var = gt_total_a - gt_total_b
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
+        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0;"></td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table>"
@@ -731,6 +735,7 @@ def main():
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{labels[i]}</th>'
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{short_a} vs {short_b}</th>'
             header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">%</th>'
+        header_html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; text-align:left;">Note</th>'
 
         html = f"""<table style="border-collapse:collapse; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
         <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
@@ -753,6 +758,7 @@ def main():
                 cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(t / d)}</td>'
                 cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_cell(tv)}</td>'
                 cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{tp}</td>'
+            cells += f'<td style="padding:5px 8px; border:1px solid #cbd5e0; background:#edf2f7;"></td>'
             return f'<tr>{cells}</tr>'
 
         totals = {lbl: 0.0 for lbl in labels}
@@ -793,11 +799,12 @@ def main():
                 plat_subtotals[labels[i]] += v
                 var = (base_val - v) / d
                 pct = f"{(base_val - v) / abs(v) * 100:+.0f}%" if v != 0 else "-"
-                note = cmp_notes.get(row_proj, "") if i == 1 else ""
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{fv(v / d)}</td>'
-                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{colored_var(var, note)}</td>'
+                val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{colored_var(var)}</td>'
                 val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; text-align:right;">{pct}</td>'
 
+            cmp_note = cmp_notes.get(row_proj, "")
+            val_cells += f'<td style="padding:4px 8px; border:1px solid #cbd5e0; font-size:10px; color:#555;">{cmp_note}</td>'
             html += f'<tr style="background:{bg};">{label_cells}{val_cells}</tr>'
 
         # Last platform subtotal
@@ -818,6 +825,7 @@ def main():
             total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_cell(tv)}</td>'
             total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0; text-align:right;">{tp}</td>'
 
+        total_val_cells += f'<td style="padding:6px 8px; border:1px solid #cbd5e0;"></td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{empty_label_cells}{total_val_cells}</tr>'
         html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
