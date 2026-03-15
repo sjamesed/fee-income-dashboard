@@ -144,74 +144,6 @@ def query_metric(db, snapshot, metric_key, metric_def):
     return sort_by_platform(rows)
 
 
-def build_project_table_html(data, metric_label, show_platform=True):
-    """Build styled HTML table for Fee by Project."""
-    if not data:
-        return "<p>No data</p>"
-
-    platform_col = '<th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Platform</th>' if show_platform else ""
-    html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
-    <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
-        {platform_col}
-        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:left;">Project</th>
-        <th style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{metric_label}</th>
-    </tr></thead><tbody>"""
-
-    # Filter out rows where value is 0
-    data = [r for r in data if abs(r["value"]) >= 500]
-
-    total = 0
-    plat_subtotal = 0
-    prev_platform = None
-    for i, row in enumerate(data):
-        bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
-        val = row["value"] / divisor()
-        total += row["value"]
-        plat = row["platform"]
-
-        # Insert subtotal when platform changes
-        if show_platform and prev_platform is not None and plat != prev_platform:
-            html += f"""<tr style="background:#edf2f7; font-weight:bold;">
-                <td style="padding:5px 10px; border:1px solid #cbd5e0;" colspan="2">Subtotal — {prev_platform}</td>
-                <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(plat_subtotal / divisor())}</td>
-            </tr>"""
-            plat_subtotal = 0
-
-        plat_subtotal += row["value"]
-        prev_platform = plat
-
-        # Show platform name only on first row of each platform group
-        if show_platform:
-            plat_display = f"<b>{plat}</b>" if plat != (data[i-1]["platform"] if i > 0 else None) else ""
-            plat_td = f'<td style="padding:5px 10px; border:1px solid #cbd5e0;">{plat_display}</td>'
-        else:
-            plat_td = ""
-
-        html += f"""<tr style="background:{bg};">
-            {plat_td}
-            <td style="padding:5px 10px; border:1px solid #cbd5e0;">{row["project_name"]}</td>
-            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(val)}</td>
-        </tr>"""
-
-    # Last platform subtotal
-    if show_platform and prev_platform is not None:
-        html += f"""<tr style="background:#edf2f7; font-weight:bold;">
-            <td style="padding:5px 10px; border:1px solid #cbd5e0;" colspan="2">Subtotal — {prev_platform}</td>
-            <td style="padding:5px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(plat_subtotal / divisor())}</td>
-        </tr>"""
-
-    # Grand Total
-    plat_td = f'<td style="padding:6px 10px; border:1px solid #cbd5e0;"></td>' if show_platform else ""
-    html += f"""<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
-        {plat_td}
-        <td style="padding:6px 10px; border:1px solid #cbd5e0;">Grand Total</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e0; text-align:right;">{fv(total/divisor())}</td>
-    </tr>"""
-
-    html += "</tbody></table>"
-    return html
-
-
 def build_comparison_table_html(data_a, data_b, label_a, label_b):
     """Build side-by-side comparison HTML table with variance."""
     # Merge data by project
@@ -465,37 +397,31 @@ def main():
     option_labels = list(options.keys())
 
     # --- View mode ---
-    mode = st.radio("View", ["Single Metric", "Fee by Project (FY)", "Monthly Detail"], horizontal=True)
+    mode = st.radio("View", ["Fee by Project (FY)", "Monthly Detail"], horizontal=True)
 
-    if mode == "Single Metric":
-        chosen = st.selectbox("Select Metric", option_labels, index=option_labels.index("FY26 Bud"))
-        data = query_metric(db, selected, chosen, options[chosen])
-        # Filter zero rows
-        data = [r for r in data if abs(r["value"]) >= 500]
-        html = build_project_table_html(data, chosen)
-        st.markdown(html, unsafe_allow_html=True)
-        st.caption(f"Unit: {unit_label()}")
-        # Export
-        if data:
-            exp_rows = [{"Platform": r["platform"], "Project": r["project_name"], chosen: r["value"] / divisor()} for r in data]
-            export_button(pd.DataFrame(exp_rows), f"fee_by_project_{chosen}.xlsx")
-
-    elif mode == "Fee by Project (FY)":
+    if mode == "Fee by Project (FY)":
         # Pivoted table: rows = Platform/Project, cols = Fee Type, with two metric blocks side by side
         FT_COLS = ["Asset Mgmt Fee", "Development Mgmt Fee", "Leasing Fee", "Acq / Div Fee", "Promote Fee", "Other Fee"]
         FT_SHORT = {"Asset Mgmt Fee": "AM Fee", "Development Mgmt Fee": "DM Fee",
                      "Leasing Fee": "Leasing Fee", "Acq / Div Fee": "Acq Fee", "Promote Fee": "Promote", "Other Fee": "Other"}
 
-        col1, col2 = st.columns(2)
-        with col1:
+        num_metrics_ftp = st.radio("Number of metrics", ["1", "2"], index=1, horizontal=True, key="ftp_num_metrics")
+        num_metrics_ftp = int(num_metrics_ftp)
+
+        if num_metrics_ftp == 2:
+            col1, col2 = st.columns(2)
+            with col1:
+                label_a = st.selectbox("Metric 1", option_labels,
+                                        index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a")
+            with col2:
+                label_b = st.selectbox("Metric 2", option_labels,
+                                        index=option_labels.index("FY26 Bud"), key="ftp_b")
+        else:
             label_a = st.selectbox("Metric 1", option_labels,
-                                    index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a")
-        with col2:
-            label_b = st.selectbox("Metric 2", option_labels,
-                                    index=option_labels.index("FY26 Bud"), key="ftp_b")
+                                    index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a_single")
 
         data_a = query_metric_by_fee_type(db, selected, options[label_a])
-        data_b = query_metric_by_fee_type(db, selected, options[label_b])
+        data_b = query_metric_by_fee_type(db, selected, options[label_b]) if num_metrics_ftp == 2 else []
 
         # Build lookup: (platform, project) -> {fee_type: value}
         def build_ft_lookup(data):
@@ -508,7 +434,7 @@ def main():
             return lookup
 
         lookup_a = build_ft_lookup(data_a)
-        lookup_b = build_ft_lookup(data_b)
+        lookup_b = build_ft_lookup(data_b) if num_metrics_ftp == 2 else {}
         all_proj_keys = sorted(set(lookup_a.keys()) | set(lookup_b.keys()),
             key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1]))
 
@@ -518,11 +444,6 @@ def main():
 
         d = divisor()
         short_a = label_a.split("(")[0].strip() if "(" in label_a else label_a
-        short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
-
-        # Load saved notes for this metric pair
-        ftp_note_key = f"ftp_{label_a}_vs_{label_b}"
-        saved_notes = db.get_drivers(selected, ftp_note_key)
 
         # Highlight threshold: abs variance >= 0.3M (300,000 USD)
         HIGHLIGHT_THRESHOLD = 300_000
@@ -541,7 +462,6 @@ def main():
 
         # Build HTML with two header rows + Variance column
         ft_headers_a = "".join(f'<th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-size:10px;">{FT_SHORT[ft]}</th>' for ft in FT_COLS)
-        ft_headers_b = ft_headers_a
 
         sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
         # Frozen column styles (sticky left)
@@ -550,24 +470,47 @@ def main():
         frz0_data = "position:sticky; left:0; z-index:1;"
         frz1_data = "position:sticky; left:100px; z-index:1;"
 
-        html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
-        <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
-        <thead>
-        <tr style="font-weight:bold; text-align:center;">
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">Platform</th>
-            <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">Project</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Variance</th>
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Note</th>
-        </tr>
-        <tr style="font-weight:bold; font-size:10px; text-align:center;">
-            {ft_headers_a.replace('style="', f'style="{sty_th} top:28px; ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
-            {ft_headers_b.replace('style="', f'style="{sty_th} top:28px; ')}
-            <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
-        </tr>
-        </thead><tbody>"""
+        if num_metrics_ftp == 2:
+            short_b = label_b.split("(")[0].strip() if "(" in label_b else label_b
+
+            # Load saved notes for this metric pair
+            ftp_note_key = f"ftp_{label_a}_vs_{label_b}"
+            saved_notes = db.get_drivers(selected, ftp_note_key)
+
+            ft_headers_b = ft_headers_a
+
+            html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
+            <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+            <thead>
+            <tr style="font-weight:bold; text-align:center;">
+                <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">Platform</th>
+                <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">Project</th>
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_b}</th>
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Variance</th>
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Note</th>
+            </tr>
+            <tr style="font-weight:bold; font-size:10px; text-align:center;">
+                {ft_headers_a.replace('style="', f'style="{sty_th} top:28px; ')}
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
+                {ft_headers_b.replace('style="', f'style="{sty_th} top:28px; ')}
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
+            </tr>
+            </thead><tbody>"""
+        else:
+            html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
+            <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:11px; font-family:Calibri,sans-serif;">
+            <thead>
+            <tr style="font-weight:bold; text-align:center;">
+                <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz0} min-width:100px;" rowspan="2">Platform</th>
+                <th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0; {frz1} min-width:120px;" rowspan="2">Project</th>
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="{len(FT_COLS) + 1}">{label_a}</th>
+            </tr>
+            <tr style="font-weight:bold; font-size:10px; text-align:center;">
+                {ft_headers_a.replace('style="', f'style="{sty_th} top:28px; ')}
+                <th style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>
+            </tr>
+            </thead><tbody>"""
 
         plat_sub_a = {ft: 0.0 for ft in FT_COLS}
         plat_sub_b = {ft: 0.0 for ft in FT_COLS}
@@ -581,13 +524,14 @@ def main():
             for ft in FT_COLS:
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_a[ft]/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_a/d)}</td>'
-            total_b = sum(sub_b.values())
-            for ft in FT_COLS:
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
-            var = total_a - total_b
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; background:#edf2f7;"></td>'
+            if num_metrics_ftp == 2:
+                total_b = sum(sub_b.values())
+                for ft in FT_COLS:
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(sub_b[ft]/d)}</td>'
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(total_b/d)}</td>'
+                var = total_a - total_b
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fmt_var_val(var)}</td>'
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; background:#edf2f7;"></td>'
             return f'<tr>{cells}</tr>'
 
         for idx, key in enumerate(all_proj_keys):
@@ -614,27 +558,28 @@ def main():
                 row_total_a += va
                 plat_sub_a[ft] += va
                 grand_a[ft] += va
-                hl = hl_style(va, vb)
+                hl = hl_style(va, vb) if num_metrics_ftp == 2 else ""
                 cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(va/d)}</td>'
             cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_a/d)}</td>'
 
-            row_total_b = 0
-            for ft in FT_COLS:
-                va = ft_vals_a.get(ft, 0)
-                vb = ft_vals_b.get(ft, 0)
-                row_total_b += vb
-                plat_sub_b[ft] += vb
-                grand_b[ft] += vb
-                hl = hl_style(va, vb)
-                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
+            if num_metrics_ftp == 2:
+                row_total_b = 0
+                for ft in FT_COLS:
+                    va = ft_vals_a.get(ft, 0)
+                    vb = ft_vals_b.get(ft, 0)
+                    row_total_b += vb
+                    plat_sub_b[ft] += vb
+                    grand_b[ft] += vb
+                    hl = hl_style(va, vb)
+                    cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;{hl}">{fv(vb/d)}</td>'
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total_b/d)}</td>'
 
-            # Variance column + Note column
-            row_var = row_total_a - row_total_b
-            row_hl = hl_style(row_total_a, row_total_b)
-            proj_note = saved_notes.get(proj, "")
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d)}</td>'
-            cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px; color:#555; min-width:200px;">{proj_note}</td>'
+                # Variance column + Note column
+                row_var = row_total_a - row_total_b
+                row_hl = hl_style(row_total_a, row_total_b)
+                proj_note = saved_notes.get(proj, "")
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;{row_hl}">{colored_var(row_var / d)}</td>'
+                cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; font-size:10px; color:#555; min-width:200px;">{proj_note}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -648,13 +593,14 @@ def main():
         for ft in FT_COLS:
             gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_a[ft]/d)}</td>'
         gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_a/d)}</td>'
-        gt_total_b = sum(grand_b.values())
-        for ft in FT_COLS:
-            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
-        gt_var = gt_total_a - gt_total_b
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
-        gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0;"></td>'
+        if num_metrics_ftp == 2:
+            gt_total_b = sum(grand_b.values())
+            for ft in FT_COLS:
+                gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(grand_b[ft]/d)}</td>'
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_total_b/d)}</td>'
+            gt_var = gt_total_a - gt_total_b
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0; text-align:right;">{fmt_var_val(gt_var)}</td>'
+            gt_cells += f'<td style="padding:4px 6px; border:1px solid #cbd5e0;"></td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table></div>"
@@ -668,21 +614,22 @@ def main():
         with st.expander("Open Full Table (for copy & paste)"):
             st.markdown(full_html, unsafe_allow_html=True)
 
-        # Inline note editor — select project, type note, save
-        proj_list = [k[1] for k in all_proj_keys]
-        nc1, nc2, nc3 = st.columns([2, 5, 1])
-        with nc1:
-            note_proj = st.selectbox("Add/edit note for:", [""] + proj_list, key="ftp_note_proj")
-        with nc2:
-            note_text = st.text_input("Note:", value=saved_notes.get(note_proj, "") if note_proj else "",
-                                       key="ftp_note_text", label_visibility="collapsed",
-                                       placeholder="Type variance note here...")
-        with nc3:
-            st.markdown("<div style='padding-top:4px;'></div>", unsafe_allow_html=True)
-            if st.button("💾", key="ftp_save_note") and note_proj:
-                saved_notes[note_proj] = note_text
-                db.save_drivers(selected, ftp_note_key, saved_notes)
-                st.rerun()
+        if num_metrics_ftp == 2:
+            # Inline note editor — select project, type note, save
+            proj_list = [k[1] for k in all_proj_keys]
+            nc1, nc2, nc3 = st.columns([2, 5, 1])
+            with nc1:
+                note_proj = st.selectbox("Add/edit note for:", [""] + proj_list, key="ftp_note_proj")
+            with nc2:
+                note_text = st.text_input("Note:", value=saved_notes.get(note_proj, "") if note_proj else "",
+                                           key="ftp_note_text", label_visibility="collapsed",
+                                           placeholder="Type variance note here...")
+            with nc3:
+                st.markdown("<div style='padding-top:4px;'></div>", unsafe_allow_html=True)
+                if st.button("\U0001f4be", key="ftp_save_note") and note_proj:
+                    saved_notes[note_proj] = note_text
+                    db.save_drivers(selected, ftp_note_key, saved_notes)
+                    st.rerun()
 
         # Export
         exp_rows = []
@@ -690,13 +637,15 @@ def main():
             plat, proj = key
             row = {"Platform": plat, "Project": proj}
             ft_a = lookup_a.get(key, {})
-            ft_b = lookup_b.get(key, {})
             for ft in FT_COLS:
                 row[f"{FT_SHORT[ft]} ({short_a})"] = ft_a.get(ft, 0) / d
-                row[f"{FT_SHORT[ft]} ({short_b})"] = ft_b.get(ft, 0) / d
             row[f"Total ({short_a})"] = sum(ft_a.get(ft, 0) for ft in FT_COLS) / d
-            row[f"Total ({short_b})"] = sum(ft_b.get(ft, 0) for ft in FT_COLS) / d
-            row["Note"] = saved_notes.get(proj, "")
+            if num_metrics_ftp == 2:
+                ft_b = lookup_b.get(key, {})
+                for ft in FT_COLS:
+                    row[f"{FT_SHORT[ft]} ({short_b})"] = ft_b.get(ft, 0) / d
+                row[f"Total ({short_b})"] = sum(ft_b.get(ft, 0) for ft in FT_COLS) / d
+                row["Note"] = saved_notes.get(proj, "")
             exp_rows.append(row)
         export_button(pd.DataFrame(exp_rows), "fee_by_project_fee_type.xlsx")
 
@@ -704,9 +653,12 @@ def main():
         # Monthly data by Project or Fee Type, dual metric comparison
         n = get_snapshot_n_value(selected)
 
+        num_metrics_md = st.radio("Number of metrics", ["1", "2"], index=1, horizontal=True, key="monthly_num_metrics")
+        num_metrics_md = int(num_metrics_md)
+
         view_by = st.radio("View by", ["Project", "Fee Type"], horizontal=True, key="monthly_view")
 
-        # Build monthly metric options: label → (year, period_type)
+        # Build monthly metric options: label -> (year, period_type)
         monthly_metrics = {
             "FY26 Actual": ("2026", "actual"),
             "FY26 Budget": ("2026", "budget"),
@@ -719,22 +671,26 @@ def main():
         }
         monthly_labels = list(monthly_metrics.keys())
 
-        mc1, mc2 = st.columns(2)
-        with mc1:
+        if num_metrics_md == 2:
+            mc1, mc2 = st.columns(2)
+            with mc1:
+                m1_label = st.selectbox("Metric 1", monthly_labels,
+                                         index=monthly_labels.index(f"FY26 Forecast ({selected})"),
+                                         key="monthly_m1")
+            with mc2:
+                m2_label = st.selectbox("Metric 2", monthly_labels,
+                                         index=monthly_labels.index("FY26 Budget"),
+                                         key="monthly_m2")
+        else:
             m1_label = st.selectbox("Metric 1", monthly_labels,
                                      index=monthly_labels.index(f"FY26 Forecast ({selected})"),
-                                     key="monthly_m1")
-        with mc2:
-            m2_label = st.selectbox("Metric 2", monthly_labels,
-                                     index=monthly_labels.index("FY26 Budget"),
-                                     key="monthly_m2")
+                                     key="monthly_m1_single")
 
         m1_year, pt1 = monthly_metrics[m1_label]
-        m2_year, pt2 = monthly_metrics[m2_label]
         months1 = [f"{m1_year}-{m:02d}" for m in range(1, 13)]
-        months2 = [f"{m2_year}-{m:02d}" for m in range(1, 13)]
-        ph1 = ",".join(["?"] * len(months1))
-        ph2 = ",".join(["?"] * len(months2))
+        if num_metrics_md == 2:
+            m2_year, pt2 = monthly_metrics[m2_label]
+            months2 = [f"{m2_year}-{m:02d}" for m in range(1, 13)]
 
         # Project search
         search = st.text_input("Search project...", key="monthly_search")
@@ -773,7 +729,7 @@ def main():
 
         if view_by == "Project":
             rows1 = query_monthly(["platform", "project_name"], months1, m1_year, pt1)
-            rows2 = query_monthly(["platform", "project_name"], months2, m2_year, pt2)
+            rows2 = query_monthly(["platform", "project_name"], months2, m2_year, pt2) if num_metrics_md == 2 else []
 
             pivot1 = {}
             pivot2 = {}
@@ -789,9 +745,13 @@ def main():
 
             all_keys = sort_by_platform([{"platform": k[0], "project_name": k[1]} for k in all_keys_set])
             all_keys = [(p["platform"], p["project_name"]) for p in all_keys]
-            all_keys = [k for k in all_keys if
-                        any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
-                        any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+            if num_metrics_md == 2:
+                all_keys = [k for k in all_keys if
+                            any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
+                            any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+            else:
+                all_keys = [k for k in all_keys if
+                            any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1)]
 
             # Apply project search filter
             if search:
@@ -815,7 +775,7 @@ def main():
                 extra_params = (filter_proj,)
 
             rows1 = query_monthly(["platform", "project_name", "fee_type"], months1, m1_year, pt1, extra_where, extra_params)
-            rows2 = query_monthly(["platform", "project_name", "fee_type"], months2, m2_year, pt2, extra_where, extra_params)
+            rows2 = query_monthly(["platform", "project_name", "fee_type"], months2, m2_year, pt2, extra_where, extra_params) if num_metrics_md == 2 else []
 
             pivot1 = {}
             pivot2 = {}
@@ -833,9 +793,13 @@ def main():
             all_keys = sorted(all_keys_set,
                 key=lambda k: (PLATFORM_ORDER.index(k[0]) if k[0] in PLATFORM_ORDER else 99, k[1],
                                FT_ORDER.index(k[2]) if k[2] in FT_ORDER else 99))
-            all_keys = [k for k in all_keys if
-                        any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
-                        any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+            if num_metrics_md == 2:
+                all_keys = [k for k in all_keys if
+                            any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1) or
+                            any(abs(pivot2.get(k, {}).get(m, 0)) >= 500 for m in months2)]
+            else:
+                all_keys = [k for k in all_keys if
+                            any(abs(pivot1.get(k, {}).get(m, 0)) >= 500 for m in months1)]
 
             # Apply project search filter
             if search:
@@ -847,7 +811,7 @@ def main():
 
         d = divisor()
 
-        # Build HTML table with dual metrics
+        # Build HTML table
         sty_th = f"background:{HEADER_COLOR}; color:white; position:sticky; z-index:2;"
         frz0 = f"position:sticky; left:0; z-index:3; background:{HEADER_COLOR}; color:white;"
         frz1 = f"position:sticky; left:80px; z-index:3; background:{HEADER_COLOR}; color:white;"
@@ -857,7 +821,6 @@ def main():
         frz2_data = "position:sticky; left:180px; z-index:1;"
 
         month_headers1 = "".join(f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px; font-size:9px;">{MONTH_NAMES[m]}</th>' for m in range(1, 13))
-        month_headers2 = month_headers1
 
         html = f"""<div style="max-height:70vh; overflow:auto; border:1px solid #cbd5e0;">
         <table style="border-collapse:separate; border-spacing:0; width:100%; font-size:10px; font-family:Calibri,sans-serif;">
@@ -876,25 +839,25 @@ def main():
                 html += f'<th style="padding:6px 8px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">{col}</th>'
 
         html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="13">{m1_label}</th>'
-        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="13">{m2_label}</th>'
-        html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Var</th>'
+        if num_metrics_md == 2:
+            html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" colspan="13">{m2_label}</th>'
+            html += f'<th style="padding:4px 6px; border:1px solid #cbd5e0; {sty_th} top:0;" rowspan="2">Var</th>'
         html += "</tr>"
 
         # Row 2: month sub-headers + Total for each metric
         html += '<tr style="font-weight:bold; text-align:center;">'
         html += month_headers1
         html += f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
-        html += month_headers2
-        html += f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
+        if num_metrics_md == 2:
+            html += month_headers1
+            html += f'<th style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; {sty_th} top:28px;">Total</th>'
         html += "</tr></thead><tbody>"
 
         grand_totals1 = {m: 0.0 for m in months1}
-        grand_totals2 = {m: 0.0 for m in months2}
+        grand_totals2 = {m: 0.0 for m in months2} if num_metrics_md == 2 else {}
         prev_plat = None
         plat_totals1 = {m: 0.0 for m in months1}
-        plat_totals2 = {m: 0.0 for m in months2}
-
-        num_month_cols = 13  # 12 months + Total
+        plat_totals2 = {m: 0.0 for m in months2} if num_metrics_md == 2 else {}
 
         def render_monthly_subtotal(label, pt1_totals, pt2_totals):
             sub_cells = f'<td style="padding:2px 3px; border:1px solid #cbd5e0; font-weight:bold; background:#edf2f7; {frz0_data} background:#edf2f7;" colspan="{len(label_cols)}">Subtotal — {label}</td>'
@@ -904,14 +867,15 @@ def main():
                 row_sum1 += v
                 sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
             sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum1/d)}</td>'
-            row_sum2 = 0
-            for m in months2:
-                v = pt2_totals[m]
-                row_sum2 += v
-                sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
-            sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum2/d)}</td>'
-            var_val = (row_sum1 - row_sum2) / d
-            sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{colored_var(var_val)}</td>'
+            if num_metrics_md == 2:
+                row_sum2 = 0
+                for m in months2:
+                    v = pt2_totals[m]
+                    row_sum2 += v
+                    sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(v/d)}</td>'
+                sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{fv(row_sum2/d)}</td>'
+                var_val = (row_sum1 - row_sum2) / d
+                sub_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold; background:#edf2f7;">{colored_var(var_val)}</td>'
             return f'<tr>{sub_cells}</tr>'
 
         for idx, key in enumerate(all_keys):
@@ -923,7 +887,7 @@ def main():
             if prev_plat is not None and current_plat != prev_plat:
                 html += render_monthly_subtotal(prev_plat, plat_totals1, plat_totals2)
                 plat_totals1 = {m: 0.0 for m in months1}
-                plat_totals2 = {m: 0.0 for m in months2}
+                plat_totals2 = {m: 0.0 for m in months2} if num_metrics_md == 2 else {}
             prev_plat = current_plat
 
             # Label cells
@@ -951,20 +915,21 @@ def main():
                 cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
             cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total1/d)}</td>'
 
-            # Metric 2 monthly values
-            month_vals2 = pivot2.get(key, {})
-            row_total2 = 0
-            for m in months2:
-                v = month_vals2.get(m, 0)
-                row_total2 += v
-                plat_totals2[m] += v
-                grand_totals2[m] += v
-                cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-            cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total2/d)}</td>'
+            if num_metrics_md == 2:
+                # Metric 2 monthly values
+                month_vals2 = pivot2.get(key, {})
+                row_total2 = 0
+                for m in months2:
+                    v = month_vals2.get(m, 0)
+                    row_total2 += v
+                    plat_totals2[m] += v
+                    grand_totals2[m] += v
+                    cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+                cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{fv(row_total2/d)}</td>'
 
-            # Variance = Metric 1 Total - Metric 2 Total
-            row_var = (row_total1 - row_total2) / d
-            cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{colored_var(row_var)}</td>'
+                # Variance = Metric 1 Total - Metric 2 Total
+                row_var = (row_total1 - row_total2) / d
+                cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right; font-weight:bold;">{colored_var(row_var)}</td>'
 
             html += f'<tr style="background:{bg};">{cells}</tr>'
 
@@ -980,19 +945,23 @@ def main():
             gt_sum1 += v
             gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
         gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum1/d)}</td>'
-        gt_sum2 = 0
-        for m in months2:
-            v = grand_totals2[m]
-            gt_sum2 += v
-            gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
-        gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum2/d)}</td>'
-        gt_var = (gt_sum1 - gt_sum2) / d
-        gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{colored_var(gt_var)}</td>'
+        if num_metrics_md == 2:
+            gt_sum2 = 0
+            for m in months2:
+                v = grand_totals2[m]
+                gt_sum2 += v
+                gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(v/d)}</td>'
+            gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{fv(gt_sum2/d)}</td>'
+            gt_var = (gt_sum1 - gt_sum2) / d
+            gt_cells += f'<td style="padding:2px 3px; border:1px solid #cbd5e0; text-align:right;">{colored_var(gt_var)}</td>'
         html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">{gt_cells}</tr>'
 
         html += "</tbody></table></div>"
         st.markdown(html, unsafe_allow_html=True)
-        st.caption(f"Unit: {unit_label()} | {m1_label} vs {m2_label}")
+        if num_metrics_md == 2:
+            st.caption(f"Unit: {unit_label()} | {m1_label} vs {m2_label}")
+        else:
+            st.caption(f"Unit: {unit_label()} | {m1_label}")
 
         # Full table for copy & paste
         full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
@@ -1007,18 +976,21 @@ def main():
             parts = get_labels(key)
             row = {col: parts[i] for i, col in enumerate(label_cols)}
             mv1 = pivot1.get(key, {})
-            mv2 = pivot2.get(key, {})
             for m_idx in range(1, 13):
                 mname = MONTH_NAMES[m_idx]
                 row[f"{mname} ({m1_label})"] = mv1.get(months1[m_idx - 1], 0) / d
-                row[f"{mname} ({m2_label})"] = mv2.get(months2[m_idx - 1], 0) / d
             total1 = sum(mv1.get(m, 0) for m in months1) / d
-            total2 = sum(mv2.get(m, 0) for m in months2) / d
             row[f"Total ({m1_label})"] = total1
-            row[f"Total ({m2_label})"] = total2
-            row["Variance"] = total1 - total2
+            if num_metrics_md == 2:
+                mv2 = pivot2.get(key, {})
+                for m_idx in range(1, 13):
+                    mname = MONTH_NAMES[m_idx]
+                    row[f"{mname} ({m2_label})"] = mv2.get(months2[m_idx - 1], 0) / d
+                total2 = sum(mv2.get(m, 0) for m in months2) / d
+                row[f"Total ({m2_label})"] = total2
+                row["Variance"] = total1 - total2
             exp_rows.append(row)
-        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{m1_label}_vs_{m2_label}.xlsx")
+        export_button(pd.DataFrame(exp_rows), f"monthly_detail_{m1_label}.xlsx")
 
 
 main()
