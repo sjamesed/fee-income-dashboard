@@ -65,7 +65,8 @@ def copy_html_button(html_content, key="copy", title=""):
     <script>
     function copyTable() {{
         const b64 = "{b64}";
-        const html = atob(b64);
+        const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+        const html = new TextDecoder('utf-8').decode(bytes);
         const blob = new Blob([html], {{type: 'text/html'}});
         const item = new ClipboardItem({{'text/html': blob}});
         navigator.clipboard.write([item]).then(() => {{
