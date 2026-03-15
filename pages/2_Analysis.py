@@ -8,6 +8,31 @@ from src.queries import get_snapshot_n_value, PLATFORM_ORDER, sort_by_platform
 MONTH_NAMES = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
                7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
 
+
+def copy_html_button(html_content, key="copy"):
+    """Render a button that copies HTML table to clipboard on click."""
+    import streamlit.components.v1 as components
+    escaped = html_content.replace("`", "\\`").replace("${", "\\${")
+    components.html(f"""
+    <button onclick="copyTable()" style="
+        background:#4a5568; color:white; border:none; padding:6px 16px;
+        border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        Copy Table
+    </button>
+    <span id="msg_{key}" style="margin-left:8px; font-size:12px; color:#38a169;"></span>
+    <script>
+    function copyTable() {{
+        const html = `{escaped}`;
+        const blob = new Blob([html], {{type: 'text/html'}});
+        const item = new ClipboardItem({{'text/html': blob}});
+        navigator.clipboard.write([item]).then(() => {{
+            document.getElementById('msg_{key}').innerText = 'Copied!';
+            setTimeout(() => document.getElementById('msg_{key}').innerText = '', 2000);
+        }});
+    }}
+    </script>
+    """, height=40)
+
 HEADER_COLOR = "#4a5568"
 
 # Global state for unit toggle
@@ -607,12 +632,11 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
-        # Full HTML view for copy & paste
+        # Copy table button
         full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
-        full_html = full_html.replace('position:sticky; z-index:2;', '')
+        full_html = full_html.replace('position:sticky; z-index:2;', '').replace('position:sticky; z-index:1;', '').replace('position:sticky; z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
-        with st.expander("Open Full Table (for copy & paste)"):
-            st.markdown(full_html, unsafe_allow_html=True)
+        copy_html_button(full_html, key="copy_ftp")
 
         if num_metrics_ftp == 2:
             # Inline note editor — select project, type note, save
@@ -963,12 +987,11 @@ def main():
         else:
             st.caption(f"Unit: {unit_label()} | {m1_label}")
 
-        # Full table for copy & paste
+        # Copy table button
         full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
         full_html = full_html.replace('position:sticky;', '').replace('z-index:1;', '').replace('z-index:2;', '').replace('z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
-        with st.expander("Open Full Table (for copy & paste)"):
-            st.markdown(full_html, unsafe_allow_html=True)
+        copy_html_button(full_html, key="copy_monthly")
 
         # Export
         exp_rows = []

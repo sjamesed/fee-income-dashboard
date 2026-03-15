@@ -48,6 +48,31 @@ def export_button(df, filename="export.xlsx", key=None):
     )
 
 
+def copy_html_button(html_content, key="copy"):
+    """Render a button that copies HTML table to clipboard on click."""
+    import streamlit.components.v1 as components
+    escaped = html_content.replace("`", "\\`").replace("${", "\\${")
+    components.html(f"""
+    <button onclick="copyTable()" style="
+        background:#4a5568; color:white; border:none; padding:6px 16px;
+        border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        Copy Table
+    </button>
+    <span id="msg_{key}" style="margin-left:8px; font-size:12px; color:#38a169;"></span>
+    <script>
+    function copyTable() {{
+        const html = `{escaped}`;
+        const blob = new Blob([html], {{type: 'text/html'}});
+        const item = new ClipboardItem({{'text/html': blob}});
+        navigator.clipboard.write([item]).then(() => {{
+            document.getElementById('msg_{key}').innerText = 'Copied!';
+            setTimeout(() => document.getElementById('msg_{key}').innerText = '', 2000);
+        }});
+    }}
+    </script>
+    """, height=40)
+
+
 def render_metric_card(label, actual, budget, color_up="red", color_down="blue"):
     """Render a metric card with colored variance."""
     var = actual - budget
@@ -299,10 +324,7 @@ def main():
             "Variance Driver": "",
         })
         export_button(pd.DataFrame(exp_rows), f"variance_{table_key}.xlsx", key=f"export_{table_key}")
-
-        # Open Full Table for copy & paste
-        with st.expander("Open Full Table (for copy & paste)", expanded=False):
-            st.markdown(html, unsafe_allow_html=True)
+        copy_html_button(html, key=f"copy_{table_key}")
 
         # Editable drivers
         with st.expander(f"Edit Variance Drivers — {title}"):
@@ -585,9 +607,7 @@ def main():
     })
     export_button(pd.DataFrame(pnl_exp_rows), "monthly_pnl_fee_income.xlsx", key="export_pnl")
 
-    # Open Full Table for copy & paste
-    with st.expander("Open Full Table (for copy & paste)", expanded=False):
-        st.markdown(html, unsafe_allow_html=True)
+    copy_html_button(html, key="copy_pnl")
 
     # --- Watch List FY2026 (styled HTML table + editable) ---
     st.markdown("---")
