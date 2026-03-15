@@ -101,6 +101,14 @@ class FeeIncomeDB:
 
     def delete_snapshot(self, snapshot: str):
         self.conn.execute("DELETE FROM fee_income WHERE snapshot = ?", (snapshot,))
+        self.conn.execute("DELETE FROM variance_drivers WHERE snapshot = ?", (snapshot,))
+        self.conn.execute("DELETE FROM todo_notes WHERE snapshot = ?", (snapshot,))
+        self.conn.commit()
+
+    def rename_snapshot(self, old_name: str, new_name: str):
+        self.conn.execute("UPDATE fee_income SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
+        self.conn.execute("UPDATE variance_drivers SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
+        self.conn.execute("UPDATE todo_notes SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
         self.conn.commit()
 
     def get_latest_snapshot(self) -> str | None:

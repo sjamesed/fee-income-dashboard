@@ -43,13 +43,28 @@ def main():
     else:
         for snap in snapshots:
             count = db.query("SELECT COUNT(*) as cnt FROM fee_income WHERE snapshot = ?", (snap,))[0]["cnt"]
-            col1, col2, col3 = st.columns([2, 2, 1])
+            col1, col2, col3, col4 = st.columns([3, 2, 1, 1])
             col1.write(f"**{snap}**")
             col2.write(f"{count:,} rows")
-            if col3.button("Delete", key=f"del_{snap}"):
+            if col3.button("Rename", key=f"ren_{snap}"):
+                st.session_state[f"renaming_{snap}"] = True
+            if col4.button("Delete", key=f"del_{snap}"):
                 db.delete_snapshot(snap)
                 st.cache_data.clear()
                 st.rerun()
+            # Rename input row
+            if st.session_state.get(f"renaming_{snap}"):
+                rc1, rc2 = st.columns([3, 1])
+                new_name = rc1.text_input("New name:", value=snap, key=f"rename_input_{snap}")
+                if rc2.button("Save", key=f"rename_save_{snap}"):
+                    if new_name and new_name != snap:
+                        db.rename_snapshot(snap, new_name)
+                        st.session_state[f"renaming_{snap}"] = False
+                        st.cache_data.clear()
+                        st.rerun()
+                    else:
+                        st.session_state[f"renaming_{snap}"] = False
+                        st.rerun()
 
     st.header("Raw Data Viewer")
     if snapshots:
