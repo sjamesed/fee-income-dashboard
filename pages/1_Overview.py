@@ -1,6 +1,7 @@
 """Page 1: Overview — summary cards, FY tables, variance commentary, and watch list."""
 import streamlit as st
 import pandas as pd
+import io
 from src.db import FeeIncomeDB
 from src.queries import (
     get_fee_by_project_fy, get_fee_by_platform_fy,
@@ -32,6 +33,19 @@ def add_grand_total(df: pd.DataFrame, label_col: str, numeric_cols: list[str]) -
             totals[col] = ""
     totals_df = pd.DataFrame([totals])
     return pd.concat([df, totals_df], ignore_index=True)
+
+
+def export_button(df, filename="export.xlsx", key=None):
+    """Render an Excel download button."""
+    buf = io.BytesIO()
+    df.to_excel(buf, index=False, engine="openpyxl")
+    st.download_button(
+        label="Export to Excel",
+        data=buf.getvalue(),
+        file_name=filename,
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key=key,
+    )
 
 
 def render_metric_card(label, actual, budget, color_up="red", color_down="blue"):
@@ -251,6 +265,45 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption("Unit: USD millions")
 
+        # Export to Excel
+        exp_rows = []
+        for item in key_items:
+            name = item["project_name"]
+            v = item["_var"] / 1e6
+            exp_rows.append({
+                "Project": name,
+                label_a: round(item[col_a] / 1e6, 1),
+                label_b: round(item[col_b] / 1e6, 1),
+                "Variance": round(v, 1),
+                "Variance Driver": saved_drivers.get(name, ""),
+            })
+        exp_rows.append({
+            "Project": "Subtotal (Key Items)",
+            label_a: round(sub_a / 1e6, 1),
+            label_b: round(sub_b / 1e6, 1),
+            "Variance": round((sub_a - sub_b) / 1e6, 1),
+            "Variance Driver": "",
+        })
+        exp_rows.append({
+            "Project": "Other (net)",
+            label_a: round(other_a / 1e6, 1),
+            label_b: round(other_b / 1e6, 1),
+            "Variance": round((other_a - other_b) / 1e6, 1),
+            "Variance Driver": "",
+        })
+        exp_rows.append({
+            "Project": "Grand Total",
+            label_a: round(total_a / 1e6, 1),
+            label_b: round(total_b / 1e6, 1),
+            "Variance": round((total_a - total_b) / 1e6, 1),
+            "Variance Driver": "",
+        })
+        export_button(pd.DataFrame(exp_rows), f"variance_{table_key}.xlsx", key=f"export_{table_key}")
+
+        # Open Full Table for copy & paste
+        with st.expander("Open Full Table (for copy & paste)", expanded=False):
+            st.markdown(html, unsafe_allow_html=True)
+
         # Editable drivers
         with st.expander(f"Edit Variance Drivers — {title}"):
             updated = {}
@@ -451,6 +504,90 @@ def main():
     html += "</tbody></table>"
     st.markdown(html, unsafe_allow_html=True)
     st.caption("Unit: USD millions")
+
+    # Export Monthly P&L table to Excel
+    pnl_exp_rows = []
+    for ft in FEE_TYPE_ORDER:
+        ma = mtd_act_by_type.get(ft, 0)
+        mb = mtd_bud_by_type.get(ft, 0)
+        ya = ytd_act_by_type.get(ft, 0)
+        yb = ytd_bud_by_type.get(ft, 0)
+        ff = fy_fcst_by_type.get(ft, 0)
+        fb = fy_bud_by_type.get(ft, 0)
+        f5 = fy25_act_by_type.get(ft, 0)
+        pnl_exp_rows.append({
+            "Fee Type": ft,
+            f"MTD {month_name} Actual": round(ma / 1e6, 1),
+            f"MTD {month_name} Budget": round(mb / 1e6, 1),
+            f"MTD Var": round((ma - mb) / 1e6, 1),
+            f"YTD {month_name} Actual": round(ya / 1e6, 1),
+            f"YTD {month_name} Budget": round(yb / 1e6, 1),
+            f"YTD Var": round((ya - yb) / 1e6, 1),
+            f"FY26 Fcst": round(ff / 1e6, 1),
+            f"FY26 Budget": round(fb / 1e6, 1),
+            f"FY26 Var": round((ff - fb) / 1e6, 1),
+            f"FY26 Fcst (YoY)": round(ff / 1e6, 1),
+            f"FY25 Actual": round(f5 / 1e6, 1),
+            f"YoY Var": round((ff - f5) / 1e6, 1),
+        })
+    # Add subtotal (excl promote), promote, and total rows
+    pnl_exp_rows.append({
+        "Fee Type": "Fee Income excl. Promote",
+        f"MTD {month_name} Actual": round(excl_promote["mtd_a"] / 1e6, 1),
+        f"MTD {month_name} Budget": round(excl_promote["mtd_b"] / 1e6, 1),
+        f"MTD Var": round((excl_promote["mtd_a"] - excl_promote["mtd_b"]) / 1e6, 1),
+        f"YTD {month_name} Actual": round(excl_promote["ytd_a"] / 1e6, 1),
+        f"YTD {month_name} Budget": round(excl_promote["ytd_b"] / 1e6, 1),
+        f"YTD Var": round((excl_promote["ytd_a"] - excl_promote["ytd_b"]) / 1e6, 1),
+        f"FY26 Fcst": round(excl_promote["fy_f"] / 1e6, 1),
+        f"FY26 Budget": round(excl_promote["fy_b"] / 1e6, 1),
+        f"FY26 Var": round((excl_promote["fy_f"] - excl_promote["fy_b"]) / 1e6, 1),
+        f"FY26 Fcst (YoY)": round(excl_promote["fy_f"] / 1e6, 1),
+        f"FY25 Actual": round(excl_promote["fy25"] / 1e6, 1),
+        f"YoY Var": round((excl_promote["fy_f"] - excl_promote["fy25"]) / 1e6, 1),
+    })
+    pnl_exp_rows.append({
+        "Fee Type": "Promote Fee",
+        f"MTD {month_name} Actual": round(pm_a / 1e6, 1),
+        f"MTD {month_name} Budget": round(pm_b / 1e6, 1),
+        f"MTD Var": round((pm_a - pm_b) / 1e6, 1),
+        f"YTD {month_name} Actual": round(py_a / 1e6, 1),
+        f"YTD {month_name} Budget": round(py_b / 1e6, 1),
+        f"YTD Var": round((py_a - py_b) / 1e6, 1),
+        f"FY26 Fcst": round(pf_f / 1e6, 1),
+        f"FY26 Budget": round(pf_b / 1e6, 1),
+        f"FY26 Var": round((pf_f - pf_b) / 1e6, 1),
+        f"FY26 Fcst (YoY)": round(pf_f / 1e6, 1),
+        f"FY25 Actual": round(pf_5 / 1e6, 1),
+        f"YoY Var": round((pf_f - pf_5) / 1e6, 1),
+    })
+    t_mtd_a = excl_promote["mtd_a"] + pm_a
+    t_mtd_b = excl_promote["mtd_b"] + pm_b
+    t_ytd_a = excl_promote["ytd_a"] + py_a
+    t_ytd_b = excl_promote["ytd_b"] + py_b
+    t_fy_f = excl_promote["fy_f"] + pf_f
+    t_fy_b = excl_promote["fy_b"] + pf_b
+    t_fy25 = excl_promote["fy25"] + pf_5
+    pnl_exp_rows.append({
+        "Fee Type": "Fee Income",
+        f"MTD {month_name} Actual": round(t_mtd_a / 1e6, 1),
+        f"MTD {month_name} Budget": round(t_mtd_b / 1e6, 1),
+        f"MTD Var": round((t_mtd_a - t_mtd_b) / 1e6, 1),
+        f"YTD {month_name} Actual": round(t_ytd_a / 1e6, 1),
+        f"YTD {month_name} Budget": round(t_ytd_b / 1e6, 1),
+        f"YTD Var": round((t_ytd_a - t_ytd_b) / 1e6, 1),
+        f"FY26 Fcst": round(t_fy_f / 1e6, 1),
+        f"FY26 Budget": round(t_fy_b / 1e6, 1),
+        f"FY26 Var": round((t_fy_f - t_fy_b) / 1e6, 1),
+        f"FY26 Fcst (YoY)": round(t_fy_f / 1e6, 1),
+        f"FY25 Actual": round(t_fy25 / 1e6, 1),
+        f"YoY Var": round((t_fy_f - t_fy25) / 1e6, 1),
+    })
+    export_button(pd.DataFrame(pnl_exp_rows), "monthly_pnl_fee_income.xlsx", key="export_pnl")
+
+    # Open Full Table for copy & paste
+    with st.expander("Open Full Table (for copy & paste)", expanded=False):
+        st.markdown(html, unsafe_allow_html=True)
 
     # --- Watch List FY2026 (styled HTML table + editable) ---
     st.markdown("---")
