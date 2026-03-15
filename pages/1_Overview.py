@@ -193,6 +193,37 @@ def main():
     # Row 4: FY26 Fcst vs FY25 Act
     metric_row("YoY", fy_fcst, fcst_label, fy25_act, "FY25 Actual")
 
+    # Export / Copy for FY26 summary
+    summary_rows = [
+        {"": fcst_label, "Actual/Fcst": f"${format_millions(fy_fcst)}M", "Budget/Comp": f"${format_millions(fy_bud)}M", "Variance": f"${format_millions(fy_fcst - fy_bud)}M"},
+        {"": f"MTD {month_name}", "Actual/Fcst": f"${format_millions(mtd_act_total)}M", "Budget/Comp": f"${format_millions(mtd_bud_total)}M", "Variance": f"${format_millions(mtd_act_total - mtd_bud_total)}M"},
+        {"": f"YTD Jan-{month_name}", "Actual/Fcst": f"${format_millions(ytd_act_total)}M", "Budget/Comp": f"${format_millions(ytd_bud_total)}M", "Variance": f"${format_millions(ytd_act_total - ytd_bud_total)}M"},
+        {"": f"{fcst_label} vs FY25", "Actual/Fcst": f"${format_millions(fy_fcst)}M", "Budget/Comp": f"${format_millions(fy25_act)}M", "Variance": f"${format_millions(fy_fcst - fy25_act)}M"},
+    ]
+    HEADER_COLOR_S = "#4a5568"
+    summary_html = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif;">
+    <thead><tr style="background:{HEADER_COLOR_S}; color:white; font-weight:bold;">
+        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Metric</th>
+        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Actual / Fcst</th>
+        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Budget / Comp</th>
+        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Variance</th>
+    </tr></thead><tbody>"""
+    for i, r in enumerate(summary_rows):
+        bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+        summary_html += f"""<tr style="background:{bg};">
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; font-weight:bold;">{r[""]}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Actual/Fcst"]}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Budget/Comp"]}</td>
+            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Variance"]}</td>
+        </tr>"""
+    summary_html += "</tbody></table>"
+
+    sc1, sc2 = st.columns(2)
+    with sc1:
+        export_button(pd.DataFrame(summary_rows), "fy26_fee_income_summary.xlsx", key="export_summary")
+    with sc2:
+        copy_html_button(summary_html, key="copy_summary")
+
     # --- Variance Tables (email-style with styled HTML + editable drivers) ---
     st.markdown("---")
 
