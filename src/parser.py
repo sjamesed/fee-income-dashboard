@@ -27,10 +27,20 @@ EMPTY_ROW_THRESHOLD = 10
 
 
 def extract_snapshot_from_filename(filename: str) -> str:
+    """Extract snapshot name from filename.
+
+    Supported formats:
+        Revenue_26 Bud and 25 Fcst (2+10).xlsx → FY26 2+10
+        Revenue_26 Fcst (3+9).xlsx             → FY26 3+9
+        Revenue_27 Fcst (1+11).xlsx            → FY27 1+11
+        Any file with (N+M) pattern            → FY{YY} N+M
+    """
     nm = re.search(r"\((\d+\+\d+)\)", filename)
     if not nm:
-        raise ValueError(f"Cannot extract snapshot from filename: {filename}")
-    fy = re.search(r"Revenue[_ ]+(\d{2})", filename)
+        raise ValueError(f"Cannot extract snapshot from filename: {filename}. "
+                         f"Expected (N+M) pattern, e.g. Revenue_26 Fcst (2+10).xlsx")
+    # Try multiple patterns to find fiscal year
+    fy = re.search(r"Revenue[_ ]*(\d{2})", filename) or re.search(r"FY(\d{2})", filename, re.IGNORECASE)
     fy_year = f"FY{fy.group(1)}" if fy else "FY26"
     return f"{fy_year} {nm.group(1)}"
 

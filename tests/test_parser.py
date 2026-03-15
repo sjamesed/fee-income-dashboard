@@ -10,8 +10,14 @@ from src.parser import (
 def test_extract_snapshot_basic():
     assert extract_snapshot_from_filename("Revenue_26 Bud and 25 Fcst (2+10).xlsx") == "FY26 2+10"
 
+def test_extract_snapshot_short_name():
+    assert extract_snapshot_from_filename("Revenue_26 Fcst (3+9).xlsx") == "FY26 3+9"
+
 def test_extract_snapshot_year_end():
     assert extract_snapshot_from_filename("Revenue_26 Bud and 25 Fcst (12+0).xlsx") == "FY26 12+0"
+
+def test_extract_snapshot_fy27():
+    assert extract_snapshot_from_filename("Revenue_27 Fcst (1+11).xlsx") == "FY27 1+11"
 
 def test_extract_snapshot_invalid():
     with pytest.raises(ValueError):
