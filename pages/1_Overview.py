@@ -193,34 +193,45 @@ def main():
     # Row 4: FY26 Fcst vs FY25 Act
     metric_row("YoY", fy_fcst, fcst_label, fy25_act, "FY25 Actual")
 
-    # Export / Copy for FY26 summary
-    summary_rows = [
-        {"": fcst_label, "Actual/Fcst": f"${format_millions(fy_fcst)}M", "Budget/Comp": f"${format_millions(fy_bud)}M", "Variance": f"${format_millions(fy_fcst - fy_bud)}M"},
-        {"": f"MTD {month_name}", "Actual/Fcst": f"${format_millions(mtd_act_total)}M", "Budget/Comp": f"${format_millions(mtd_bud_total)}M", "Variance": f"${format_millions(mtd_act_total - mtd_bud_total)}M"},
-        {"": f"YTD Jan-{month_name}", "Actual/Fcst": f"${format_millions(ytd_act_total)}M", "Budget/Comp": f"${format_millions(ytd_bud_total)}M", "Variance": f"${format_millions(ytd_act_total - ytd_bud_total)}M"},
-        {"": f"{fcst_label} vs FY25", "Actual/Fcst": f"${format_millions(fy_fcst)}M", "Budget/Comp": f"${format_millions(fy25_act)}M", "Variance": f"${format_millions(fy_fcst - fy25_act)}M"},
+    # Export / Copy for FY26 summary — matching the card layout
+    summary_data = [
+        (fcst_label, f"${format_millions(fy_fcst)}M", "FY26 Budget", f"${format_millions(fy_bud)}M", fy_fcst - fy_bud),
+        (f"MTD {month_name} Actual", f"${format_millions(mtd_act_total)}M", f"MTD {month_name} Budget", f"${format_millions(mtd_bud_total)}M", mtd_act_total - mtd_bud_total),
+        (f"YTD Jan-{month_name} Actual", f"${format_millions(ytd_act_total)}M", f"YTD Jan-{month_name} Budget", f"${format_millions(ytd_bud_total)}M", ytd_act_total - ytd_bud_total),
+        (fcst_label, f"${format_millions(fy_fcst)}M", "FY25 Actual", f"${format_millions(fy25_act)}M", fy_fcst - fy25_act),
     ]
-    HEADER_COLOR_S = "#4a5568"
-    summary_html = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif;">
-    <thead><tr style="background:{HEADER_COLOR_S}; color:white; font-weight:bold;">
-        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Metric</th>
-        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Actual / Fcst</th>
-        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Budget / Comp</th>
-        <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:right;">Variance</th>
-    </tr></thead><tbody>"""
-    for i, r in enumerate(summary_rows):
-        bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
-        summary_html += f"""<tr style="background:{bg};">
-            <td style="padding:6px 12px; border:1px solid #cbd5e0; font-weight:bold;">{r[""]}</td>
-            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Actual/Fcst"]}</td>
-            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Budget/Comp"]}</td>
-            <td style="padding:6px 12px; border:1px solid #cbd5e0; text-align:right;">{r["Variance"]}</td>
+    summary_html = """<table style="border-collapse:collapse; font-size:13px; font-family:Calibri,sans-serif; width:100%;">"""
+    for act_label, act_val, bud_label, bud_val, var in summary_data:
+        var_color = "#38a169" if var >= 0 else "#c53030"
+        sign = "+" if var >= 0 else ""
+        var_pct = f" ({var / abs(float(bud_val.replace('$','').replace('M','')) * 1e6) * 100:+.1f}%)" if float(bud_val.replace('$','').replace('M','')) != 0 else ""
+        summary_html += f"""<tr>
+            <td style="padding:10px 14px; background:#f7fafc; border:2px solid white; border-top:3px solid #4a5568; text-align:center; width:33%;">
+                <div style="font-size:11px; color:#718096; text-transform:uppercase;">{act_label}</div>
+                <div style="font-size:20px; font-weight:bold; color:#2d3748;">{act_val}</div>
+            </td>
+            <td style="padding:10px 14px; background:#f7fafc; border:2px solid white; border-top:3px solid #4a5568; text-align:center; width:33%;">
+                <div style="font-size:11px; color:#718096; text-transform:uppercase;">{bud_label}</div>
+                <div style="font-size:20px; font-weight:bold; color:#2d3748;">{bud_val}</div>
+            </td>
+            <td style="padding:10px 14px; background:#f7fafc; border:2px solid white; border-top:3px solid {var_color}; text-align:center; width:33%;">
+                <div style="font-size:11px; color:#718096; text-transform:uppercase;">Variance</div>
+                <div style="font-size:20px; font-weight:bold; color:{var_color};">{sign}{format_millions(var)}M{var_pct}</div>
+            </td>
         </tr>"""
-    summary_html += "</tbody></table>"
+    summary_html += "</table>"
+
+    # Excel export data
+    summary_exp = [
+        {"Metric": fcst_label + " vs Budget", "Actual/Fcst": round(fy_fcst/1e6, 1), "Budget/Comp": round(fy_bud/1e6, 1), "Variance": round((fy_fcst-fy_bud)/1e6, 1)},
+        {"Metric": f"MTD {month_name}", "Actual/Fcst": round(mtd_act_total/1e6, 1), "Budget/Comp": round(mtd_bud_total/1e6, 1), "Variance": round((mtd_act_total-mtd_bud_total)/1e6, 1)},
+        {"Metric": f"YTD Jan-{month_name}", "Actual/Fcst": round(ytd_act_total/1e6, 1), "Budget/Comp": round(ytd_bud_total/1e6, 1), "Variance": round((ytd_act_total-ytd_bud_total)/1e6, 1)},
+        {"Metric": f"{fcst_label} vs FY25", "Actual/Fcst": round(fy_fcst/1e6, 1), "Budget/Comp": round(fy25_act/1e6, 1), "Variance": round((fy_fcst-fy25_act)/1e6, 1)},
+    ]
 
     sc1, sc2 = st.columns(2)
     with sc1:
-        export_button(pd.DataFrame(summary_rows), "fy26_fee_income_summary.xlsx", key="export_summary")
+        export_button(pd.DataFrame(summary_exp), "fy26_fee_income_summary.xlsx", key="export_summary")
     with sc2:
         copy_html_button(summary_html, key="copy_summary")
 
