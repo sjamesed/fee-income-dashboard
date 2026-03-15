@@ -21,31 +21,38 @@ def main():
         st.markdown("""
         **File naming rule:**
         ```
-        Revenue_26 Bud and 25 Fcst (N+M).xlsx
+        Revenue_{YY} Fcst ({N}+{M}).xlsx
         ```
+        - `YY` = fiscal year (e.g. 26, 27)
         - `N` = number of actual months, `M` = forecast months (N+M = 12)
-        - Example: `Revenue_26 Bud and 25 Fcst (3+9).xlsx` → Mar close
+        - Examples:
+          - `Revenue_26 Fcst (2+10).xlsx` → **FY26 2+10** (Feb close)
+          - `Revenue_26 Fcst (3+9).xlsx` → **FY26 3+9** (Mar close)
+          - `Revenue_27 Fcst (1+11).xlsx` → **FY27 1+11** (Jan close)
+        - Old format also supported: `Revenue_26 Bud and 25 Fcst (2+10).xlsx`
 
-        **Snapshot name** is auto-extracted from the filename:
-        - `(2+10)` + `Revenue_26` → **FY26 2+10**
+        **How snapshot is recognized:**
+        - `Revenue_26` → **FY26**
+        - `(2+10)` → **2+10**
+        - Combined → **FY26 2+10**
 
-        **Upload rules:**
-        - The file must contain a sheet named **`Summary_new template (작성탭)`**
-        - Row 20 = headers, Row 21+ = data
+        **Required sheet:**
+        - `Summary_new template (작성탭)` — Row 20 = headers, Row 21+ = data
 
-        **Re-uploading the same snapshot:**
-        - If you upload a file with the same `(N+M)` pattern, the **data is replaced** but **memos, notes, and watch list are preserved**
-        - No need to delete first — just re-upload
+        **Updating data (re-upload):**
+        - Upload a file with the same `(N+M)` and `YY` → data is replaced
+        - All memos, notes, watch list are **preserved**
+        - No need to delete first
 
         **Deleting a snapshot:**
-        - Removes all data **and** associated memos/notes for that snapshot
-        - Watch list is shared across all snapshots and is not affected
+        - Removes all data **and** associated memos/notes
+        - Watch list is not affected (shared across snapshots)
         """)
 
     # --- Upload ---
     st.header("Upload Excel File")
     uploaded_file = st.file_uploader("Drop your Revenue Excel file here", type=["xlsx"],
-        help="Expected: Revenue_26 Bud and 25 Fcst (N+M).xlsx")
+        help="Expected: Revenue_26 Fcst (N+M).xlsx")
 
     if uploaded_file is not None:
         st.caption(f"Selected file: **{uploaded_file.name}**")
