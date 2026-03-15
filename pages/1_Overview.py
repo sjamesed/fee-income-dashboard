@@ -48,10 +48,12 @@ def export_button(df, filename="export.xlsx", key=None):
     )
 
 
-def copy_html_button(html_content, key="copy"):
-    """Render a button that copies HTML table to clipboard on click."""
+def copy_html_button(html_content, key="copy", title=""):
+    """Render a button that copies HTML table to clipboard on click, with optional title."""
     import streamlit.components.v1 as components
-    escaped = html_content.replace("`", "\\`").replace("${", "\\${")
+    title_html = f'<h3 style="font-family:Calibri,sans-serif; color:#2d3748;">{title}</h3>' if title else ""
+    full_content = title_html + html_content
+    escaped = full_content.replace("`", "\\`").replace("${", "\\${")
     components.html(f"""
     <button onclick="copyTable()" style="
         background:#4a5568; color:white; border:none; padding:6px 16px;
@@ -233,7 +235,7 @@ def main():
     with sc1:
         export_button(pd.DataFrame(summary_exp), "fy26_fee_income_summary.xlsx", key="export_summary")
     with sc2:
-        copy_html_button(summary_html, key="copy_summary")
+        copy_html_button(summary_html, key="copy_summary", title="FY26 Fee Income")
 
     # --- Variance Tables (email-style with styled HTML + editable drivers) ---
     st.markdown("---")
@@ -366,7 +368,7 @@ def main():
             "Variance Driver": "",
         })
         export_button(pd.DataFrame(exp_rows), f"variance_{table_key}.xlsx", key=f"export_{table_key}")
-        copy_html_button(html, key=f"copy_{table_key}")
+        copy_html_button(html, key=f"copy_{table_key}", title=title)
 
         # Editable drivers
         with st.expander(f"Edit Variance Drivers — {title}"):
@@ -649,7 +651,7 @@ def main():
     })
     export_button(pd.DataFrame(pnl_exp_rows), "monthly_pnl_fee_income.xlsx", key="export_pnl")
 
-    copy_html_button(html, key="copy_pnl")
+    copy_html_button(html, key="copy_pnl", title="Monthly P&L — Fee Income")
 
     # --- Watch List FY2026 (styled HTML table + editable) ---
     st.markdown("---")

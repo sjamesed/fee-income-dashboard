@@ -9,10 +9,12 @@ MONTH_NAMES = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
                7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
 
 
-def copy_html_button(html_content, key="copy"):
-    """Render a button that copies HTML table to clipboard on click."""
+def copy_html_button(html_content, key="copy", title=""):
+    """Render a button that copies HTML table to clipboard on click, with optional title."""
     import streamlit.components.v1 as components
-    escaped = html_content.replace("`", "\\`").replace("${", "\\${")
+    title_html = f'<h3 style="font-family:Calibri,sans-serif; color:#2d3748;">{title}</h3>' if title else ""
+    full_content = title_html + html_content
+    escaped = full_content.replace("`", "\\`").replace("${", "\\${")
     components.html(f"""
     <button onclick="copyTable()" style="
         background:#4a5568; color:white; border:none; padding:6px 16px;
@@ -636,7 +638,8 @@ def main():
         full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
         full_html = full_html.replace('position:sticky; z-index:2;', '').replace('position:sticky; z-index:1;', '').replace('position:sticky; z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
-        copy_html_button(full_html, key="copy_ftp")
+        ftp_title = f"Fee by Project (FY) — {label_a} vs {label_b}" if num_metrics_ftp == 2 else f"Fee by Project (FY) — {label_a}"
+        copy_html_button(full_html, key="copy_ftp", title=ftp_title)
 
         if num_metrics_ftp == 2:
             # Inline note editor — select project, type note, save
@@ -991,7 +994,8 @@ def main():
         full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
         full_html = full_html.replace('position:sticky;', '').replace('z-index:1;', '').replace('z-index:2;', '').replace('z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
-        copy_html_button(full_html, key="copy_monthly")
+        monthly_title = f"Monthly Detail — {m1_label} vs {m2_label}" if num_metrics_md == 2 else f"Monthly Detail — {m1_label}"
+        copy_html_button(full_html, key="copy_monthly", title=monthly_title)
 
         # Export
         exp_rows = []
