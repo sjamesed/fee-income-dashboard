@@ -51,9 +51,10 @@ def export_button(df, filename="export.xlsx", key=None):
 def copy_html_button(html_content, key="copy", title=""):
     """Render a button that copies HTML table to clipboard on click, with optional title."""
     import streamlit.components.v1 as components
+    import base64
     title_html = f'<h3 style="font-family:Calibri,sans-serif; color:#2d3748;">{title}</h3>' if title else ""
     full_content = title_html + html_content
-    escaped = full_content.replace("`", "\\`").replace("${", "\\${")
+    b64 = base64.b64encode(full_content.encode("utf-8")).decode("ascii")
     components.html(f"""
     <button onclick="copyTable()" style="
         background:#4a5568; color:white; border:none; padding:6px 16px;
@@ -63,7 +64,8 @@ def copy_html_button(html_content, key="copy", title=""):
     <span id="msg_{key}" style="margin-left:8px; font-size:12px; color:#38a169;"></span>
     <script>
     function copyTable() {{
-        const html = `{escaped}`;
+        const b64 = "{b64}";
+        const html = atob(b64);
         const blob = new Blob([html], {{type: 'text/html'}});
         const item = new ClipboardItem({{'text/html': blob}});
         navigator.clipboard.write([item]).then(() => {{
