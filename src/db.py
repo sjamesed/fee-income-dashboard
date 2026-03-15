@@ -62,6 +62,13 @@ class FeeIncomeDB:
                 UNIQUE(snapshot)
             )
         """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS snapshot_meta (
+                snapshot TEXT PRIMARY KEY,
+                filename TEXT DEFAULT '',
+                uploaded_at TEXT DEFAULT ''
+            )
+        """)
         self.conn.commit()
 
     def get_todo(self, snapshot: str) -> str:
@@ -73,6 +80,19 @@ class FeeIncomeDB:
             "INSERT INTO todo_notes (snapshot, content) VALUES (?, ?) ON CONFLICT(snapshot) DO UPDATE SET content = ?",
             (snapshot, content, content))
         self.conn.commit()
+
+    def save_snapshot_meta(self, snapshot: str, filename: str):
+        from datetime import datetime
+        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+        self.conn.execute(
+            "INSERT INTO snapshot_meta (snapshot, filename, uploaded_at) VALUES (?, ?, ?) "
+            "ON CONFLICT(snapshot) DO UPDATE SET filename = ?, uploaded_at = ?",
+            (snapshot, filename, now, filename, now))
+        self.conn.commit()
+
+    def get_snapshot_meta(self, snapshot: str) -> dict | None:
+        rows = self.query("SELECT * FROM snapshot_meta WHERE snapshot = ?", (snapshot,))
+        return rows[0] if rows else None
 
     def insert_snapshot(self, snapshot: str, rows: list[dict]):
         try:
@@ -103,12 +123,14 @@ class FeeIncomeDB:
         self.conn.execute("DELETE FROM fee_income WHERE snapshot = ?", (snapshot,))
         self.conn.execute("DELETE FROM variance_drivers WHERE snapshot = ?", (snapshot,))
         self.conn.execute("DELETE FROM todo_notes WHERE snapshot = ?", (snapshot,))
+        self.conn.execute("DELETE FROM snapshot_meta WHERE snapshot = ?", (snapshot,))
         self.conn.commit()
 
     def rename_snapshot(self, old_name: str, new_name: str):
         self.conn.execute("UPDATE fee_income SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
         self.conn.execute("UPDATE variance_drivers SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
         self.conn.execute("UPDATE todo_notes SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
+        self.conn.execute("UPDATE snapshot_meta SET snapshot = ? WHERE snapshot = ?", (new_name, old_name))
         self.conn.commit()
 
     def get_latest_snapshot(self) -> str | None:
