@@ -62,7 +62,7 @@ def main():
                     tmp.write(uploaded_file.getvalue())
                     tmp_path = tmp.name
                 try:
-                    rows, snapshot = parse_excel_file(tmp_path)
+                    rows, snapshot = parse_excel_file(tmp_path, original_filename=uploaded_file.name)
                     db.insert_snapshot(snapshot, rows)
                     db.save_snapshot_meta(snapshot, uploaded_file.name)
                     st.cache_data.clear()

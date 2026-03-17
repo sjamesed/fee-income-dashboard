@@ -116,8 +116,8 @@ def _validate_fy_cross_check(rows: list[dict]):
                 )
 
 
-def parse_excel_file(filepath: str) -> tuple[list[dict], str]:
-    filename = Path(filepath).name
+def parse_excel_file(filepath: str, original_filename: str | None = None) -> tuple[list[dict], str]:
+    filename = original_filename or Path(filepath).name
     snapshot = extract_snapshot_from_filename(filename)
     wb = openpyxl.load_workbook(filepath, data_only=True, read_only=True)
     if SHEET_NAME not in wb.sheetnames:
