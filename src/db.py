@@ -151,7 +151,10 @@ class FeeIncomeDB:
         return {r["project_name"]: r["driver_text"] for r in rows}
 
     def save_drivers(self, snapshot: str, table_type: str, drivers: dict[str, str]):
-        """Save variance drivers (upsert)."""
+        """Save variance drivers (delete + insert)."""
+        self.conn.execute(
+            "DELETE FROM variance_drivers WHERE snapshot = ? AND table_type = ?",
+            (snapshot, table_type))
         for project_name, text in drivers.items():
             self.conn.execute(
                 """INSERT INTO variance_drivers (snapshot, table_type, project_name, driver_text)

@@ -1,8 +1,8 @@
-"""Fee Income Dashboard — main entry point."""
+"""Financial Dashboard — main entry point."""
 import streamlit as st
 from src.db import FeeIncomeDB
 
-st.set_page_config(page_title="Fee Income Dashboard", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Financial Dashboard", page_icon="📊", layout="wide")
 
 # Global CSS to match table color tone
 st.markdown("""
