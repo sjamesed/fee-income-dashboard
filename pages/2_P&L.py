@@ -395,7 +395,7 @@ def render_pl_summary(pl_data, snapshot_short, highlighted_labels=None):
         <th style="{TH}" colspan="4">FY26 Fcst ({snapshot_short}) vs FY25</th>
     </tr>
     <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center; font-size:11px;">"""
-    for sl in ["Actual","Budget","Var","%Δ"]*4:
+    for sl in ["Actual","Budget","Var","%Δ","Actual","Budget","Var","%Δ","Fcst","Budget","Var","%Δ","Fcst","LY","Var","%Δ"]:
         html += f'<th style="{TH}">{sl}</th>'
     html += "</tr></thead><tbody>"
     TD = "padding:4px 6px; border:1px solid #cbd5e0;"
@@ -438,8 +438,13 @@ def render_pl_summary(pl_data, snapshot_short, highlighted_labels=None):
     st.caption("Unit: USD millions")
     # Export (source in millions → ×1_000_000 for USD; Var% kept as %)
     grp_names = ["MTD","YTD","FY26 vs Bud","FY26 vs FY25"]
-    sub_names = ["Actual (USD)","Budget (USD)","Var (USD)","% Var"]
-    exp_cols = [f"{gn} {sn}" for gn in grp_names for sn in sub_names]
+    sub_names_map = {
+        "MTD": ["Actual (USD)","Budget (USD)","Var (USD)","% Var"],
+        "YTD": ["Actual (USD)","Budget (USD)","Var (USD)","% Var"],
+        "FY26 vs Bud": ["Fcst (USD)","Budget (USD)","Var (USD)","% Var"],
+        "FY26 vs FY25": ["Fcst (USD)","LY (USD)","Var (USD)","% Var"],
+    }
+    exp_cols = [f"{gn} {sn}" for gn in grp_names for sn in sub_names_map[gn]]
     exp_rows = []
     for row_def in PL_ROWS:
         excel_row, label, indent, bold, is_pct_row = row_def
@@ -449,7 +454,7 @@ def render_pl_summary(pl_data, snapshot_short, highlighted_labels=None):
         for grp in COL_GROUPS:
             for i, ci in enumerate(grp):
                 v = rd.get(ci)
-                col_name = f"{grp_names[gi]} {sub_names[i]}"
+                col_name = f"{grp_names[gi]} {sub_names_map[grp_names[gi]][i]}"
                 if i == 3:
                     # % variance column — always percentage
                     row_data[col_name] = round(v * 100, 2) if isinstance(v, (int, float)) else None
