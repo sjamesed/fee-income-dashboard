@@ -277,11 +277,28 @@ def main():
 
     watch_note_key = f"{selected}__watch_note"
     saved_watch_note = db.get_todo(watch_note_key)
-    watch_note = st.text_area("Watch List Note", value=saved_watch_note, height=100,
-                               key="watch_note", placeholder="Watch List에 대한 설명을 입력하세요...")
-    if st.button("Save Note", key="save_watch_note"):
-        db.save_todo(watch_note_key, watch_note)
-        st.success("Saved!")
+
+    # Display Watch List Note as table (if content exists)
+    if saved_watch_note and saved_watch_note.strip():
+        note_lines = [l.strip() for l in saved_watch_note.strip().split("\n") if l.strip()]
+        if note_lines:
+            nh = f"""<table style="border-collapse:collapse; width:100%; font-size:13px; font-family:Calibri,sans-serif; margin-top:8px;">
+            <thead><tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">
+                <th style="padding:8px 12px; border:1px solid #cbd5e0; text-align:left;">Watch List Note</th>
+            </tr></thead><tbody>"""
+            for i, line in enumerate(note_lines):
+                bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+                nh += f'<tr style="background:{bg};"><td style="padding:6px 12px; border:1px solid #cbd5e0;">{line}</td></tr>'
+            nh += "</tbody></table>"
+            st.markdown(nh, unsafe_allow_html=True)
+
+    with st.expander("Edit Watch List Note"):
+        watch_note = st.text_area("", value=saved_watch_note, height=100,
+                                   key="watch_note", placeholder="한 줄에 하나씩 입력하세요 (각 줄이 테이블 행이 됩니다)")
+        if st.button("Save Note", key="save_watch_note"):
+            db.save_todo(watch_note_key, watch_note)
+            st.success("Saved!")
+            st.rerun()
 
     with st.expander("Edit Watch List"):
         if watch_items:
@@ -346,10 +363,13 @@ def main():
         TD = "padding:4px 6px; border:1px solid #cbd5e0;"
         MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
-        def fc_k(v):
+        def fc_k(v, white=False):
             if v is None or v == 0: return "-"
             val = v / 1000
             if abs(val) < 0.05: return "-"
+            if white:
+                if val < 0: return f"({abs(val):.1f})"
+                return f"{val:.1f}"
             if val < 0: return f'<span style="color:#c53030;">({abs(val):.1f})</span>'
             return f"{val:.1f}"
 
@@ -415,8 +435,8 @@ def main():
             html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">'
             html += f'<td style="{TD}" colspan="2">Total</td>'
             for v in t_monthly:
-                html += f'<td style="{TD} text-align:right;">{fc_k(v)}</td>'
-            html += f'<td style="{TD} text-align:right;">{fc_k(sum(t_monthly))}</td></tr>'
+                html += f'<td style="{TD} text-align:right;">{fc_k(v, white=True)}</td>'
+            html += f'<td style="{TD} text-align:right;">{fc_k(sum(t_monthly), white=True)}</td></tr>'
             html += "</tbody></table>"
             st.markdown(html, unsafe_allow_html=True)
             st.caption("Unit: USD millions")
