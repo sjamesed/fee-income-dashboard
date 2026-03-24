@@ -5,6 +5,7 @@ import pandas as pd
 import io
 from pathlib import Path
 from src.db import FeeIncomeDB
+from src.queries import get_snapshot_n_value
 
 
 def export_button(df, filename="export.xlsx", key=None):
@@ -15,6 +16,7 @@ def export_button(df, filename="export.xlsx", key=None):
 
 HEADER_COLOR = "#4a5568"
 DATA_DIR = Path(__file__).parent.parent / "data"
+
 
 BREAKDOWN_SECTIONS = {
     "Fee Income": [
@@ -93,7 +95,9 @@ def load_breakdown_from_json(bd_list, total_row):
             if project.startswith("[") and project.endswith("]"):
                 continue
             vals = e.get("v", {})
-            monthly = [vals.get(str(c), 0) for c in range(23, 35)]
+            fcst_monthly = [vals.get(str(c), 0) for c in range(23, 35)]
+            bud_monthly = [vals.get(f"b{c}", 0) for c in range(23, 35)]
+            fy25_monthly = [vals.get(f"a{c}", 0) for c in range(11, 23)]
             rows.append({
                 "platform": h,
                 "project": project,
@@ -101,6 +105,9 @@ def load_breakdown_from_json(bd_list, total_row):
                 "fy25_bud": vals.get("58", 0),
                 "fy25": vals.get("37", 0),
                 "fy24": vals.get("75", 0),
+                "fcst_monthly": fcst_monthly,
+                "bud_monthly": bud_monthly,
+                "fy25_monthly": fy25_monthly,
             })
 
     rows.reverse()
@@ -112,13 +119,21 @@ def load_breakdown_from_json(bd_list, total_row):
         "fy25_bud": tv.get("58", 0),
         "fy25": tv.get("37", 0),
         "fy24": tv.get("75", 0),
+        "fcst_monthly": [tv.get(str(c), 0) for c in range(23, 35)],
+        "bud_monthly": [tv.get(f"b{c}", 0) for c in range(23, 35)],
+        "fy25_monthly": [tv.get(f"a{c}", 0) for c in range(11, 23)],
     }
     return rows, total
 
 
 def fmt_pct_delta(a, b):
-    """Format percentage delta: (a-b)/|b|."""
+    """Format percentage delta: (a-b)/|b|. Suppress if both values too small to display."""
     if b is None or b == 0 or a is None:
+        return "-"
+    # If both a and b are too small to show as numbers (< 0.05 in millions), suppress %
+    a_mil = abs(a) / 1000 if isinstance(a, (int, float)) else 0
+    b_mil = abs(b) / 1000 if isinstance(b, (int, float)) else 0
+    if a_mil < 0.05 and b_mil < 0.05:
         return "-"
     pct = (a - b) / abs(b) * 100
     if abs(pct) < 0.05:
@@ -136,69 +151,125 @@ def fmt_var(a, b):
     return fmt_v(a - b)
 
 
-def render_breakdown_table(rows, total, section_label, snapshot_short, total_row=0):
+
+MONTH_NAMES = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
+               7:"Jul",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
+
+
+def _get_mtd_ytd(r, n):
+    """Calculate MTD and YTD values for a breakdown row. n = snapshot month (1-based)."""
+    fm = r.get("fcst_monthly", [0]*12)
+    bm = r.get("bud_monthly", [0]*12)
+    am = r.get("fy25_monthly", [0]*12)
+    idx = n - 1  # 0-based month index
+    mtd_act = fm[idx] if idx < len(fm) else 0
+    mtd_bud = bm[idx] if idx < len(bm) else 0
+    mtd_ly = am[idx] if idx < len(am) else 0
+    ytd_act = sum(fm[:n])
+    ytd_bud = sum(bm[:n])
+    ytd_ly = sum(am[:n])
+    return mtd_act, mtd_bud, mtd_ly, ytd_act, ytd_bud, ytd_ly
+
+
+def render_breakdown_table(rows, total, section_label, snapshot_short, total_row=0, n=2):
+    """Render breakdown table in same style as P&L Summary (4-group header)."""
     TH = "padding:5px 6px; border:1px solid #cbd5e0;"
     TD = "padding:4px 6px; border:1px solid #cbd5e0;"
+    mn = MONTH_NAMES.get(n, str(n))
 
     html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
     <thead>
     <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center;">
-        <th style="{TH} text-align:left; min-width:120px;">Platform</th>
-        <th style="{TH} text-align:left; min-width:160px;">Project</th>
-        <th style="{TH}">FY26 Fcst<br>({snapshot_short})</th>
-        <th style="{TH}">FY26 Bud</th>
-        <th style="{TH}">FY25 Act</th>
-        <th style="{TH}">FY26F vs<br>FY26B</th>
-        <th style="{TH}">%Δ</th>
-        <th style="{TH}">FY26F vs<br>FY25A</th>
-        <th style="{TH}">%Δ</th>
+        <th style="{TH} text-align:left; min-width:120px;" rowspan="2">Platform</th>
+        <th style="{TH} text-align:left; min-width:140px;" rowspan="2">Project</th>
+        <th style="{TH}" colspan="4">MTD {mn}</th>
+        <th style="{TH}" colspan="4">YTD {mn}</th>
+        <th style="{TH}" colspan="4">FY26 Fcst ({snapshot_short}) vs Budget</th>
+        <th style="{TH}" colspan="4">FY26 Fcst ({snapshot_short}) vs FY25</th>
     </tr>
-    </thead><tbody>"""
+    <tr style="background:{HEADER_COLOR}; color:white; font-weight:bold; text-align:center; font-size:11px;">"""
+    for sl in ["Actual","Budget","Var","%Δ","Actual","Budget","Var","%Δ","Fcst","Budget","Var","%Δ","Fcst","LY","Var","%Δ"]:
+        html += f'<th style="{TH}">{sl}</th>'
+    html += "</tr></thead><tbody>"
 
     row_idx = 0
     for r in rows:
-        # Skip rows where fy26, fy25_bud, fy25 are all zero/None
-        if all((v or 0) == 0 for v in [r.get("fy26"), r.get("fy25_bud"), r.get("fy25")]):
+        fy26 = r.get("fy26", 0) or 0
+        bud = r.get("fy25_bud", 0) or 0
+        fy25 = r.get("fy25", 0) or 0
+        mtd_a, mtd_b, mtd_ly, ytd_a, ytd_b, ytd_ly = _get_mtd_ytd(r, n)
+        if fy26 == 0 and bud == 0 and fy25 == 0 and mtd_a == 0 and ytd_a == 0:
             continue
         bg = "#f7fafc" if row_idx % 2 == 0 else "#ffffff"
         row_idx += 1
         html += f'<tr style="background:{bg};">'
         html += f'<td style="{TD}">{r["platform"]}</td>'
         html += f'<td style="{TD}">{r["project"]}</td>'
-        html += f'<td style="{TD} text-align:right; font-weight:bold;">{fmt_v(r["fy26"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_v(r["fy25_bud"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_v(r["fy25"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_var(r["fy26"], r["fy25_bud"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(r["fy26"], r["fy25_bud"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_var(r["fy26"], r["fy25"])}</td>'
-        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(r["fy26"], r["fy25"])}</td>'
+        # MTD
+        html += f'<td style="{TD} text-align:right;">{fmt_v(mtd_a)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_v(mtd_b)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_var(mtd_a, mtd_b)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(mtd_a, mtd_b)}</td>'
+        # YTD
+        html += f'<td style="{TD} text-align:right;">{fmt_v(ytd_a)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_v(ytd_b)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_var(ytd_a, ytd_b)}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(ytd_a, ytd_b)}</td>'
+        # FY26 Fcst vs Budget
+        html += f'<td style="{TD} text-align:right; font-weight:bold;">{fmt_v(r.get("fy26"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_v(r.get("fy25_bud"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_var(r.get("fy26"), r.get("fy25_bud"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(r.get("fy26"), r.get("fy25_bud"))}</td>'
+        # FY26 Fcst vs FY25
+        html += f'<td style="{TD} text-align:right; font-weight:bold;">{fmt_v(r.get("fy26"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_v(r.get("fy25"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_var(r.get("fy26"), r.get("fy25"))}</td>'
+        html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(r.get("fy26"), r.get("fy25"))}</td>'
         html += "</tr>"
 
+    # Total row
+    t_mtd_a, t_mtd_b, t_mtd_ly, t_ytd_a, t_ytd_b, t_ytd_ly = _get_mtd_ytd(total, n)
     html += f'<tr style="background:{HEADER_COLOR}; color:white; font-weight:bold;">'
     html += f'<td style="{TD}" colspan="2">{section_label} Total</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_v(total["fy26"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_v(total["fy25_bud"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_v(total["fy25"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_var(total["fy26"], total["fy25_bud"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(total["fy26"], total["fy25_bud"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_var(total["fy26"], total["fy25"])}</td>'
-    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(total["fy26"], total["fy25"])}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(t_mtd_a)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(t_mtd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_var(t_mtd_a, t_mtd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(t_mtd_a, t_mtd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(t_ytd_a)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(t_ytd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_var(t_ytd_a, t_ytd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(t_ytd_a, t_ytd_b)}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(total.get("fy26"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(total.get("fy25_bud"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_var(total.get("fy26"), total.get("fy25_bud"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(total.get("fy26"), total.get("fy25_bud"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(total.get("fy26"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_v(total.get("fy25"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_var(total.get("fy26"), total.get("fy25"))}</td>'
+    html += f'<td style="{TD} text-align:right;">{fmt_pct_delta(total.get("fy26"), total.get("fy25"))}</td>'
     html += "</tr></tbody></table>"
 
     st.markdown(html, unsafe_allow_html=True)
     st.caption("Unit: USD millions")
-    # Export (source in thousands → ×1000 for USD)
+
+    # Export
     exp_rows = []
     for r in rows:
-        if all((v or 0) == 0 for v in [r.get("fy26"), r.get("fy25_bud"), r.get("fy25")]):
+        fy26 = r.get("fy26", 0) or 0
+        bud = r.get("fy25_bud", 0) or 0
+        fy25 = r.get("fy25", 0) or 0
+        mtd_a, mtd_b, mtd_ly, ytd_a, ytd_b, ytd_ly = _get_mtd_ytd(r, n)
+        if fy26 == 0 and bud == 0 and fy25 == 0 and mtd_a == 0 and ytd_a == 0:
             continue
         exp_rows.append({
             "Platform": r["platform"], "Project": r["project"],
-            "FY26 Fcst (USD)": round((r["fy26"] or 0) * 1000, 2),
-            "FY26 Budget (USD)": round((r["fy25_bud"] or 0) * 1000, 2),
-            "FY25 Actual (USD)": round((r["fy25"] or 0) * 1000, 2),
-            "FY26F vs FY26B (USD)": round(((r["fy26"] or 0) - (r["fy25_bud"] or 0)) * 1000, 2),
-            "FY26F vs FY25A (USD)": round(((r["fy26"] or 0) - (r["fy25"] or 0)) * 1000, 2),
+            f"MTD {mn} Actual (USD)": round((mtd_a or 0) * 1000, 2),
+            f"MTD {mn} Budget (USD)": round((mtd_b or 0) * 1000, 2),
+            f"YTD {mn} Actual (USD)": round((ytd_a or 0) * 1000, 2),
+            f"YTD {mn} Budget (USD)": round((ytd_b or 0) * 1000, 2),
+            "FY26 Fcst (USD)": round((r.get("fy26") or 0) * 1000, 2),
+            "FY26 Budget (USD)": round((r.get("fy25_bud") or 0) * 1000, 2),
+            "FY25 Actual (USD)": round((r.get("fy25") or 0) * 1000, 2),
         })
     if exp_rows:
         _safe = section_label.replace(" ","_").replace("/","_")
@@ -487,6 +558,7 @@ def main():
     pl_data = _load_pl_data(data)
     bd_list = data.get("pl_breakdown", [])
     sga_data = data.get("output_sga", {})
+    n = get_snapshot_n_value(selected)
 
     tab_labels = ["Summary"] + list(BREAKDOWN_SECTIONS.keys())
     tab_labels.insert(2, "SG&A")  # After Fee Income
@@ -571,6 +643,10 @@ def main():
                     st.info("No SG&A data available.")
                 continue
 
+            if label == "Fee Income":
+                st.info("Refer to Fee Breakdown tab")
+                continue
+
             if not bd_list:
                 st.info("No breakdown data available. Re-upload the MM Report file to extract breakdown data.")
                 continue
@@ -580,7 +656,7 @@ def main():
                 st.subheader(sub_label)
                 rows, total = load_breakdown_from_json(bd_list, total_row)
                 if rows:
-                    render_breakdown_table(rows, total, sub_label, selected, total_row=total_row)
+                    render_breakdown_table(rows, total, sub_label, selected, total_row=total_row, n=n)
                 else:
                     st.write(f"FY26 Fcst ({selected}): {fmt_v(total['fy26'])}M | FY25: {fmt_v(total['fy25'])}M", unsafe_allow_html=True)
 
