@@ -292,14 +292,6 @@ def main():
             nh += "</tbody></table>"
             st.markdown(nh, unsafe_allow_html=True)
 
-    with st.expander("Edit Watch List Note"):
-        watch_note = st.text_area("", value=saved_watch_note, height=100,
-                                   key="watch_note", placeholder="한 줄에 하나씩 입력하세요 (각 줄이 테이블 행이 됩니다)")
-        if st.button("Save Note", key="save_watch_note"):
-            db.save_todo(watch_note_key, watch_note)
-            st.success("Saved!")
-            st.rerun()
-
     with st.expander("Edit Watch List"):
         if watch_items:
             edit_data = [{"category": w["category"], "pnl_item": w.get("pnl_item",""),

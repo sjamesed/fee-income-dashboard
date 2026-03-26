@@ -540,8 +540,44 @@ def render_pl_summary(pl_data, snapshot_short, highlighted_labels=None):
         export_button(pd.DataFrame(exp_rows, columns=["Label"] + exp_cols), "pl_summary.xlsx", key="exp_pl_summary")
 
 
+def print_button():
+    import streamlit.components.v1 as components
+    # Inject print CSS into parent frame for landscape + fit-to-page
+    components.html("""
+    <script>
+    (function() {
+        var style = window.top.document.getElementById('pl-print-css');
+        if (!style) {
+            style = window.top.document.createElement('style');
+            style.id = 'pl-print-css';
+            style.textContent = `
+                @media print {
+                    @page { size: landscape; margin: 8mm; }
+                    [data-testid="stSidebar"] { display: none !important; }
+                    [data-testid="stHeader"] { display: none !important; }
+                    header { display: none !important; }
+                    .stDeployButton { display: none !important; }
+                    section[data-testid="stSidebar"] { display: none !important; }
+                    .main .block-container { max-width: 100% !important; padding: 0 !important; }
+                    table { font-size: 9px !important; }
+                    th, td { padding: 2px 4px !important; }
+                    iframe { display: none !important; }
+                }
+            `;
+            window.top.document.head.appendChild(style);
+        }
+    })();
+    </script>
+    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
+        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        🖨️ Print
+    </button>
+    """, height=40)
+
+
 def main():
     st.title("P&L")
+    print_button()
 
     mm_json_files = sorted(DATA_DIR.glob("mm_report_*.json"), reverse=True)
     if not mm_json_files:

@@ -2,7 +2,7 @@
 import streamlit as st
 from src.db import FeeIncomeDB
 
-st.set_page_config(page_title="Financial Dashboard", page_icon="📊", layout="wide")
+st.set_page_config(page_title="FP&A Dashboard", page_icon="📊", layout="wide")
 
 # Global CSS to match table color tone
 st.markdown("""
@@ -31,7 +31,7 @@ def get_db():
     return db
 
 def main():
-    st.title("Fee Income Dashboard")
+    st.title("FP&A Dashboard")
     st.markdown("Navigate using the sidebar pages.")
     db = get_db()
     snapshots = db.list_snapshots()

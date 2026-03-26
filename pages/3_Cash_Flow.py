@@ -263,8 +263,19 @@ def render_comment_section(db, key):
         st.success("Saved!")
 
 
+def print_button():
+    import streamlit.components.v1 as components
+    components.html("""
+    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
+        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        🖨️ Print
+    </button>
+    """, height=40)
+
+
 def main():
     st.title("Cash Flow")
+    print_button()
 
     mm_json_files = sorted(DATA_DIR.glob("mm_report_*.json"), reverse=True)
     if not mm_json_files:

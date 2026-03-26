@@ -309,8 +309,19 @@ def render_comments_editor(table_key, projects, db):
             st.rerun()
 
 
+def print_button():
+    import streamlit.components.v1 as components
+    components.html("""
+    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
+        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        🖨️ Print
+    </button>
+    """, height=40)
+
+
 def main():
     st.title("Disposal Plan — Korea")
+    print_button()
 
     db = FeeIncomeDB()
     db.init_db()

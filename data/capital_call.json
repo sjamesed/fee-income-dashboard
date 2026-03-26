@@ -1,0 +1,6003 @@
+{
+  "funds": [
+    {
+      "fund": "Terra",
+      "sheet": "Capital call-Terra",
+      "projects": [
+        {
+          "project": "NHN",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 109882350.0,
+              "usd": 100000.0,
+              "fx_rate": 1098.823504838184,
+              "details": "Capital drawndown"
+            }
+          ],
+          "total_krw": 109882350.0,
+          "total_usd": 100000.0
+        },
+        {
+          "project": "Mokcheon",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 109882350.48,
+              "usd": 100000.0,
+              "fx_rate": 1098.823504838184,
+              "details": "Capital drawndown"
+            }
+          ],
+          "total_krw": 109882350.48,
+          "total_usd": 100000.0
+        },
+        {
+          "project": "DSL",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 109882350.48,
+              "usd": 100000.0,
+              "fx_rate": 1098.823504838184,
+              "details": "Capital drawndown"
+            }
+          ],
+          "total_krw": 109882350.48,
+          "total_usd": 100000.0
+        },
+        {
+          "project": "Fila",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 109882350.48,
+              "usd": 100000.0,
+              "fx_rate": 1098.823504838184,
+              "details": "Capital drawndown"
+            }
+          ],
+          "total_krw": 109882350.48,
+          "total_usd": 100000.0
+        },
+        {
+          "project": "Assist Korea",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 109882350.48,
+              "usd": 100000.0,
+              "fx_rate": 1098.823504838184,
+              "details": "Capital drawndown"
+            }
+          ],
+          "total_krw": 109882350.48,
+          "total_usd": 100000.0
+        },
+        {
+          "project": "Maplewood",
+          "calls": [
+            {
+              "date": "2018-08-14",
+              "krw": null,
+              "usd": 1200000.0,
+              "fx_rate": null,
+              "details": "2nd investor(NHN,Mokcheon, DSL, Fila, Assist Korea)"
+            },
+            {
+              "date": "2018-12-17",
+              "krw": null,
+              "usd": 267809.3197643278,
+              "fx_rate": null,
+              "details": "AMB icheon"
+            },
+            {
+              "date": "2019-04-29",
+              "krw": null,
+              "usd": 259090.0,
+              "fx_rate": null,
+              "details": "Ilyang Logis"
+            },
+            {
+              "date": "2019-05-09",
+              "krw": null,
+              "usd": 256257.0,
+              "fx_rate": null,
+              "details": "Osan"
+            }
+          ],
+          "total_krw": null,
+          "total_usd": 1983156.3197643277
+        }
+      ]
+    },
+    {
+      "fund": "Acqui Fund",
+      "sheet": "Acqui fund",
+      "projects": [
+        {
+          "project": "DSL",
+          "calls": [
+            {
+              "date": "2018-02-09",
+              "krw": 25752869000.0,
+              "usd": 23691428.0,
+              "fx_rate": null,
+              "details": "Fund 6호"
+            }
+          ],
+          "total_krw": 25752869000.0,
+          "total_usd": 23691428.0
+        },
+        {
+          "project": "FILA",
+          "calls": [
+            {
+              "date": "2018-04-02",
+              "krw": 1800000000.0,
+              "usd": 1679104.0,
+              "fx_rate": 1072.0,
+              "details": "Fund 7호"
+            }
+          ],
+          "total_krw": 1800000000.0,
+          "total_usd": 1679104.0
+        },
+        {
+          "project": "Mokchon",
+          "calls": [
+            {
+              "date": "2018-03-27",
+              "krw": 21077913000.0,
+              "usd": 19662232.0,
+              "fx_rate": 1072.0,
+              "details": "Fund 5호"
+            }
+          ],
+          "total_krw": 21077913000.0,
+          "total_usd": 19662232.0
+        },
+        {
+          "project": "NHN",
+          "calls": [
+            {
+              "date": "2018-04-18",
+              "krw": 31837578900.0,
+              "usd": 29754747.0,
+              "fx_rate": 1070.0,
+              "details": "Fund 4호"
+            }
+          ],
+          "total_krw": 31837578900.0,
+          "total_usd": 29754747.0
+        }
+      ]
+    },
+    {
+      "fund": "Dev JV1 (Star)",
+      "sheet": "Dev JV1_Capital call-Star",
+      "projects": [
+        {
+          "project": "Bucheon",
+          "calls": [
+            {
+              "date": "2015-11-18",
+              "krw": 38139003843.0,
+              "usd": 32870070.12,
+              "fx_rate": 1137.0000338962454,
+              "details": "Bucheon",
+              "call_label": "Capital Call 1"
+            },
+            {
+              "date": "2015-12-23",
+              "krw": 21352800000.0,
+              "usd": 18600000.0,
+              "fx_rate": 1148.0,
+              "details": "Bucheon",
+              "call_label": "Capital Call 2"
+            },
+            {
+              "date": "2016-01-26",
+              "krw": 765733002.3880371,
+              "usd": 673467.880000004,
+              "fx_rate": 1207.0,
+              "details": "",
+              "call_label": "Capital Call 3"
+            },
+            {
+              "date": "2016-06-06",
+              "krw": 86629463430.0,
+              "usd": 73157817.0,
+              "fx_rate": 1184.1450029871723,
+              "details": "Bucheon",
+              "call_label": "Capital Call 5"
+            },
+            {
+              "date": "2016-10-20",
+              "krw": 762816000.0,
+              "usd": 696000.0222515946,
+              "fx_rate": 1095.9999649601339,
+              "details": "Bucheon(offshore fee) & Gachang",
+              "call_label": "Capital Call 11"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 1898968363.0,
+              "usd": 1679017.1269928582,
+              "fx_rate": 1130.9999954563164,
+              "details": "Offshore fee (Q117)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 953977500.0,
+              "usd": 847980.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 845527245.0,
+              "usd": 772171.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 952210006.0,
+              "usd": 892418.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 457091724.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 424412.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 627198.0,
+              "usd": 561.0,
+              "fx_rate": 1125.0,
+              "details": "Call from B 1-3 for Bucheon, Gachang, Ilmok",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 377843130.0,
+              "usd": 333195.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 305737600.0,
+              "usd": 272980.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 305559857.59999996,
+              "usd": 267847.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 329904623.5,
+              "usd": 274121.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 14286748.5,
+              "usd": 11871.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 327886867.5,
+              "usd": 280365.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 326311347.2,
+              "usd": 279424.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 345049561.20000005,
+              "usd": 283548.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 325104098.5,
+              "usd": 276755.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 309724172.5,
+              "usd": 273005.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 290212241.56,
+              "usd": 267457.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 292955288.0,
+              "usd": 263449.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 333551232.0,
+              "usd": 282240.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 36395289.6,
+              "usd": 30574.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 37855946.0,
+              "usd": 30326.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 47640133.8,
+              "usd": 36666.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            }
+          ],
+          "total_krw": 156764236448.84802,
+          "total_usd": 134077737.14924446
+        },
+        {
+          "project": "Gachang",
+          "calls": [
+            {
+              "date": "2016-01-26",
+              "krw": 22383729303.0,
+              "usd": 18408958.0,
+              "fx_rate": 1207.0,
+              "details": "Gachang",
+              "call_label": "Capital Call 3"
+            },
+            {
+              "date": "2016-01-26",
+              "krw": 154599031.6089064,
+              "usd": 135971.0,
+              "fx_rate": 1207.0,
+              "details": "",
+              "call_label": "Capital Call 3"
+            },
+            {
+              "date": "2016-10-20",
+              "krw": 5242686216.0,
+              "usd": 4783473.0,
+              "fx_rate": 1095.9999649601339,
+              "details": "Bucheon(offshore fee) & Gachang",
+              "call_label": "Capital Call 11"
+            },
+            {
+              "date": "2016-12-15",
+              "krw": 1975590282.0,
+              "usd": 1680629.0,
+              "fx_rate": 1175.5064812043586,
+              "details": "Gachang",
+              "call_label": "Capital Call 12"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 559403390.0,
+              "usd": 494610.0,
+              "fx_rate": 1130.9999954563164,
+              "details": "Offshore fee (Q117)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 285499125.0,
+              "usd": 253777.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 281349300.0,
+              "usd": 256940.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 143886017.0,
+              "usd": 134851.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 1464720.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 1360.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 4749264.0,
+              "usd": 4248.0,
+              "fx_rate": 1125.0,
+              "details": "Call from B 1-3 for Bucheon, Gachang, Ilmok",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": -7334688430.0,
+              "usd": -6467979.0,
+              "fx_rate": 1134.0,
+              "details": "Upstream loan",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 56934738.0,
+              "usd": 50207.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-22",
+              "krw": -182704678.0,
+              "usd": -163421.0,
+              "fx_rate": 1118.0,
+              "details": "Juksan & Majang&Sanha&Namsa",
+              "call_label": "Capital Call 31"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 42117600.0,
+              "usd": 37605.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 41602694.4,
+              "usd": 36468.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 45550068.0,
+              "usd": 37848.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 14286748.5,
+              "usd": 11871.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 56911378.5,
+              "usd": 48663.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 44969642.4,
+              "usd": 38508.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 48348653.900000006,
+              "usd": 39731.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 44152274.2,
+              "usd": 37586.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 37660862.0,
+              "usd": 33196.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 26186235.639999997,
+              "usd": 24133.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 32622744.0,
+              "usd": 29337.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            }
+          ],
+          "total_krw": 24006907180.148907,
+          "total_usd": 19948570.0
+        },
+        {
+          "project": "Goyang",
+          "calls": [
+            {
+              "date": "2016-03-21",
+              "krw": 8833500454.0,
+              "usd": 7330706.000000001,
+              "fx_rate": 1204.9999623501474,
+              "details": "Goyang",
+              "call_label": "Capital Call 4"
+            },
+            {
+              "date": "2016-06-14",
+              "krw": 10303356780.0,
+              "usd": 8683091.846405787,
+              "fx_rate": 1186.59999943049,
+              "details": "Goyang+Juksan(Ilmok Star)",
+              "call_label": "Capital Call 6"
+            },
+            {
+              "date": "2016-07-21",
+              "krw": 1350827638.0,
+              "usd": 1178629.8404364863,
+              "fx_rate": 1146.0999812288335,
+              "details": "Goyang+Juksan",
+              "call_label": "Capital Call 7"
+            },
+            {
+              "date": "2016-09-23",
+              "krw": 53533645569.0,
+              "usd": 49113436.0,
+              "fx_rate": 1090.000006698778,
+              "details": "Goyang",
+              "call_label": "Capital Call 10"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 21548963266.0,
+              "usd": 19053018.0,
+              "fx_rate": 1130.9999954563164,
+              "details": "Goyang",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": -11200000000.0,
+              "usd": -9902741.0,
+              "fx_rate": 1130.9999954563164,
+              "details": "Ilmok star loan repayment(SD)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 932678078.0,
+              "usd": 824649.0,
+              "fx_rate": 1130.9999954563164,
+              "details": "Offshore fee (Q117)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 11175298125.9628,
+              "usd": 9880900.23948584,
+              "fx_rate": 1130.9999954563164,
+              "details": "Ilmok star loan repayment",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": -4507344000.0,
+              "usd": -4006528.0,
+              "fx_rate": 1125.0,
+              "details": "Project Majang",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 491673375.0,
+              "usd": null,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": null,
+              "usd": 437043.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 504233265.0,
+              "usd": 460487.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 508111802.0,
+              "usd": 476206.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 505908903.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 469739.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 521316692.0,
+              "usd": 466294.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 531279000.0,
+              "usd": 468500.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 722071641.6,
+              "usd": 632952.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 356061492.5,
+              "usd": 295855.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 50017460.0,
+              "usd": 41560.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 218954959.5,
+              "usd": null,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 212249264.20000002,
+              "usd": 174418.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 216106034.9,
+              "usd": 183967.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 204719390.5,
+              "usd": 180449.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 145816305.64,
+              "usd": 134383.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 41706672.0,
+              "usd": 37506.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 42805832.5,
+              "usd": 36415.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            }
+          ],
+          "total_krw": 97243958001.3028,
+          "total_usd": 86650935.92632811
+        },
+        {
+          "project": "Juksan",
+          "calls": [
+            {
+              "date": "2016-07-21",
+              "krw": 15354205359.0,
+              "usd": 13396916.0,
+              "fx_rate": 1146.0999812288335,
+              "details": "Goyang+Juksan",
+              "call_label": "Capital Call 7"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 955623860.0,
+              "usd": 844937.1033060362,
+              "fx_rate": 1130.9999954563164,
+              "details": "Offshore fee (Q117)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 500000000.0,
+              "usd": 444444.0,
+              "fx_rate": 1125.0,
+              "details": "Project Juksan (upfront fee)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 357213375.0,
+              "usd": 317523.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 239420655.0,
+              "usd": 218649.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-01-02",
+              "krw": 2456195931.0,
+              "usd": 2255460.0,
+              "fx_rate": 1089.0,
+              "details": "Project Juksan",
+              "call_label": "Capital Call 20"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 245920026.0,
+              "usd": 230478.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 224362794.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 208322.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 3974491.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 4400000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 374141754.0,
+              "usd": 329931.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 1000000000.0,
+              "usd": 881834.0,
+              "fx_rate": 1134.0,
+              "details": "Juksan",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-22",
+              "krw": 1817295322.0,
+              "usd": 1625488.0,
+              "fx_rate": 1118.0,
+              "details": "Juksan & Majang&Sanha&Namsa",
+              "call_label": "Capital Call 31"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 166331200.0,
+              "usd": 148510.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-03-15",
+              "krw": 2400000000.0,
+              "usd": 2143048.0,
+              "fx_rate": 1119.9,
+              "details": "Sanha, Majang, Juksan, Changwon",
+              "call_label": "Capital Call 38"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 166723356.79999998,
+              "usd": 146146.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-28",
+              "krw": 7000000000.0,
+              "usd": 5897220.0,
+              "fx_rate": 1187.0,
+              "details": "Majang, Opo, Changwon, Juksan",
+              "call_label": "Capital Call 41"
+            },
+            {
+              "date": "2019-07-15",
+              "krw": 1900000000.0,
+              "usd": 1644452.0,
+              "fx_rate": 1155.4,
+              "details": "Changwon, Juksan",
+              "call_label": "Capital Call 43"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 66091406.0,
+              "usd": 54916.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 53050280.0,
+              "usd": 44080.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 203785375.0,
+              "usd": 174250.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 108935887.39999999,
+              "usd": 93283.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 189150068.4,
+              "usd": 155436.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 96394707.3,
+              "usd": 82059.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 93179888.5,
+              "usd": 82133.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 93358113.03999999,
+              "usd": 86038.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 88974456.0,
+              "usd": 80013.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 78930058.39999999,
+              "usd": 66788.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 42714143.5,
+              "usd": 36337.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 7145971.2,
+              "usd": 6003.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 29196489.0,
+              "usd": 23389.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 40708340476.54,
+          "total_usd": 35692574.10330603
+        },
+        {
+          "project": "Bucheon Cold",
+          "calls": [
+            {
+              "date": "2017-04-25",
+              "krw": 27038093021.0,
+              "usd": 23906359.973141413,
+              "fx_rate": 1130.9999954563164,
+              "details": "Bucheon 1-3",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 321343080.0,
+              "usd": 293464.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 432477507.0,
+              "usd": 406339.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": null,
+              "usd": -1018.0,
+              "fx_rate": 1067.0,
+              "details": "Call from B 1-3 But it for a Ilmokstar"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 171457323.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 159199.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 188118034.0,
+              "usd": 168263.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": -6507878.0,
+              "usd": -5821.0,
+              "fx_rate": 1125.0,
+              "details": "Call from B 1-3 for Bucheon, Gachang, Ilmok",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 184216032.0,
+              "usd": 162448.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 262084480.0,
+              "usd": 234004.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": -1153600.0,
+              "usd": -1030.0,
+              "fx_rate": 1120.0,
+              "details": "Call for Ilmok Star",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 3500000000.0,
+              "usd": 3068022.0,
+              "fx_rate": 1140.8,
+              "details": "Opo, Bucheon Cold",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 106707009.6,
+              "usd": 93537.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-06-19",
+              "krw": 4700000000.0,
+              "usd": 3984739.0,
+              "fx_rate": 1179.5,
+              "details": "Bucheon Cold, Iljuk, Changwon",
+              "call_label": "Capital Call 42"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 3000000000.0,
+              "usd": 2492730.0,
+              "fx_rate": 1203.5,
+              "details": "Bucheon Cold, Namsa,",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 38835742.0,
+              "usd": 32269.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": -1233587.5,
+              "usd": -1025.0,
+              "fx_rate": 1203.5,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 81466118.5,
+              "usd": 67691.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": -49167789.0,
+              "usd": -40854.0,
+              "fx_rate": 1203.5,
+              "details": "Adjustment on Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 2000000000.0,
+              "usd": 1710133.0,
+              "fx_rate": 1169.5,
+              "details": "Bucheon Cold, Wongok, Iljuk, Changwon, Sanha 2",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 29074939.5,
+              "usd": 24861.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 384579896.0,
+              "usd": 329320.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 35756172.7,
+              "usd": 29383.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": -1383615.3,
+              "usd": -1137.0,
+              "fx_rate": 1216.9,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 33097172.5,
+              "usd": 28175.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": -1335633.9000000001,
+              "usd": -1137.0,
+              "fx_rate": 1174.7,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 30396658.5,
+              "usd": 26793.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": -1309213.0,
+              "usd": -1154.0,
+              "fx_rate": 1134.5,
+              "details": "Adjustment on offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 24453362.88,
+              "usd": 22536.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": -3777163.4799999995,
+              "usd": -3481.0,
+              "fx_rate": 1085.08,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 3472776.0,
+              "usd": 3123.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": -1292144.0,
+              "usd": -1162.0,
+              "fx_rate": 1112.0,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 92558870.0,
+              "usd": 78740.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": -50923835.5,
+              "usd": -43321.0,
+              "fx_rate": 1175.5,
+              "details": "Adjustment on Offshore Admin Cost",
+              "call_label": "Capital call 64"
+            }
+          ],
+          "total_krw": 42770103735.5,
+          "total_usd": 37427530.97314142
+        },
+        {
+          "project": "Gimhae Sangdong",
+          "calls": [
+            {
+              "date": "2017-02-24",
+              "krw": 22726951110.0,
+              "usd": 19962188.0,
+              "fx_rate": 1138.4999465739954,
+              "details": "Gimhae Sangdong",
+              "call_label": "Capital Call 13"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 260441370.0,
+              "usd": 237846.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 117670894.0,
+              "usd": 110282.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 79750773.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 73050.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 4066166.0,
+              "usd": 3637.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 1354940.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 1500000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 111153546.0,
+              "usd": 98019.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-12-06",
+              "krw": 1220000000.0,
+              "usd": 1082520.0,
+              "fx_rate": 1127.0,
+              "details": "Ansung, Sangdong & Opo, Namsa",
+              "call_label": "Capital Call 32"
+            },
+            {
+              "date": "2019-01-11",
+              "krw": 347768675.0,
+              "usd": 311342.0,
+              "fx_rate": 1117.0,
+              "details": "Sangdong, Ansung",
+              "call_label": "Capital Call 35"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 30275840.0,
+              "usd": 27032.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-03-05",
+              "krw": 2145000000.0,
+              "usd": 1909212.0,
+              "fx_rate": 1123.5,
+              "details": "Gimhae Sangdong",
+              "call_label": "Capital Call 37"
+            },
+            {
+              "date": "2019-04-10",
+              "krw": 2359954521.0,
+              "usd": 2090305.0,
+              "fx_rate": 1129.0,
+              "details": "Gimpo, Opo, Gimhae Sangdong",
+              "call_label": "Capital Call 39"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 32614331.2,
+              "usd": 28589.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": -1153349.0,
+              "usd": -1011.0,
+              "fx_rate": 1140.8,
+              "details": "Call for Ilmok Star",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 93205057.5,
+              "usd": 77445.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 13082045.0,
+              "usd": 10870.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 90403519.5,
+              "usd": 77301.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 10660846.2,
+              "usd": 9129.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 75047439.9,
+              "usd": 61671.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 12927573.5,
+              "usd": 11005.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 11149866.0,
+              "usd": 9828.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 6693858.52,
+              "usd": 6169.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 26918184.0,
+              "usd": 24207.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 106284001.2,
+              "usd": 89934.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": -2807956.8,
+              "usd": -2376.0,
+              "fx_rate": 1181.8,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 47617154.0,
+              "usd": 40508.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 54756019.2,
+              "usd": 45998.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": -1458240.0,
+              "usd": -1225.0,
+              "fx_rate": 1190.4,
+              "details": "Adjustment on Offshore Admin Cost",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 26068249.0,
+              "usd": 20883.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": -1637770.0,
+              "usd": -1312.0,
+              "fx_rate": 1248.3,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 31733403723.92,
+          "total_usd": 27974528.0
+        },
+        {
+          "project": "Majang",
+          "calls": [
+            {
+              "date": "2017-04-25",
+              "krw": 4507344000.0,
+              "usd": 4006528.0,
+              "fx_rate": 1125.0,
+              "details": "Project Majang",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 17040950116.0,
+              "usd": 15584554.0,
+              "fx_rate": 1125.0,
+              "details": "Project Majang",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": null,
+              "usd": -437043.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 1021480137.3636363,
+              "usd": 957339.0,
+              "fx_rate": 1067.0,
+              "details": "Project Majang",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 740000000.0,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 687094.0,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo"
+            },
+            {
+              "date": "2018-07-26",
+              "krw": 548900000.0,
+              "usd": 494059.0,
+              "fx_rate": 1111.0,
+              "details": "Project Majang & Sanha",
+              "call_label": "Capital Call 28"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 100473542.0,
+              "usd": 89869.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 3161527.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 3500000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 928899090.0,
+              "usd": 819135.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-22",
+              "krw": 2000000000.0,
+              "usd": 1788908.0,
+              "fx_rate": 1118.0,
+              "details": "Juksan & Majang&Sanha&Namsa",
+              "call_label": "Capital Call 31"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 1164000000.0,
+              "usd": 1039286.0,
+              "fx_rate": 1120.0,
+              "details": "Gimpo, Sanha, Majang, Opo",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 111722240.0,
+              "usd": 99752.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-03-15",
+              "krw": 3500000000.0,
+              "usd": 3125279.0,
+              "fx_rate": 1119.9,
+              "details": "Sanha, Majang, Juksan, Changwon",
+              "call_label": "Capital Call 38"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 117213777.6,
+              "usd": 102747.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-28",
+              "krw": 2122942336.0,
+              "usd": 1788494.0,
+              "fx_rate": 1187.0,
+              "details": "Majang, Opo, Changwon, Juksan",
+              "call_label": "Capital Call 41"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 300583753.0,
+              "usd": 249758.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 12834124.0,
+              "usd": 10664.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 290747056.0,
+              "usd": 248608.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 165636080.79999998,
+              "usd": 141836.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 64000111.199999996,
+              "usd": 54804.0,
+              "fx_rate": 1167.8,
+              "details": "W/H tax on Majang SH loan repayment",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 323282870.90000004,
+              "usd": 265661.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 17245770.7,
+              "usd": 14681.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 15605047.5,
+              "usd": 13755.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 8463624.0,
+              "usd": 7800.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 29677056.0,
+              "usd": 26688.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 174421862.0,
+              "usd": 147590.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 41938313.5,
+              "usd": 35677.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 85868313.60000001,
+              "usd": 72134.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 24678891.0,
+              "usd": 19770.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 39188908113.163635,
+          "total_usd": 34823496.0
+        },
+        {
+          "project": "Sanha",
+          "calls": [
+            {
+              "date": "2017-10-10",
+              "krw": 7905000000.0,
+              "usd": 6995575.221238938,
+              "fx_rate": 1130.0,
+              "details": "Project Sanha",
+              "call_label": "Capital Call 16"
+            },
+            {
+              "date": "2018-01-19",
+              "krw": 7469519381.0,
+              "usd": 7007053.828330207,
+              "fx_rate": 1066.0,
+              "details": "Project Sanha",
+              "call_label": "Capital Call 21"
+            },
+            {
+              "date": "2018-03-15",
+              "krw": 818833252.0,
+              "usd": 758179.0,
+              "fx_rate": 1080.0,
+              "details": "Project Sanha",
+              "call_label": "Capital Call 23"
+            },
+            {
+              "date": "2018-07-26",
+              "krw": 500000000.0,
+              "usd": 450045.0,
+              "fx_rate": 1111.0,
+              "details": "Project Majang & Sanha",
+              "call_label": "Capital Call 28"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 20515300.0,
+              "usd": 18350.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 3613174.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 4000000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 813884274.0,
+              "usd": 717711.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-11-22",
+              "krw": 1000000000.0,
+              "usd": 894454.0,
+              "fx_rate": 1118.0,
+              "details": "Juksan & Majang&Sanha&Namsa",
+              "call_label": "Capital Call 31"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 1000000000.0,
+              "usd": 892857.0,
+              "fx_rate": 1120.0,
+              "details": "Gimpo, Sanha, Majang, Opo",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 119716800.0,
+              "usd": 106890.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-03-15",
+              "krw": 2031000000.0,
+              "usd": 1813555.0,
+              "fx_rate": 1119.9,
+              "details": "Sanha, Majang, Juksan, Changwon",
+              "call_label": "Capital Call 38"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 124567374.39999999,
+              "usd": 109193.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 169547876.5,
+              "usd": 140879.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 33852048.0,
+              "usd": 28128.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 163907764.0,
+              "usd": 140152.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 161841898.6,
+              "usd": 138587.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 121821125.8,
+              "usd": 103081.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 28492944.5,
+              "usd": 24239.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 34891402.199999996,
+              "usd": 26854.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            }
+          ],
+          "total_krw": 26747391441.0,
+          "total_usd": 24185499.049569145
+        },
+        {
+          "project": "Gimpo",
+          "calls": [
+            {
+              "date": "2017-11-02",
+              "krw": 12915750000.0,
+              "usd": 11439991.142604074,
+              "fx_rate": 1129.0,
+              "details": "Project Gimpo",
+              "call_label": "Capital Call 17"
+            },
+            {
+              "date": "2017-12-06",
+              "krw": 65300000000.0,
+              "usd": 60073597.05611776,
+              "fx_rate": 1087.0,
+              "details": "Project Gimpo",
+              "call_label": "Capital Call 19"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 148411723.30547947,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 137801.0,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo"
+            },
+            {
+              "date": "2018-06-29",
+              "krw": 826750000.0,
+              "usd": 769070.0,
+              "fx_rate": 1075.0,
+              "details": "Project Gimpo",
+              "call_label": "Capital Call 27"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 1249705990.0,
+              "usd": 1117805.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 1226154510.0,
+              "usd": 1081265.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2019-01-04",
+              "krw": 5050000000.0,
+              "usd": 4492883.0,
+              "fx_rate": 1124.0,
+              "details": "Gimpo",
+              "call_label": "Capital Call 34"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 5573400000.0,
+              "usd": 4976250.0,
+              "fx_rate": 1120.0,
+              "details": "Gimpo, Sanha, Majang, Opo",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 442958880.0,
+              "usd": 395499.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-04-10",
+              "krw": 3747732311.0,
+              "usd": 3319515.0,
+              "fx_rate": 1129.0,
+              "details": "Gimpo, Opo, Gimhae Sangdong",
+              "call_label": "Capital Call 39"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 238216152.0,
+              "usd": 208815.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 487950650.5,
+              "usd": 405443.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 13082045.0,
+              "usd": 10870.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 287123945.0,
+              "usd": 245510.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 109538472.2,
+              "usd": 93799.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 304035163.6,
+              "usd": 249844.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 890328624.0,
+              "usd": 757920.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 66306987.0,
+              "usd": 58446.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 50465985.72,
+              "usd": 46509.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 98093968.0,
+              "usd": 88214.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 454478917.0,
+              "usd": 384565.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 42051161.5,
+              "usd": 35773.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 217515840.00000003,
+              "usd": 182725.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 144842746.0,
+              "usd": 116032.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 159995802.0,
+              "usd": 123140.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": -1729368.3,
+              "usd": -1331.0,
+              "fx_rate": 1299.3,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 71"
+            }
+          ],
+          "total_krw": 100273160505.52548,
+          "total_usd": 91016492.19872183
+        },
+        {
+          "project": "Opo",
+          "calls": [
+            {
+              "date": "2017-11-29",
+              "krw": 40542939771.0,
+              "usd": 37025515.77260274,
+              "fx_rate": 1095.0,
+              "details": "Project Opo",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 10270799796.0,
+              "usd": 9625865.0,
+              "fx_rate": 1067.0,
+              "details": "Project Opo",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-04-13",
+              "krw": 2511100000.0,
+              "usd": 2380189.0,
+              "fx_rate": 1055.0,
+              "details": "Project Opo",
+              "call_label": "Capital Call 24"
+            },
+            {
+              "date": "2018-06-04",
+              "krw": 2548480609.1057534,
+              "usd": null,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo",
+              "call_label": "Capital Call 26"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 2366277.0,
+              "fx_rate": 1077.0,
+              "details": "Project Majang, Opo & Gimpo"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 11722401790.55452,
+              "usd": 10485153.0,
+              "fx_rate": 1125.0,
+              "details": "Project Opo",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 2285461438.0,
+              "usd": 2044241.0,
+              "fx_rate": 1118.0,
+              "details": "Offshore fee (Q218)",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 4288178.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 4747271018.456986,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 1729017738.0,
+              "usd": 1524707.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2018-12-06",
+              "krw": 8627822969.789589,
+              "usd": 7655567.0,
+              "fx_rate": 1127.0,
+              "details": "Ansung, Sangdong & Opo, Namsa",
+              "call_label": "Capital Call 32"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 2618796854.0,
+              "usd": 2338212.0,
+              "fx_rate": 1120.0,
+              "details": "Gimpo, Sanha, Majang, Opo",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 1370760440.0,
+              "usd": 1223893.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-04-10",
+              "krw": 3419351430.0,
+              "usd": 3028656.0,
+              "fx_rate": 1129.0,
+              "details": "Gimpo, Opo, Gimhae Sangdong",
+              "call_label": "Capital Call 39"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 1000000000.0,
+              "usd": 876578.0,
+              "fx_rate": 1140.8,
+              "details": "Opo, Bucheon Cold",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 1085407315.2,
+              "usd": 951444.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-28",
+              "krw": 6000000000.0,
+              "usd": 5054760.0,
+              "fx_rate": 1187.0,
+              "details": "Majang, Opo, Changwon, Juksan",
+              "call_label": "Capital Call 41"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 1104386961.0,
+              "usd": 917646.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 13082045.0,
+              "usd": 10870.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 452154429.0,
+              "usd": 386622.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 381138389.4,
+              "usd": 326373.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-01-09",
+              "krw": 7000000000.0,
+              "usd": 6080083.0,
+              "fx_rate": 1151.3,
+              "details": "Opo",
+              "call_label": "Capital call 49"
+            },
+            {
+              "date": "2020-03-25",
+              "krw": 11300000000.0,
+              "usd": 9566543.0,
+              "fx_rate": 1181.2,
+              "details": "Gimhae 3, Opo",
+              "call_label": "Capital call 51"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 488697304.8,
+              "usd": 401592.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 492517643.70000005,
+              "usd": 419271.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 309211378.5,
+              "usd": 272553.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 733220023.3199999,
+              "usd": 675729.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 527633992.0,
+              "usd": 474491.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 972526856.0,
+              "usd": 822920.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 41995913.0,
+              "usd": 35726.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 407537011.20000005,
+              "usd": 342353.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 421642036.0,
+              "usd": 337773.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-06-17",
+              "krw": 4700000000.0,
+              "usd": 3795219.0,
+              "fx_rate": 1238.4,
+              "details": "Iljuk 2, Opo 3",
+              "call_label": "Capital call 69"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 579168172.1999999,
+              "usd": 445754.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 1035695.0,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 1420869970.5,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2023-01-25",
+              "krw": 4000000000.0,
+              "usd": 3223726.0,
+              "fx_rate": 1240.8,
+              "details": "Opo 3",
+              "call_label": "Capital call 75"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 40156235.0,
+              "usd": 30456.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Admin Cost (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 1217378961.0,
+              "usd": 923306.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Management Fee (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-27",
+              "krw": 12500000000.0,
+              "usd": 9588831.0,
+              "fx_rate": 1303.6,
+              "details": "Opo 3",
+              "call_label": "Capital call 78"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 1959750.0,
+              "usd": 1500.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Admin Cost up to Jun-23",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 1205163941.0,
+              "usd": 922437.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Management Fee",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 442230258.0,
+              "usd": 349313.0,
+              "fx_rate": 1266.0,
+              "details": "Opo Admin cost and Management fees",
+              "call_label": "Capital call 81"
+            },
+            {
+              "date": "2023-11-03",
+              "krw": 16433120000.0,
+              "usd": 12100971.0,
+              "fx_rate": 1358.0,
+              "details": "Opo3",
+              "call_label": "Capital Call 84"
+            }
+          ],
+          "total_krw": 167895402440.72684,
+          "total_usd": 144563530.77260274
+        },
+        {
+          "project": "Ilmok star",
+          "calls": [
+            {
+              "date": "2016-06-14",
+              "krw": 1364500000.0,
+              "usd": 1149924.153594213,
+              "fx_rate": 1186.59999943049,
+              "details": "Goyang+Juksan(Ilmok Star)",
+              "call_label": "Capital Call 6"
+            },
+            {
+              "date": "2016-07-22",
+              "krw": 5300000000.0,
+              "usd": 4624378.0,
+              "fx_rate": 1146.1000809189907,
+              "details": "Bucheon 1-3 (Ilmok Star)",
+              "call_label": "Capital Call 8"
+            },
+            {
+              "date": "2016-08-23",
+              "krw": 6193000000.0,
+              "usd": 5579279.233439458,
+              "fx_rate": 1110.0000091198522,
+              "details": "Gimhae Sangdong(Ilmok Star)",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2016-08-23",
+              "krw": -1324500000.0,
+              "usd": -1193243.2334394578,
+              "fx_rate": 1110.0000091198522,
+              "details": "fund received back from junksan",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 84323040.0,
+              "usd": 74556.18067087507,
+              "fx_rate": 1130.9999954563164,
+              "details": "Offshore fee (Q117)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": -11175298125.9628,
+              "usd": -9880900.23948584,
+              "fx_rate": 1130.9999954563164,
+              "details": "Ilmok star loan repayment",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 14370750.0,
+              "usd": 12774.0,
+              "fx_rate": 1125.0,
+              "details": "Offshore fee (Q217)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 1091715.0,
+              "usd": 997.0,
+              "fx_rate": 1095.0,
+              "details": "Offshore fee (Q317)",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-02-09",
+              "krw": 1086206.0,
+              "usd": 1018.0,
+              "fx_rate": 1067.0,
+              "details": "Offshore fee (Q417)",
+              "call_label": "Capital Call 22"
+            },
+            {
+              "date": "2018-06-05",
+              "krw": null,
+              "usd": 999.0,
+              "fx_rate": 1077.0,
+              "details": "Offshore fee (Q118)"
+            },
+            {
+              "date": "2018-08-09",
+              "krw": 1131416.0,
+              "usd": 1012.0,
+              "fx_rate": 1125.0,
+              "details": "Call from B 1-3 for Bucheon, Gachang, Ilmok",
+              "call_label": "Capital Call 29"
+            },
+            {
+              "date": "2018-11-08",
+              "krw": 1164618.0,
+              "usd": 1027.0,
+              "fx_rate": 1134.0,
+              "details": "Offshore fee (Q318)",
+              "call_label": "Capital Call 30-2 Gachang upstream loan Used )Not call to investor"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 1153600.0,
+              "usd": 1030.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 1153349.0,
+              "usd": 1011.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 1233587.5,
+              "usd": 1025.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 49167789.0,
+              "usd": 40854.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 1383615.3,
+              "usd": 1137.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 1335633.9000000001,
+              "usd": 1137.0,
+              "fx_rate": 1174.7,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 1309213.0,
+              "usd": 1154.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 3777163.4799999995,
+              "usd": 3481.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 1292144.0,
+              "usd": 1162.0,
+              "fx_rate": 1112.0,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 2807956.8,
+              "usd": 2376.0,
+              "fx_rate": 1181.8,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 50923835.5,
+              "usd": 43321.0,
+              "fx_rate": 1175.5,
+              "details": "Adjustment on Offshore Admin Cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 1458240.0,
+              "usd": 1225.0,
+              "fx_rate": 1190.4,
+              "details": "Adjustment on Offshore Admin Cost",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 1637770.0,
+              "usd": 1312.0,
+              "fx_rate": 1248.3,
+              "details": "Adjustment on offshore fee",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 1729368.3,
+              "usd": 1331.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            }
+          ],
+          "total_krw": 581232884.8172009,
+          "total_usd": 473377.0947792485
+        },
+        {
+          "project": "Ansung",
+          "calls": [
+            {
+              "date": "2018-04-23",
+              "krw": 4486222809.459247,
+              "usd": 4186862.0,
+              "fx_rate": 1071.5,
+              "details": "Project Ansung",
+              "call_label": "Capital Call 25"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 6772695.0,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha"
+            },
+            {
+              "date": "2018-10-08",
+              "krw": null,
+              "usd": 206542.0,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 7497779991.835616,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Project Ansung, Opo, Majang, Juksan, Sanha",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-10-10",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1107.06,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 30"
+            },
+            {
+              "date": "2018-12-06",
+              "krw": 35540710000.0,
+              "usd": 31535680.0,
+              "fx_rate": 1127.0,
+              "details": "Ansung, Sangdong & Opo, Namsa",
+              "call_label": "Capital Call 32"
+            },
+            {
+              "date": "2018-12-12",
+              "krw": 335100000.0,
+              "usd": 300000.0,
+              "fx_rate": null,
+              "details": "Ansung",
+              "call_label": "Capital Call 33"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 1845898880.0,
+              "usd": 1648124.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 542742444.8,
+              "usd": 475756.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 567820928.0,
+              "usd": 471808.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 25676672.5,
+              "usd": 21335.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 13000000000.0,
+              "usd": 11115861.0,
+              "fx_rate": 1169.5,
+              "details": "Bucheon Cold, Wongok, Iljuk, Changwon, Sanha 2",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 442358698.0,
+              "usd": 378246.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 465347279.59999996,
+              "usd": 398482.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 325405144.5,
+              "usd": 267405.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 339814866.6,
+              "usd": 289278.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 136358958.5,
+              "usd": 120193.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 126812214.52,
+              "usd": 116869.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 135641760.0,
+              "usd": 121980.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 335455111.8,
+              "usd": 283851.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 42008843.5,
+              "usd": 35737.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 164227584.0,
+              "usd": 137960.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 55945061.0,
+              "usd": 44817.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 66641327248.61486,
+          "total_usd": 58929481.0
+        },
+        {
+          "project": "Namsa",
+          "calls": [
+            {
+              "date": "2018-11-22",
+              "krw": 2000000000.0,
+              "usd": null,
+              "fx_rate": 1118.0,
+              "details": "Juksan & Majang&Sanha&Namsa",
+              "call_label": "Capital Call 31"
+            },
+            {
+              "date": "2019-01-11",
+              "krw": 230000000.0,
+              "usd": null,
+              "fx_rate": 1117.0,
+              "details": "Namsa, Iljuk",
+              "call_label": "Capital Call 35"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 21414400.0,
+              "usd": null,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 219817329.6,
+              "usd": null,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 13750414086.0,
+              "usd": null,
+              "fx_rate": 1203.5,
+              "details": "Bucheon Cold, Namsa,",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 210652216.0,
+              "usd": null,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 24964200.5,
+              "usd": null,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 365867549.5,
+              "usd": null,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 189522262.0,
+              "usd": null,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 171018258.4,
+              "usd": null,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-07-29",
+              "krw": 800000000.0,
+              "usd": null,
+              "fx_rate": 1192.3,
+              "details": "Namsa, Iljuk, Gimhae 3",
+              "call_label": "Capital Call 52"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 186443685.20000002,
+              "usd": null,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-09-23",
+              "krw": 400000000.0,
+              "usd": null,
+              "fx_rate": 1172.6,
+              "details": "Namsa Iljuk",
+              "call_label": "Capital Call 54"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 4067583410.0000005,
+              "usd": null,
+              "fx_rate": 1134.5,
+              "details": "Namsa",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 199901169.0,
+              "usd": null,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 2500000000.0,
+              "usd": null,
+              "fx_rate": 1085.08,
+              "details": "Nansa, Iljuk, Sanha2",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 57752297.919999994,
+              "usd": null,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 202599728.0,
+              "usd": null,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 150248143.0,
+              "usd": null,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 42105234.5,
+              "usd": null,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 73590528.0,
+              "usd": null,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 73774530.0,
+              "usd": null,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 49217484.0,
+              "usd": null,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 83065801.2,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)",
+              "call_label": "Capital call 73"
+            }
+          ],
+          "total_krw": 26069952312.82,
+          "total_usd": null
+        },
+        {
+          "project": "Iljuk (Star 1)",
+          "calls": [
+            {
+              "date": "2018-12-12",
+              "krw": 6933000000.0,
+              "usd": 6189073.0,
+              "fx_rate": 1120.2,
+              "details": "Iljuk",
+              "call_label": "Capital Call 33"
+            },
+            {
+              "date": "2019-01-11",
+              "krw": 230000000.0,
+              "usd": 205909.0,
+              "fx_rate": 1117.0,
+              "details": "Namsa, Iljuk",
+              "call_label": "Capital Call 35"
+            },
+            {
+              "date": "2019-01-31",
+              "krw": 82416320.0,
+              "usd": 73586.0,
+              "fx_rate": 1120.0,
+              "details": "Offshore fee (Q418)",
+              "call_label": "Capital Call 36"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 209061867.2,
+              "usd": 183259.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-06-19",
+              "krw": 34465000000.0,
+              "usd": 29220009.0,
+              "fx_rate": 1179.5,
+              "details": "Bucheon Cold, Iljuk, Changwon",
+              "call_label": "Capital Call 42"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 669143593.0,
+              "usd": 555998.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 8957650.5,
+              "usd": 7443.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-10-01",
+              "krw": 1850000000.0,
+              "usd": 1562500.0,
+              "fx_rate": 1184.0,
+              "details": "Sanha2, Iljuk",
+              "call_label": "Capital Call 45"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 1011421241.0,
+              "usd": 864833.0,
+              "fx_rate": 1169.5,
+              "details": "Bucheon Cold, Wongok, Iljuk, Changwon, Sanha 2",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 1126766471.0,
+              "usd": 963460.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 617177628.8,
+              "usd": 528496.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 535266850.90000004,
+              "usd": 439861.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-07-29",
+              "krw": 4300000000.0,
+              "usd": 3606475.0,
+              "fx_rate": 1192.3,
+              "details": "Namsa, Iljuk, Gimhae 3",
+              "call_label": "Capital Call 52"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 568175371.9,
+              "usd": 483677.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-09-23",
+              "krw": 9700000000.0,
+              "usd": 8272216.0,
+              "fx_rate": 1172.6,
+              "details": "Namsa Iljuk",
+              "call_label": "Capital Call 54"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 652322751.5,
+              "usd": 574987.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2020-12-18",
+              "krw": 2200000000.0,
+              "usd": 2031957.0,
+              "fx_rate": 1082.7,
+              "details": "Iljuk, Iljuk 2",
+              "call_label": "Capital Call 56"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 11000000000.0,
+              "usd": 10137501.0,
+              "fx_rate": 1085.08,
+              "details": "Nansa, Iljuk, Sanha2",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 203703153.48,
+              "usd": 187731.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 349279200.0,
+              "usd": 314100.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 851041361.4,
+              "usd": 720123.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 41406987.5,
+              "usd": 35225.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 210621043.20000002,
+              "usd": 176933.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 178907604.0,
+              "usd": 143321.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 77993669095.38,
+          "total_usd": 67478673.0
+        },
+        {
+          "project": "Changwon (Star 2)",
+          "calls": [
+            {
+              "date": "2019-03-15",
+              "krw": 2368741800.0,
+              "usd": 2115138.0,
+              "fx_rate": 1119.9,
+              "details": "Sanha, Majang, Juksan, Changwon",
+              "call_label": "Capital Call 38"
+            },
+            {
+              "date": "2019-05-08",
+              "krw": 1404324.8,
+              "usd": 1231.0,
+              "fx_rate": 1140.8,
+              "details": "Offshore fee (Q119)",
+              "call_label": "Capital Call 40"
+            },
+            {
+              "date": "2019-05-28",
+              "krw": 2443000000.0,
+              "usd": 2058130.0,
+              "fx_rate": 1187.0,
+              "details": "Majang, Opo, Changwon, Juksan",
+              "call_label": "Capital Call 41"
+            },
+            {
+              "date": "2019-06-19",
+              "krw": 370000000.0,
+              "usd": 313693.0,
+              "fx_rate": 1179.5,
+              "details": "Bucheon Cold, Iljuk, Changwon",
+              "call_label": "Capital Call 42"
+            },
+            {
+              "date": "2019-07-15",
+              "krw": 41574000000.0,
+              "usd": 35982343.0,
+              "fx_rate": 1155.4,
+              "details": "Changwon, Juksan",
+              "call_label": "Capital Call 43"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 450393026.0,
+              "usd": 374236.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore fee (Q219)",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-08-23",
+              "krw": 826804.5,
+              "usd": 687.0,
+              "fx_rate": 1203.5,
+              "details": "Offshore Admin Cost",
+              "call_label": "Capital Call 44"
+            },
+            {
+              "date": "2019-10-01",
+              "krw": 230000000.0,
+              "usd": 194257.0,
+              "fx_rate": 1184.0,
+              "details": "upfront fee,",
+              "call_label": "Capital Call 45"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 1991546669.0,
+              "usd": 1702905.0,
+              "fx_rate": 1169.5,
+              "details": "Bucheon Cold, Wongok, Iljuk, Changwon, Sanha 2",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 999740059.0,
+              "usd": 854844.0,
+              "fx_rate": 1169.5,
+              "details": "Offshore fee (Q319)",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-05",
+              "krw": 4500000000.0,
+              "usd": 3905911.0,
+              "fx_rate": 1152.1,
+              "details": "Changwon",
+              "call_label": "Capital call 47"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 564074259.4,
+              "usd": 483023.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 595311130.7,
+              "usd": 489203.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 572487695.6,
+              "usd": 487348.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 565325888.0,
+              "usd": 498304.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 459953476.11999995,
+              "usd": 423889.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 142939816.0,
+              "usd": 128543.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 1212388529.3999999,
+              "usd": 1025883.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 49345139.0,
+              "usd": 41978.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 146623948.8,
+              "usd": 123172.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 152745733.0,
+              "usd": 122363.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            }
+          ],
+          "total_krw": 59390848299.32,
+          "total_usd": 51327081.0
+        },
+        {
+          "project": "Sanha 2 (Star 3)",
+          "calls": [
+            {
+              "date": "2019-10-01",
+              "krw": 48600000000.0,
+              "usd": 41047298.0,
+              "fx_rate": 1184.0,
+              "details": "Sanha2, Iljuk",
+              "call_label": "Capital Call 45"
+            },
+            {
+              "date": "2019-10-01",
+              "krw": 230000000.0,
+              "usd": 194257.0,
+              "fx_rate": 1184.0,
+              "details": "upfront fee,",
+              "call_label": "Capital Call 45"
+            },
+            {
+              "date": "2019-11-01",
+              "krw": 7000000000.0,
+              "usd": 5985464.0,
+              "fx_rate": 1169.5,
+              "details": "Bucheon Cold, Wongok, Iljuk, Changwon, Sanha 2",
+              "call_label": "Capital call 46"
+            },
+            {
+              "date": "2019-12-20",
+              "krw": 1437901629.8,
+              "usd": 1231291.0,
+              "fx_rate": 1167.8,
+              "details": "Offshore fee (Q419)",
+              "call_label": "Capital call 48"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 3024020000.0,
+              "usd": 2485019.0,
+              "fx_rate": 1216.9,
+              "details": "Sanha2, Gimhae 3",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 939808219.3000001,
+              "usd": 772297.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 925997214.8000001,
+              "usd": 788284.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 843516633.0,
+              "usd": 743514.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 500000000.0,
+              "usd": 460795.0,
+              "fx_rate": 1085.08,
+              "details": "Nansa, Iljuk, Sanha2",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 841163781.7199999,
+              "usd": 775209.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-04-07",
+              "krw": 11200000000.0,
+              "usd": 9978617.0,
+              "fx_rate": 1122.4,
+              "details": "Sanha 2, Gimhae",
+              "call_label": "Capital Call 59"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 850226304.0,
+              "usd": 764592.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-06-14",
+              "krw": 1700000000.0,
+              "usd": 1535682.0,
+              "fx_rate": 1107.0,
+              "details": "Sanha 2",
+              "call_label": "Capital call 61"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 1800000000.0,
+              "usd": 1523100.0,
+              "fx_rate": 1181.8,
+              "details": "Sanha 2",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 1999221515.0,
+              "usd": 1691675.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 2500000000.0,
+              "usd": 2126754.0,
+              "fx_rate": 1175.5,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 41705564.5,
+              "usd": 35479.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 1000000000.0,
+              "usd": 840054.0,
+              "fx_rate": 1190.4,
+              "details": "Sanha 2",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 369397785.6,
+              "usd": 310314.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 1500000000.0,
+              "usd": 1221001.0,
+              "fx_rate": 1228.5,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 66"
+            },
+            {
+              "date": "2022-04-14",
+              "krw": 1200000000.0,
+              "usd": 991164.0,
+              "fx_rate": 1210.7,
+              "details": "Sanha 2, Iljuk 2, Gimhae 3",
+              "call_label": "Capital call 67"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 351390209.0,
+              "usd": 281495.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 431033679.9,
+              "usd": 331743.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-10-18",
+              "krw": 1000000000.0,
+              "usd": 712150.0,
+              "fx_rate": 1404.2,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 72"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 389442.0,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 534275479.8,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2022-12-16",
+              "krw": 2500000000.0,
+              "usd": 1933188.0,
+              "fx_rate": 1297.2,
+              "details": "Sanha2, Gimhae3, Iljuk2",
+              "call_label": "Capital call 74"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 3000000000.0,
+              "usd": 2275313.0,
+              "fx_rate": 1318.5,
+              "details": "Sanha2 Project (Land Costs + CM costs + on-shore admin cost + on-shore mgmt fee)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 40073416.0,
+              "usd": 30393.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Admin Cost (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 547898432.0,
+              "usd": 415547.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Management Fee (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-04-21",
+              "krw": 600000000.0,
+              "usd": 457910.0,
+              "fx_rate": 1310.3,
+              "details": "Sanha 2",
+              "call_label": "Capital call 79"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 1600000000.0,
+              "usd": 1224646.0,
+              "fx_rate": 1306.5,
+              "details": "Sanha 2 Project (Civil Work, CM, General)",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 1931007.0,
+              "usd": 1478.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Admin Cost up to Jun-23",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 351035647.0,
+              "usd": 268684.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Management Fee",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 200000000.0,
+              "usd": 153081.0,
+              "fx_rate": 1306.5,
+              "details": "Onshore Management Fee",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 2500000000.0,
+              "usd": 1974723.0,
+              "fx_rate": 1266.0,
+              "details": "Sanha 2 Project (Civil Work, CM, Architectural Design Service)",
+              "call_label": "Capital call 81"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 579300078.0,
+              "usd": 457583.0,
+              "fx_rate": 1266.0,
+              "details": "Sanha 2 Admin cost and Management fees",
+              "call_label": "Capital call 81"
+            },
+            {
+              "date": "2023-09-04",
+              "krw": 2300000000.0,
+              "usd": 1741764.0,
+              "fx_rate": 1320.5,
+              "details": "Sanha2 Project (Civil Works)",
+              "call_label": "Capital call 82"
+            },
+            {
+              "date": "2023-10-09",
+              "krw": 3500000000.0,
+              "usd": 2569750.0,
+              "fx_rate": 1362.0,
+              "details": "Sanha2 Project (Civil Works)",
+              "call_label": "Capital call 83"
+            }
+          ],
+          "total_krw": 108539896596.42,
+          "total_usd": 90720750.0
+        },
+        {
+          "project": "Gimhae 3 (star 4)",
+          "calls": [
+            {
+              "date": "2020-01-21",
+              "krw": 9123154780.0,
+              "usd": 7923532.0,
+              "fx_rate": 1151.4,
+              "details": "gimhae 3, Ilmok Networks",
+              "call_label": "Capital call 50"
+            },
+            {
+              "date": "2020-03-25",
+              "krw": 2532500000.0,
+              "usd": 2144006.0,
+              "fx_rate": 1181.2,
+              "details": "Gimhae 3, Opo",
+              "call_label": "Capital call 51"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 1080000000.0,
+              "usd": 887501.0,
+              "fx_rate": 1216.9,
+              "details": "Sanha2, Gimhae 3",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 128188959.5,
+              "usd": 105341.0,
+              "fx_rate": 1216.9,
+              "details": "Offshore fee (Q120)",
+              "call_label": "Capital call 51.2\n(used with Bucheon Holding dividend)"
+            },
+            {
+              "date": "2020-07-29",
+              "krw": 21500000000.0,
+              "usd": 18032374.0,
+              "fx_rate": 1192.3,
+              "details": "Namsa, Iljuk, Gimhae 3",
+              "call_label": "Capital Call 52"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 230000000.0,
+              "usd": 195795.0,
+              "fx_rate": 1174.7,
+              "details": "Upfront fee for Gimhae 3, Namyangju",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 792033252.1,
+              "usd": 674243.0,
+              "fx_rate": 1174.7,
+              "details": "Offshore fee (Q220)",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 666409838.0,
+              "usd": 587404.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 465935522.15999997,
+              "usd": 429402.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-04-07",
+              "krw": 1500000000.0,
+              "usd": 1336422.0,
+              "fx_rate": 1122.4,
+              "details": "Sanha 2, Gimhae",
+              "call_label": "Capital Call 59"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 500000000.0,
+              "usd": 449640.0,
+              "fx_rate": 1112.0,
+              "details": "Gimhae 3",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 457452336.0,
+              "usd": 411378.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-08-09",
+              "krw": 5302723000.0,
+              "usd": 4643771.0,
+              "fx_rate": 1141.9,
+              "details": "Gimhae 3",
+              "call_label": "Capital call 62"
+            },
+            {
+              "date": "2021-08-09",
+              "krw": 457277000.0,
+              "usd": 400453.0,
+              "fx_rate": 1141.9,
+              "details": "Offhsore fee (Q221)- Gimhae 3 only",
+              "call_label": "Capital call 62"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 973667293.0,
+              "usd": 823885.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 27477312.5,
+              "usd": 23375.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 5197286.4,
+              "usd": 4366.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-04-14",
+              "krw": 1000000000.0,
+              "usd": 825969.0,
+              "fx_rate": 1210.7,
+              "details": "Sanha 2, Iljuk 2, Gimhae 3",
+              "call_label": "Capital call 67"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 13100000000.0,
+              "usd": 10494272.0,
+              "fx_rate": 1248.3,
+              "details": "Iljuk 2, Gimhae 3",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 494444140.0,
+              "usd": 396094.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-07-15",
+              "krw": 3500000000.0,
+              "usd": 2704373.0,
+              "fx_rate": 1294.2,
+              "details": "Gimhae 3, Iljuk 2",
+              "call_label": "Capital call 70"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 416185279.5,
+              "usd": 320315.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 6560246.0,
+              "fx_rate": 1371.9,
+              "details": "Gimhae3, Iljuk2"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 248838.0,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 9000000000.0,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Gimhae3, Iljuk2",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 341380852.20000005,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2022-12-16",
+              "krw": 4313300262.0,
+              "usd": 3325085.0,
+              "fx_rate": 1297.2,
+              "details": "Sanha2, Gimhae3, Iljuk2",
+              "call_label": "Capital call 74"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 41592083.0,
+              "usd": 31545.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Admin Cost (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 355151160.0,
+              "usd": 269360.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Management Fee (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 1931007.0,
+              "usd": 1478.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Admin Cost up to Jun-23",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 334612941.0,
+              "usd": 256114.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Management Fee",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 359190786.0,
+              "usd": 283721.0,
+              "fx_rate": 1266.0,
+              "details": "Gimhae3 Management fees",
+              "call_label": "Capital call 81"
+            }
+          ],
+          "total_krw": 78999805090.36,
+          "total_usd": 64790298.0
+        },
+        {
+          "project": "Namyangju (Star 5)",
+          "calls": [
+            {
+              "date": "2020-09-04",
+              "krw": 3260000000.0,
+              "usd": 2775177.0,
+              "fx_rate": 1174.7,
+              "details": "Namyangju",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-09-04",
+              "krw": 230000000.0,
+              "usd": 195795.0,
+              "fx_rate": 1174.7,
+              "details": "Upfront fee for Gimhae 3, Namyangju",
+              "call_label": "Capital Call 53"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 130133957.0,
+              "usd": 114706.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q320)",
+              "call_label": "Capital Call 55"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 330777957.35999995,
+              "usd": 304842.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": null,
+              "usd": 363281.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)"
+            }
+          ],
+          "total_krw": 3950911914.36,
+          "total_usd": 3753801.0
+        },
+        {
+          "project": "Iljuk 2 (Star 6)",
+          "calls": [
+            {
+              "date": "2020-12-18",
+              "krw": 3500000000.0,
+              "usd": 3232660.0,
+              "fx_rate": 1082.7,
+              "details": "Iljuk, Iljuk 2",
+              "call_label": "Capital Call 56"
+            },
+            {
+              "date": "2020-12-18",
+              "krw": 230000000.0,
+              "usd": 212432.0,
+              "fx_rate": 1082.7,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 56"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 219884951.51999998,
+              "usd": 202644.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-03-24",
+              "krw": 10657000000.0,
+              "usd": 9462795.0,
+              "fx_rate": 1126.2,
+              "details": "Iljuk 2",
+              "call_label": "Capital Call 57"
+            },
+            {
+              "date": "2021-05-04",
+              "krw": 524332464.0,
+              "usd": 471522.0,
+              "fx_rate": 1112.0,
+              "details": "Offshore Fee (Q121)",
+              "call_label": "Capital call 60"
+            },
+            {
+              "date": "2021-10-21",
+              "krw": 1214144684.2,
+              "usd": 1027369.0,
+              "fx_rate": 1181.8,
+              "details": "Offshore fee (Q2,Q321)",
+              "call_label": "Capital call 63"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 4400000000.0,
+              "usd": 3743088.0,
+              "fx_rate": 1175.5,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 10708805.0,
+              "usd": 9110.0,
+              "fx_rate": 1175.5,
+              "details": "Offshore admin cost",
+              "call_label": "Capital call 64"
+            },
+            {
+              "date": "2022-02-09",
+              "krw": 508950758.40000004,
+              "usd": 427546.0,
+              "fx_rate": 1190.4,
+              "details": "Offhsore fee (Q421)",
+              "call_label": "Capital call 65"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 3000000000.0,
+              "usd": 2442003.0,
+              "fx_rate": 1228.5,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 66"
+            },
+            {
+              "date": "2022-04-14",
+              "krw": 2000000000.0,
+              "usd": 1651941.0,
+              "fx_rate": 1210.7,
+              "details": "Sanha 2, Iljuk 2, Gimhae 3",
+              "call_label": "Capital call 67"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 500000000.0,
+              "usd": 400545.0,
+              "fx_rate": 1248.3,
+              "details": "Iljuk 2, Gimhae 3",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-05-13",
+              "krw": 576072974.0,
+              "usd": 461486.0,
+              "fx_rate": 1248.3,
+              "details": "Offhsore fee (Q122)",
+              "call_label": "Capital call 68"
+            },
+            {
+              "date": "2022-06-17",
+              "krw": 1000000000.0,
+              "usd": 807494.0,
+              "fx_rate": 1238.4,
+              "details": "Iljuk 2, Opo 3",
+              "call_label": "Capital call 69"
+            },
+            {
+              "date": "2022-07-15",
+              "krw": 2000000000.0,
+              "usd": 1545356.0,
+              "fx_rate": 1294.2,
+              "details": "Gimhae 3, Iljuk 2",
+              "call_label": "Capital call 70"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 1900000000.0,
+              "usd": 1462327.0,
+              "fx_rate": 1299.3,
+              "details": "Iljuk 2",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-08-25",
+              "krw": 397550718.9,
+              "usd": 305973.0,
+              "fx_rate": 1299.3,
+              "details": "Offshore fee (Q222)",
+              "call_label": "Capital call 71"
+            },
+            {
+              "date": "2022-10-18",
+              "krw": 1300000000.0,
+              "usd": 925795.0,
+              "fx_rate": 1404.2,
+              "details": "Sanha 2, Iljuk 2",
+              "call_label": "Capital call 72"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 728917.0,
+              "fx_rate": 1371.9,
+              "details": "Gimhae3, Iljuk2"
+            },
+            {
+              "date": "2022-11-22",
+              "krw": null,
+              "usd": 187934.0,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 1000000000.0,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Gimhae3, Iljuk2",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2022-11-23",
+              "krw": 257826654.60000002,
+              "usd": null,
+              "fx_rate": 1371.9,
+              "details": "Offshore fee (Q322)",
+              "call_label": "Capital call 73"
+            },
+            {
+              "date": "2022-12-16",
+              "krw": 1500000000.0,
+              "usd": 1159913.0,
+              "fx_rate": 1297.2,
+              "details": "Sanha2, Gimhae3, Iljuk2",
+              "call_label": "Capital call 74"
+            },
+            {
+              "date": "2023-02-17",
+              "krw": 900000000.0,
+              "usd": 738128.0,
+              "fx_rate": 1297.5,
+              "details": "Iljuk2",
+              "call_label": "Capital call 76"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 27890231.0,
+              "usd": 21153.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Admin Cost (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 292654260.0,
+              "usd": 221960.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore Management Fee (Q2 22~Q4 22)",
+              "call_label": "Capital call 77"
+            },
+            {
+              "date": "2023-06-13",
+              "krw": 201310746.0,
+              "usd": 154084.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore Management Fee",
+              "call_label": "Capital call 80"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 205494588.0,
+              "usd": 162318.0,
+              "fx_rate": 1266.0,
+              "details": "Iljuk 2 Management fees",
+              "call_label": "Capital call 81"
+            },
+            {
+              "date": "2023-10-09",
+              "krw": 300000000.0,
+              "usd": 220264.0,
+              "fx_rate": 1362.0,
+              "details": "Iljuk2 Project(Admin Cost, Legal fees)",
+              "call_label": "Capital call 83"
+            }
+          ],
+          "total_krw": 38623821835.62,
+          "total_usd": 32386757.0
+        },
+        {
+          "project": "Ilmok networks",
+          "calls": [
+            {
+              "date": "2017-02-24",
+              "krw": 315000000.0,
+              "usd": 276679.85488089523,
+              "fx_rate": 1138.4999465739954,
+              "details": "Gimhae Sangdong",
+              "call_label": "Capital Call 13"
+            },
+            {
+              "date": "2017-02-24",
+              "krw": -300000000.0,
+              "usd": -261358.19140131553,
+              "fx_rate": 1147.85,
+              "details": "Ilmok networks investment",
+              "call_label": "Capital Call 13"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": 315000000.0,
+              "usd": 278514.589978322,
+              "fx_rate": 1130.9999954563164,
+              "details": "Bucheon 1-3",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-04-25",
+              "krw": -300000000.0,
+              "usd": -266160.3704952357,
+              "fx_rate": 1127.14,
+              "details": "Ilmok networks investment (BU cold)",
+              "call_label": "Capital Call 14"
+            },
+            {
+              "date": "2017-08-24",
+              "krw": 315000000.0,
+              "usd": 280000.0,
+              "fx_rate": 1125.0,
+              "details": "Project Majang",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-09-27",
+              "krw": -300000000.0,
+              "usd": -264294.0,
+              "fx_rate": 1135.1,
+              "details": "Ilmok networks investment (Majang)",
+              "call_label": "Capital Call 15"
+            },
+            {
+              "date": "2017-10-10",
+              "krw": 260000000.0,
+              "usd": 230088.49557522123,
+              "fx_rate": 1130.0,
+              "details": "Project Sanha",
+              "call_label": "Capital Call 16"
+            },
+            {
+              "date": "2017-10-10",
+              "krw": -300000000.0,
+              "usd": -264480.2962179318,
+              "fx_rate": 1134.3,
+              "details": "Ilmok networks investment (Sanha)",
+              "call_label": "Capital Call 16"
+            },
+            {
+              "date": "2017-11-02",
+              "krw": 315000000.0,
+              "usd": 279007.971656333,
+              "fx_rate": 1129.0,
+              "details": "Project Gimpo",
+              "call_label": "Capital Call 17"
+            },
+            {
+              "date": "2017-11-02",
+              "krw": -300000000.0,
+              "usd": null,
+              "fx_rate": 1129.0,
+              "details": "Ilmok networks investment (Gimpo)",
+              "call_label": "Capital Call 17"
+            },
+            {
+              "date": "2017-11-29",
+              "krw": 160000000.0,
+              "usd": 146118.7214611872,
+              "fx_rate": 1095.0,
+              "details": "Project Opo",
+              "call_label": "Capital Call 18"
+            },
+            {
+              "date": "2018-04-23",
+              "krw": 300000000.0,
+              "usd": 279981.0,
+              "fx_rate": 1071.5,
+              "details": "Project Ansung",
+              "call_label": "Capital Call 25"
+            },
+            {
+              "date": "2018-12-06",
+              "krw": 300000000.0,
+              "usd": 266193.0,
+              "fx_rate": 1127.0,
+              "details": "Ansung, Sangdong & Opo, Namsa",
+              "call_label": "Capital Call 32"
+            },
+            {
+              "date": "2018-12-12",
+              "krw": 300000000.0,
+              "usd": 267809.0,
+              "fx_rate": 1120.2,
+              "details": "Iljuk",
+              "call_label": "Capital Call 33"
+            },
+            {
+              "date": "2019-03-14",
+              "krw": 273798560.0,
+              "usd": 244468.0,
+              "fx_rate": 1119.9,
+              "details": "Ilmok Networks",
+              "call_label": "Capital Call 37"
+            },
+            {
+              "date": "2019-10-01",
+              "krw": 300000000.0,
+              "usd": 253378.0,
+              "fx_rate": 1184.0,
+              "details": "Ilmok Networks",
+              "call_label": "Capital Call 45"
+            },
+            {
+              "date": "2020-01-21",
+              "krw": 600000000.0,
+              "usd": 500552.0,
+              "fx_rate": 1151.4,
+              "details": "gimhae 3, Ilmok Networks",
+              "call_label": "Capital call 50"
+            },
+            {
+              "date": "2020-12-18",
+              "krw": 300000000.0,
+              "usd": 277085.0,
+              "fx_rate": 1082.7,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 56"
+            }
+          ],
+          "total_krw": 2553798560.0,
+          "total_usd": 2523582.7754374756
+        }
+      ]
+    },
+    {
+      "fund": "Dev JV2 (Nova)",
+      "sheet": "Dev JV2_Capital call-Nova",
+      "projects": [
+        {
+          "project": "Sunwood Nova",
+          "calls": [
+            {
+              "date": "2020-09-04",
+              "krw": 587350000.0,
+              "usd": 500000.0,
+              "fx_rate": 1174.7,
+              "details": "Sunwood Nova",
+              "call_label": "Capital Call 2"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 352650000.0,
+              "usd": 300000.0,
+              "fx_rate": 1175.5,
+              "details": "Operating cost",
+              "call_label": "Capital Call 8"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 65236743.0,
+              "usd": 49478.0,
+              "fx_rate": 1318.5,
+              "details": "Sunwood Nava Admin cost",
+              "call_label": "Capital call 13"
+            }
+          ],
+          "total_krw": 1005236743.0,
+          "total_usd": 849478.0
+        },
+        {
+          "project": "Geomdan",
+          "calls": [
+            {
+              "date": "2020-06-17",
+              "krw": 10238013681.0,
+              "usd": 8429818.0,
+              "fx_rate": 1214.5,
+              "details": "ESR Pre-funding+5% IRR carry cost",
+              "call_label": ""
+            },
+            {
+              "date": "2020-06-17",
+              "krw": 16219300000.0,
+              "usd": 13354714.0,
+              "fx_rate": 1214.5,
+              "details": "Geomdan",
+              "call_label": "Capital Call 1"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 75748500000.0,
+              "usd": 66768179.0,
+              "fx_rate": 1134.5,
+              "details": "Geomdan",
+              "call_label": "Capital Call 3"
+            },
+            {
+              "date": "2020-10-27",
+              "krw": 956450914.2452161,
+              "usd": 841033.0,
+              "fx_rate": 1134.5,
+              "details": "Offshore fee (Q2,Q320)",
+              "call_label": "Capital Call 3"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 1735945487.0,
+              "usd": 1599832.0,
+              "fx_rate": 1085.08,
+              "details": "Geomdan",
+              "call_label": "Capital Call 5"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 1585352747.252747,
+              "usd": 1442671.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 5"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 2069028689.8395722,
+              "usd": 1799928.0,
+              "fx_rate": 1175.5,
+              "details": "offshore fee (Q1-Q321)",
+              "call_label": "Capital Call 8"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 759820238.0952381,
+              "usd": 638249.0,
+              "fx_rate": 1228.5,
+              "details": "offshore fee Q421",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-06-21",
+              "krw": 759074390.2439024,
+              "usd": 622441.0,
+              "fx_rate": 1234.8,
+              "details": "Offshore fee Q122",
+              "call_label": "Capital call 12"
+            },
+            {
+              "date": "2022-06-21",
+              "krw": -41287500.0,
+              "usd": -36333.0,
+              "fx_rate": 1234.8,
+              "details": "Offshore fee adjustment",
+              "call_label": "Capital call 12"
+            }
+          ],
+          "total_krw": 110030198647.67668,
+          "total_usd": 95460532.0
+        },
+        {
+          "project": "Pyeongtaek BIX",
+          "calls": [
+            {
+              "date": "2020-12-18",
+              "krw": 7850000000.0,
+              "usd": 7250394.0,
+              "fx_rate": 1082.7,
+              "details": "Pyeongtaek BIX",
+              "call_label": "Capital Call 4"
+            },
+            {
+              "date": "2020-12-18",
+              "krw": 548000000.0,
+              "usd": 506142.0,
+              "fx_rate": 1082.7,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 4"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 2726373.6263736263,
+              "usd": 2481.0,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 5"
+            },
+            {
+              "date": "2021-07-28",
+              "krw": 78660000000.0,
+              "usd": 69610620.0,
+              "fx_rate": 1130.0,
+              "details": "Pyeongtaek BIX",
+              "call_label": "Capital Call 6"
+            },
+            {
+              "date": "2021-07-28",
+              "krw": 661234090.9090909,
+              "usd": 582977.0,
+              "fx_rate": 1130.0,
+              "details": "Offshore fee 1H21",
+              "call_label": "Capital Call 6"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 24437150000.0,
+              "usd": 20788728.0,
+              "fx_rate": 1175.5,
+              "details": "Pyeongtaek BIX",
+              "call_label": "Capital Call 8"
+            },
+            {
+              "date": "2021-12-16",
+              "krw": 1792081176.4705882,
+              "usd": 1523269.0,
+              "fx_rate": 1175.5,
+              "details": "offshore fee (Q1-Q321)",
+              "call_label": "Capital Call 8"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 842286904.7619047,
+              "usd": 707521.0,
+              "fx_rate": 1228.5,
+              "details": "offshore fee Q421",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 157000000.0,
+              "usd": 127798.0,
+              "fx_rate": 1228.5,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-06-21",
+              "krw": 897013051.0,
+              "usd": 726444.0,
+              "fx_rate": 1234.8,
+              "details": "Offshore fee Q122",
+              "call_label": "Capital call 12"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 3863596595.0,
+              "usd": 2930297.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore fee from Q222~Q422",
+              "call_label": "Capital call 13"
+            },
+            {
+              "date": "2023-06-20",
+              "krw": 1349329683.0,
+              "usd": 1032782.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore fee for Q123",
+              "call_label": "Capital call 16"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 605718966.0,
+              "usd": 478451.12735759944,
+              "fx_rate": 1266.0,
+              "details": "Pyeongtaek BIX Management fees",
+              "call_label": "Capital call 18"
+            },
+            {
+              "date": "2024-04-23",
+              "krw": 361553820.0,
+              "usd": 268215.0,
+              "fx_rate": 1348.0,
+              "details": "Offshore fee for Q423",
+              "call_label": "Capital call 24"
+            },
+            {
+              "date": "2024-05-28",
+              "krw": 310230000.0,
+              "usd": 227539.0,
+              "fx_rate": 1363.4,
+              "details": "Offshore fee for Q124",
+              "call_label": "Capital call 25"
+            }
+          ],
+          "total_krw": 122337920660.76796,
+          "total_usd": 106763658.1273576
+        },
+        {
+          "project": "Haeundae",
+          "calls": [
+            {
+              "date": "2021-10-06",
+              "krw": 87122000000.0,
+              "usd": 74859940.0,
+              "fx_rate": 1163.8,
+              "details": "Haeundae",
+              "call_label": "Capital Call 7"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 1229778869.0,
+              "usd": 1001041.0,
+              "fx_rate": 1228.5,
+              "details": "offshore fee Q421",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-03-24",
+              "krw": 392000000.0,
+              "usd": 319088.0,
+              "fx_rate": 1228.5,
+              "details": "Upfront fee",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-06-21",
+              "krw": 173005358.0,
+              "usd": 140108.0,
+              "fx_rate": 1234.8,
+              "details": "Offshore fee Q122",
+              "call_label": "Capital call 12"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 547269795.0,
+              "usd": 415070.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore fee from Q222~Q422",
+              "call_label": "Capital call 13"
+            },
+            {
+              "date": "2023-05-24",
+              "krw": 1500000000.0,
+              "usd": 1135503.4065102194,
+              "fx_rate": 1321.0,
+              "details": "Haeundae",
+              "call_label": "Capital call 15"
+            },
+            {
+              "date": "2023-06-20",
+              "krw": 190121880.0,
+              "usd": 145520.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore fee for Q123",
+              "call_label": "Capital call 16"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 500000000.0,
+              "usd": 394945.0,
+              "fx_rate": 1266.0,
+              "details": "Haeundae project (Demolition Work)",
+              "call_label": "Capital call 18"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 991719834.0,
+              "usd": 783349.0,
+              "fx_rate": 1266.0,
+              "details": "Haeundae Management fees",
+              "call_label": "Capital call 18"
+            },
+            {
+              "date": "2023-09-04",
+              "krw": 500000000.0,
+              "usd": 378645.0,
+              "fx_rate": 1320.5,
+              "details": "Haeundae project (Demolition Work, CM)",
+              "call_label": "Capital call 19"
+            },
+            {
+              "date": "2023-12-19",
+              "krw": 1071381018.0,
+              "usd": 820353.0,
+              "fx_rate": 1306.0,
+              "details": "Haeundae (Offshore Manaagement fee)",
+              "call_label": "Capital call 22"
+            },
+            {
+              "date": "2024-04-23",
+              "krw": 825500000.0,
+              "usd": 612388.0,
+              "fx_rate": 1348.0,
+              "details": "Haeundae (Architectural Design Service, CM, Admin exp)",
+              "call_label": "Capital call 24"
+            },
+            {
+              "date": "2024-04-23",
+              "krw": 613718788.0,
+              "usd": 455281.0,
+              "fx_rate": 1348.0,
+              "details": "Offshore fee for Q423",
+              "call_label": "Capital call 24"
+            },
+            {
+              "date": "2024-05-28",
+              "krw": 789100000.0,
+              "usd": 578772.0,
+              "fx_rate": 1363.4,
+              "details": "Offshore fee for Q124",
+              "call_label": "Capital call 25"
+            },
+            {
+              "date": "2024-06-24",
+              "krw": 2845000000.0,
+              "usd": 2074371.0,
+              "fx_rate": 1371.5,
+              "details": "Haeundae (PF upfront fee, Construction Management)",
+              "call_label": "Capital call 26"
+            },
+            {
+              "date": "2024-07-31",
+              "krw": 466600000.0,
+              "usd": 339714.0,
+              "fx_rate": 1373.5,
+              "details": "Offshore fee for Q2 24",
+              "call_label": "Capital call 27"
+            },
+            {
+              "date": "2024-12-11",
+              "krw": 463500000.0,
+              "usd": 331658.0,
+              "fx_rate": 1397.5,
+              "details": "Haeundae offshore fee",
+              "call_label": "Capital call 29"
+            },
+            {
+              "date": "2025-03-27",
+              "krw": 469120000.0,
+              "usd": 321534.0,
+              "fx_rate": 1459.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 30"
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 444660000.0,
+              "usd": 318794.37669069826,
+              "fx_rate": 1394.8,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 31"
+            },
+            {
+              "date": "2025-08-01",
+              "krw": 455248572.0,
+              "usd": 330094.0,
+              "fx_rate": 1379.2,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 32"
+            },
+            {
+              "date": "2025-10-17",
+              "krw": 464204788.0,
+              "usd": 333002.0,
+              "fx_rate": 1394.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 34"
+            }
+          ],
+          "total_krw": 102053928902.0,
+          "total_usd": 86089170.78320092
+        },
+        {
+          "project": "East Icheon",
+          "calls": [
+            {
+              "date": "2022-03-24",
+              "krw": 760000000.0,
+              "usd": 618641.0,
+              "fx_rate": 1228.5,
+              "details": "East Icheon",
+              "call_label": "Capital Call 9"
+            },
+            {
+              "date": "2022-04-14",
+              "krw": 392000000.0,
+              "usd": 323780.0,
+              "fx_rate": 1210.7,
+              "details": "Upfront fee",
+              "call_label": "capital call 10"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 5595714.0,
+              "usd": 4244.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore fee from Q222~Q422",
+              "call_label": "Capital call 13"
+            },
+            {
+              "date": "2023-06-20",
+              "krw": 1995568.0,
+              "usd": 1528.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore fee for Q123",
+              "call_label": "Capital call 16"
+            }
+          ],
+          "total_krw": 1159591282.0,
+          "total_usd": 948193.0
+        },
+        {
+          "project": "Busan New Port",
+          "calls": [
+            {
+              "date": "2022-04-14",
+              "krw": 700000000.0,
+              "usd": 578178.0,
+              "fx_rate": 1210.7,
+              "details": "New port",
+              "call_label": "capital call 10"
+            },
+            {
+              "date": "2022-05-30",
+              "krw": 17500000000.0,
+              "usd": 14811680.0,
+              "fx_rate": 1181.5,
+              "details": "New Port",
+              "call_label": "Capital call 11"
+            },
+            {
+              "date": "2023-03-22",
+              "krw": 124015473.0,
+              "usd": 94058.0,
+              "fx_rate": 1318.5,
+              "details": "Offshore fee from Q222~Q422",
+              "call_label": "Capital call 13"
+            },
+            {
+              "date": "2023-04-26",
+              "krw": 3000000000.0,
+              "usd": 2289552.0,
+              "fx_rate": 1310.3,
+              "details": "New port",
+              "call_label": "Capital call 14"
+            },
+            {
+              "date": "2023-06-20",
+              "krw": 49125707.0,
+              "usd": 37601.0,
+              "fx_rate": 1306.5,
+              "details": "Offshore fee for Q123",
+              "call_label": "Capital call 16"
+            },
+            {
+              "date": "2023-07-24",
+              "krw": 1500000000.0,
+              "usd": 1155624.0,
+              "fx_rate": 1298.0,
+              "details": "New port (Land reclamation)",
+              "call_label": "Capital call 17"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 6500000000.0,
+              "usd": 5134281.0,
+              "fx_rate": 1266.0,
+              "details": "New port project (Land reclamation, CM)",
+              "call_label": "Capital call 18"
+            },
+            {
+              "date": "2023-08-21",
+              "krw": 68125992.0,
+              "usd": 53812.0,
+              "fx_rate": 1266.0,
+              "details": "New port Management fees",
+              "call_label": "Capital call 18"
+            },
+            {
+              "date": "2023-10-09",
+              "krw": 500000000.0,
+              "usd": 367107.0,
+              "fx_rate": 1362.0,
+              "details": "Busan New Port (Construction Management)",
+              "call_label": "Capital call 20"
+            },
+            {
+              "date": "2023-11-03",
+              "krw": 8500000000.0,
+              "usd": 6259206.0,
+              "fx_rate": 1362.0,
+              "details": "Busan New Port (Land reclamation work)",
+              "call_label": "Capital call 21"
+            },
+            {
+              "date": "2023-12-19",
+              "krw": 176947328.0,
+              "usd": 135488.0,
+              "fx_rate": 1306.0,
+              "details": "Busan New Port (Offshore Management fee)",
+              "call_label": "Capital call 22"
+            },
+            {
+              "date": "2024-01-31",
+              "krw": 9500000000.0,
+              "usd": 7224335.0,
+              "fx_rate": 1315.0,
+              "details": "Busan New Port (Land reclamation work, Environmental Impact Assessment)",
+              "call_label": "Capital call 23"
+            },
+            {
+              "date": "2024-04-23",
+              "krw": 6300000000.0,
+              "usd": 4673591.0,
+              "fx_rate": 1348.0,
+              "details": "Busan New Port (Land reclamation work, Construction Management)",
+              "call_label": "Capital call 24"
+            },
+            {
+              "date": "2024-04-23",
+              "krw": 216576420.0,
+              "usd": 160665.0,
+              "fx_rate": 1348.0,
+              "details": "Offshore fee for Q423",
+              "call_label": "Capital call 24"
+            },
+            {
+              "date": "2024-05-28",
+              "krw": 6300000000.0,
+              "usd": 4620801.0,
+              "fx_rate": 1363.4,
+              "details": "Busan New Port (Land reclamation work)",
+              "call_label": "Capital call 25"
+            },
+            {
+              "date": "2024-05-28",
+              "krw": 216280000.0,
+              "usd": 158638.0,
+              "fx_rate": 1363.4,
+              "details": "Offshore fee for Q124",
+              "call_label": "Capital call 25"
+            },
+            {
+              "date": "2024-07-31",
+              "krw": 4990000000.0,
+              "usd": 3633054.0,
+              "fx_rate": 1373.5,
+              "details": "Busan New Port (Land reclamation work, Construction Management)",
+              "call_label": "Capital call 27"
+            },
+            {
+              "date": "2024-07-31",
+              "krw": 266770000.0,
+              "usd": 194222.0,
+              "fx_rate": 1373.5,
+              "details": "Offshore fee for Q2 24",
+              "call_label": "Capital call 27"
+            },
+            {
+              "date": "2024-10-08",
+              "krw": 3954000000.0,
+              "usd": 2964018.0,
+              "fx_rate": 1334.0,
+              "details": "Busan New Port (Land reclamation work)",
+              "call_label": "Capital call 28"
+            },
+            {
+              "date": "2024-12-11",
+              "krw": 9339420000.0,
+              "usd": 6682949.0,
+              "fx_rate": 1397.5,
+              "details": "Busan New Port (Land reclamation work, CM, offshore fee)",
+              "call_label": "Capital call 29"
+            },
+            {
+              "date": "2025-01-30",
+              "krw": null,
+              "usd": 6888461.0,
+              "fx_rate": 1466.22,
+              "details": "New port (Land reclamation)"
+            },
+            {
+              "date": "2025-02-24",
+              "krw": null,
+              "usd": 1302083.0,
+              "fx_rate": 1459.2,
+              "details": "New port (Land reclamation)"
+            },
+            {
+              "date": "2025-03-24",
+              "krw": null,
+              "usd": 8617162.0,
+              "fx_rate": 1427.5,
+              "details": "New port (Land reclamation), Gamjeong (Land Cost, Architectural Design Service)"
+            },
+            {
+              "date": "2025-03-24",
+              "krw": null,
+              "usd": 1313118.0,
+              "fx_rate": 1427.5,
+              "details": "JV2 offshore fee"
+            },
+            {
+              "date": "2025-03-27",
+              "krw": 4280590000.0,
+              "usd": 2933916.0,
+              "fx_rate": 1459.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 30"
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 5234930000.0,
+              "usd": 3753177.0,
+              "fx_rate": 1394.8,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 31"
+            },
+            {
+              "date": "2025-08-01",
+              "krw": 7283840000.0,
+              "usd": 5281209.0,
+              "fx_rate": 1379.2,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 32"
+            },
+            {
+              "date": "2025-09-29",
+              "krw": 5400000000.0,
+              "usd": 3886570.0,
+              "fx_rate": 1389.4,
+              "details": "New Port",
+              "call_label": "Capital call 33"
+            },
+            {
+              "date": "2025-10-17",
+              "krw": 281958804.0,
+              "usd": 202266.0,
+              "fx_rate": 1394.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 34"
+            },
+            {
+              "date": "2025-12-15",
+              "krw": 5500000000.0,
+              "usd": 3792633.0,
+              "fx_rate": 1450.18,
+              "details": "New port (Land reclamation)",
+              "call_label": "Capital call 35"
+            },
+            {
+              "date": "2026-01-30",
+              "krw": 10100000000.0,
+              "usd": null,
+              "fx_rate": 1466.22,
+              "details": "New port (Land reclamation)",
+              "call_label": "Capital call 37"
+            },
+            {
+              "date": "2026-02-24",
+              "krw": 1900000000.0,
+              "usd": null,
+              "fx_rate": 1459.2,
+              "details": "New port (Land reclamation)",
+              "call_label": "Capital call 38"
+            },
+            {
+              "date": "2026-03-24",
+              "krw": 8931000000.0,
+              "usd": null,
+              "fx_rate": 1427.5,
+              "details": "New port (Land reclamation), Gamjeong (Land Cost, Architectural Design Service)",
+              "call_label": "Capital call 39"
+            },
+            {
+              "date": "2026-03-24",
+              "krw": 1874480000.0,
+              "usd": null,
+              "fx_rate": 1427.5,
+              "details": "JV2 offshore fee",
+              "call_label": "Capital call 39"
+            }
+          ],
+          "total_krw": 130488059724.0,
+          "total_usd": 99199455.0
+        },
+        {
+          "project": "Gamjeong",
+          "calls": [
+            {
+              "date": "2025-03-27",
+              "krw": 32214000000.0,
+              "usd": 22079507.0,
+              "fx_rate": 1459.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 30"
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 5585880000.0,
+              "usd": 4004793.0,
+              "fx_rate": 1394.8,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 31"
+            },
+            {
+              "date": "2025-08-01",
+              "krw": 1226841428.0,
+              "usd": 889526.0,
+              "fx_rate": 1379.2,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 32"
+            },
+            {
+              "date": "2025-10-17",
+              "krw": 4793054566.0,
+              "usd": 3438346.0,
+              "fx_rate": 1394.0,
+              "details": "Gamjeong, New Port, Haeundae",
+              "call_label": "Capital call 34"
+            },
+            {
+              "date": "2026-01-21",
+              "krw": 3130000000.0,
+              "usd": 2170340.0,
+              "fx_rate": 1442.17,
+              "details": "Gamjeong (Land Cost, Onshore DM Fee)",
+              "call_label": "Capital call 36"
+            },
+            {
+              "date": "2026-03-24",
+              "krw": 3370000000.0,
+              "usd": null,
+              "fx_rate": 1427.5,
+              "details": "New port (Land reclamation), Gamjeong (Land Cost, Architectural Design Service)",
+              "call_label": "Capital call 39"
+            }
+          ],
+          "total_krw": 50319775994.0,
+          "total_usd": 32582512.0
+        },
+        {
+          "project": "Cheyenne",
+          "calls": [
+            {
+              "date": "2020-06-17",
+              "krw": 1000000000.0,
+              "usd": 823384.0,
+              "fx_rate": 1214.5,
+              "details": "Geomdan",
+              "call_label": "Capital Call 1"
+            }
+          ],
+          "total_krw": 1000000000.0,
+          "total_usd": 823384.0
+        },
+        {
+          "project": "Turtlerock",
+          "calls": [
+            {
+              "date": "2020-12-18",
+              "krw": 700000000.0,
+              "usd": 646532.0,
+              "fx_rate": 1082.7,
+              "details": "Pyeongtaek BIX",
+              "call_label": "Capital Call 4"
+            },
+            {
+              "date": "2021-02-03",
+              "krw": 200000000.0,
+              "usd": null,
+              "fx_rate": 1085.08,
+              "details": "Offshore fee (Q420)",
+              "call_label": "Capital Call 5"
+            },
+            {
+              "date": "2021-04-07",
+              "krw": null,
+              "usd": 178673.72,
+              "fx_rate": 1122.5,
+              "details": "Turtlerock"
+            },
+            {
+              "date": "2021-10-06",
+              "krw": 500000000.0,
+              "usd": 421836.48,
+              "fx_rate": 1163.8,
+              "details": "Haeundae",
+              "call_label": "Capital Call 7"
+            }
+          ],
+          "total_krw": 1400000000.0,
+          "total_usd": 1247042.2
+        }
+      ]
+    },
+    {
+      "fund": "Sunwood Byul",
+      "sheet": "Sunwood Byul",
+      "projects": [
+        {
+          "project": "Sanha 2 (Star 3)",
+          "calls": [
+            {
+              "date": "2024-02-13",
+              "krw": 1900000000.0,
+              "usd": 1429646.0,
+              "fx_rate": 1329.0,
+              "details": "Civil Works",
+              "call_label": ""
+            },
+            {
+              "date": "2024-09-11",
+              "krw": 2050260000.0,
+              "usd": 1538890.0,
+              "fx_rate": 1332.3,
+              "details": "Offshore Mgmt Fee, Byul Set up Cost",
+              "call_label": ""
+            },
+            {
+              "date": "2024-12-11",
+              "krw": 3680850000.0,
+              "usd": 2633878.789161856,
+              "fx_rate": 1397.5,
+              "details": "Civil Works, Architectural Design Service, Land Property Tax, CM, Admin costs, Offshore fee",
+              "call_label": ""
+            },
+            {
+              "date": "2025-01-23",
+              "krw": 3705020000.0,
+              "usd": 2569057.0,
+              "fx_rate": 1442.17,
+              "details": "Development Activity Planning Permit, Pre-construction Levies, Admin Cost (Sanha2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-03-24",
+              "krw": 224780000.0,
+              "usd": 157469.094864567,
+              "fx_rate": 1427.5,
+              "details": "Sanha2, Gimhae3, Sunwood Byul Admin Cost and GST",
+              "call_label": ""
+            },
+            {
+              "date": "2025-03-27",
+              "krw": 410150000.0,
+              "usd": 281116.171322,
+              "fx_rate": 1459.0,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 373020000.0,
+              "usd": 267437.0,
+              "fx_rate": 1394.8,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-08-01",
+              "krw": 374840000.0,
+              "usd": 271783.0,
+              "fx_rate": 1379.2,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            }
+          ],
+          "total_krw": 12718920000.0,
+          "total_usd": 9149277.055348422
+        },
+        {
+          "project": "Gimhae 3 (star 4)",
+          "calls": [
+            {
+              "date": "2024-09-11",
+              "krw": 1672560000.0,
+              "usd": 1255394.0,
+              "fx_rate": 1332.3,
+              "details": "Offshore Mgmt Fee, Byul Set up Cost",
+              "call_label": ""
+            },
+            {
+              "date": "2025-03-24",
+              "krw": 205820000.0,
+              "usd": 144182.25,
+              "fx_rate": 1427.5,
+              "details": "Sanha2, Gimhae3, Sunwood Byul Admin Cost and GST",
+              "call_label": ""
+            }
+          ],
+          "total_krw": 1878380000.0,
+          "total_usd": 1399576.25
+        },
+        {
+          "project": "Iljuk 2 (Star 6)",
+          "calls": [
+            {
+              "date": "2024-06-11",
+              "krw": 31300000000.0,
+              "usd": 23168024.0,
+              "fx_rate": 1351.0,
+              "details": "Construction Installment, Architectural Design Service, Financing Cost",
+              "call_label": ""
+            },
+            {
+              "date": "2024-06-11",
+              "krw": 586720000.0,
+              "usd": 434283.0,
+              "fx_rate": 1351.0,
+              "details": "Offshore Mgmt Fee",
+              "call_label": ""
+            },
+            {
+              "date": "2024-09-11",
+              "krw": 423020000.0,
+              "usd": 317508.0,
+              "fx_rate": 1332.3,
+              "details": "Offshore Mgmt Fee, Byul Set up Cost",
+              "call_label": ""
+            },
+            {
+              "date": "2025-03-27",
+              "krw": 526390000.0,
+              "usd": 360791.0,
+              "fx_rate": 1459.0,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 496470000.0,
+              "usd": 355944.0,
+              "fx_rate": 1394.8,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-08-01",
+              "krw": 548680000.0,
+              "usd": 397828.0,
+              "fx_rate": 1379.2,
+              "details": "Offshore Mgmt Fee and Admin cost (Sanha2, Iljuk2)",
+              "call_label": ""
+            },
+            {
+              "date": "2025-12-15",
+              "krw": 572720000.0,
+              "usd": 394932.0,
+              "fx_rate": 1450.18,
+              "details": "Offshore Mgmt Fee (Iljuk2)",
+              "call_label": ""
+            }
+          ],
+          "total_krw": 34454000000.0,
+          "total_usd": 25429310.0
+        },
+        {
+          "project": "Sunwood Byul",
+          "calls": [
+            {
+              "date": "2024-09-11",
+              "krw": 335560000.0,
+              "usd": 251866.0,
+              "fx_rate": 1332.3,
+              "details": "Offshore Mgmt Fee, Byul Set up Cost",
+              "call_label": ""
+            },
+            {
+              "date": "2025-03-24",
+              "krw": 51980000.0,
+              "usd": 36411.43,
+              "fx_rate": 1427.5,
+              "details": "Sanha2, Gimhae3, Sunwood Byul Admin Cost and GST",
+              "call_label": ""
+            }
+          ],
+          "total_krw": 387540000.0,
+          "total_usd": 288277.43
+        }
+      ]
+    },
+    {
+      "fund": "Dangmok",
+      "sheet": "Dangmok",
+      "projects": [
+        {
+          "project": "Dangmok Holding",
+          "calls": [
+            {
+              "date": "2024-01-31",
+              "krw": 8978795914.0,
+              "usd": 6830671.37376,
+              "fx_rate": 1315.0,
+              "details": "Civil Works, PF Loan Upfront Fee, Acq DD Cost, Legal Fee, Admin Exp, Land Acq Fee, AM Fee",
+              "call_label": "Capital Call #1"
+            },
+            {
+              "date": "2024-01-31",
+              "krw": 740618137.0,
+              "usd": 560517.62624,
+              "fx_rate": 1315.0,
+              "details": "Offshore) Legal Fees, AM Fee, DM Fee",
+              "call_label": "Capital Call #1"
+            },
+            {
+              "date": "2024-03-13",
+              "krw": 5170000000.0,
+              "usd": 3883131.0,
+              "fx_rate": 1331.4,
+              "details": "Civil Works, PF Loan Upfront Fee, Acq DD Cost, Admin Exp, AM Fee",
+              "call_label": "Capital Call #2"
+            },
+            {
+              "date": "2024-03-13",
+              "krw": 92058180.0,
+              "usd": 69144.0,
+              "fx_rate": 1331.4,
+              "details": "Offshore) AM Fee",
+              "call_label": "Capital Call #2"
+            },
+            {
+              "date": "2024-06-10",
+              "krw": 1813000000.0,
+              "usd": 1324808.0,
+              "fx_rate": 1368.5,
+              "details": "Civil Works, Construction Management, Architectural Design Service, PF loan interest, Admin cost",
+              "call_label": "Capital Call #3"
+            },
+            {
+              "date": "2024-08-28",
+              "krw": 1374561630.0,
+              "usd": 1027711.0,
+              "fx_rate": 1337.5,
+              "details": "Civil Works, CM, AM Fee, PF loan, Admin Cost, Legal expense",
+              "call_label": "Capital Call #4"
+            },
+            {
+              "date": "2024-10-17",
+              "krw": 6960000000.0,
+              "usd": 5285943.0,
+              "fx_rate": 1316.7,
+              "details": "Civil Works, Construction Management, Architecture Design Service, PF loan interest, Admin cost",
+              "call_label": "Capital Call #5"
+            },
+            {
+              "date": "2025-01-23",
+              "krw": 14866543388.311476,
+              "usd": 10221067.0,
+              "fx_rate": 1454.5,
+              "details": "Construction Installment, PF loan interest AM Fee, DM Fee",
+              "call_label": "Capital Call #6"
+            },
+            {
+              "date": "2025-03-24",
+              "krw": 1795227761.0,
+              "usd": 1257603.0,
+              "fx_rate": 1427.5,
+              "details": "AM Fee, DM Fee for Q4 2025",
+              "call_label": "Capital Call #10"
+            },
+            {
+              "date": "2025-03-27",
+              "krw": 5979000000.0,
+              "usd": 4097923.0,
+              "fx_rate": 1459.0,
+              "details": "Construction Installment, Construction Management, Admin Cost",
+              "call_label": "Capital Call #7"
+            },
+            {
+              "date": "2025-06-10",
+              "krw": 873714689.0,
+              "usd": 626409.0,
+              "fx_rate": 1394.8,
+              "details": "AM Fee, DM Fee for Q1 2025",
+              "call_label": "Capital Call #8"
+            },
+            {
+              "date": "2025-10-15",
+              "krw": 806664370.0,
+              "usd": 575983.0,
+              "fx_rate": 1400.5,
+              "details": "AM Fee, DM Fee for Q3 2025",
+              "call_label": "Capital Call #9"
+            }
+          ],
+          "total_krw": 49450184069.31148,
+          "total_usd": 35760911.0
+        }
+      ]
+    },
+    {
+      "fund": "Income JV",
+      "sheet": "Income JV call",
+      "projects": [
+        {
+          "project": "ESR (Sunwood Terra)",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 14506281125.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "NHN, Mokcheon, DSL, Fila, Jungan, Assist Korea"
+            },
+            {
+              "date": "2019-09-04",
+              "krw": 1433458188.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "DC Ipyeong"
+            },
+            {
+              "date": "2019-10-04",
+              "krw": 12691753618.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Osan"
+            }
+          ],
+          "total_krw": 28631492931.0,
+          "total_usd": null
+        },
+        {
+          "project": "CPPIB",
+          "calls": [
+            {
+              "date": "2018-07-27",
+              "krw": 147832201298.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "NHN, Mokcheon, DSL, Fila, Jungan, Assist Korea"
+            },
+            {
+              "date": "2018-12-20",
+              "krw": 22384042684.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "AMB Icheon, Sangwoo Logis"
+            },
+            {
+              "date": "2019-04-29",
+              "krw": 27030036086.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Ilyang, AMB Icheon acquisition fee"
+            },
+            {
+              "date": "2019-05-13",
+              "krw": 28800000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Osan"
+            },
+            {
+              "date": "2019-09-04",
+              "krw": 12901123694.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "DC Ipyeong"
+            },
+            {
+              "date": "2019-10-04",
+              "krw": 114225782562.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Osan"
+            }
+          ],
+          "total_krw": 353173186324.0,
+          "total_usd": null
+        },
+        {
+          "project": "KSAMC",
+          "calls": [
+            {
+              "date": "2019-04-29",
+              "krw": 2295248895.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Ilyang, AMB Icheon acquisition fee"
+            },
+            {
+              "date": "2019-05-13",
+              "krw": 2900000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Osan"
+            }
+          ],
+          "total_krw": 5195248895.0,
+          "total_usd": null
+        },
+        {
+          "project": "Maplewood",
+          "calls": [
+            {
+              "date": "2018-07-26",
+              "krw": 300000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Assist Korea"
+            },
+            {
+              "date": "2018-11-14",
+              "krw": 1200000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "NHN, DSL, Jungan, Fila"
+            },
+            {
+              "date": "2018-12-17",
+              "krw": 300000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "AMB Icheon"
+            },
+            {
+              "date": "2019-04-29",
+              "krw": 300000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Ilyang, AMB Icheon acquisition fee"
+            },
+            {
+              "date": "2019-05-13",
+              "krw": 300000000.0,
+              "usd": null,
+              "fx_rate": null,
+              "details": "Osan"
+            }
+          ],
+          "total_krw": 2400000000.0,
+          "total_usd": null
+        }
+      ]
+    }
+  ]
+}

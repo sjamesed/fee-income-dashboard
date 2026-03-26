@@ -401,9 +401,20 @@ def export_button(df, filename="analysis_export.xlsx"):
     )
 
 
+def print_button():
+    import streamlit.components.v1 as components
+    components.html("""
+    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
+        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
+        🖨️ Print
+    </button>
+    """, height=40)
+
+
 def main():
     global _use_millions
     st.title("Fee Breakdown by Projects")
+    print_button()
     db = get_db()
     snapshots = db.list_snapshots()
     if not snapshots:
