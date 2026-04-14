@@ -1,4 +1,5 @@
 """Page 1: Dashboard — key metrics, P&L/CFS highlights, watch list, and reporting tables."""
+import re
 import streamlit as st
 import pandas as pd
 import io
@@ -339,9 +340,41 @@ def main():
                 "act": act, "bud": bud, "var": var,
             })
 
-        items_sorted = sorted(items, key=lambda x: abs(x["var"]), reverse=True)
-        key_items = [i for i in items_sorted if abs(i["var"]) >= VAR_THRESHOLD]
-        other_items = [i for i in items_sorted if abs(i["var"]) < VAR_THRESHOLD]
+        # --- Exception logic ---
+        # 1. Jeju Dream Tower → force into Other
+        FORCE_OTHER = {"jeju dream tower"}
+        # 2. Credit Fund Pipeline 1/2/3/4 → grouped as "Credit Fund Pipelines"
+        PIPELINE_RE = re.compile(r"credit fund pipeline", re.IGNORECASE)
+
+        pipeline_items = []
+        force_other_set = []
+        regular_items = []
+        for item in items:
+            proj_lower = item["project_name"].lower()
+            if proj_lower in FORCE_OTHER:
+                force_other_set.append(item)
+            elif PIPELINE_RE.search(item["project_name"]):
+                pipeline_items.append(item)
+            else:
+                regular_items.append(item)
+
+        # Group pipelines into one row
+        pipeline_row = None
+        if pipeline_items:
+            pipeline_act = sum(i["act"] for i in pipeline_items)
+            pipeline_bud = sum(i["bud"] for i in pipeline_items)
+            pipeline_var = pipeline_act - pipeline_bud
+            pipeline_row = {
+                "platform": pipeline_items[0]["platform"],
+                "project_name": "Credit Fund Pipelines",
+                "act": pipeline_act, "bud": pipeline_bud, "var": pipeline_var,
+            }
+
+        # Split regular items by threshold
+        regular_sorted = sorted(regular_items, key=lambda x: abs(x["var"]), reverse=True)
+        key_items = [i for i in regular_sorted if abs(i["var"]) >= VAR_THRESHOLD]
+        small_items = [i for i in regular_sorted if abs(i["var"]) < VAR_THRESHOLD]
+        other_items = small_items + force_other_set  # Other = below-threshold + forced
 
         saved_drivers = db.get_drivers(selected, table_type)
 
@@ -349,6 +382,11 @@ def main():
         total_bud = sum(i["bud"] for i in items)
         total_var = total_act - total_bud
         total_pct = (total_var / abs(total_bud) * 100) if total_bud else 0
+
+        subtotal_act = sum(i["act"] for i in key_items)
+        subtotal_bud = sum(i["bud"] for i in key_items)
+        subtotal_var = subtotal_act - subtotal_bud
+        subtotal_pct = (subtotal_var / abs(subtotal_bud) * 100) if subtotal_bud else 0
 
         def fmt_m(v):
             v_m = v / 1e6
@@ -430,12 +468,43 @@ def main():
                 <td style="{TD_S}">{driver}</td>
             </tr>"""
 
+        # Subtotal (key items)
+        SUBTOTAL_S = "background:#edf2f7; font-weight:bold; color:#2d3748;"
+        sub_pct_str = plain_pct(subtotal_pct)
+        html += f"""<tr style="{SUBTOTAL_S}">
+            <td style="{TD_S}" colspan="2">Subtotal (key items)</td>
+            <td style="{TD_S} text-align:right;">{plain_m(subtotal_act)}</td>
+            <td style="{TD_S} text-align:right;">{plain_m(subtotal_bud)}</td>
+            <td style="{TD_S} text-align:right;">{plain_var(subtotal_var)}</td>
+            <td style="{TD_S} text-align:right;">{sub_pct_str}</td>
+            <td style="{TD_S}"></td>
+        </tr>"""
+
+        # Credit Fund Pipelines row
+        if pipeline_row:
+            row_idx = len(key_items) + 1
+            bg = "#f7fafc" if row_idx % 2 == 0 else "#ffffff"
+            pl_bud = pipeline_row["bud"]
+            pl_pct = (pipeline_row["var"] / abs(pl_bud) * 100) if pl_bud else 0
+            driver = saved_drivers.get("Credit Fund Pipelines", "")
+            html += f"""<tr style="background:{bg};">
+                <td style="{TD_S}">{pipeline_row["platform"]}</td>
+                <td style="{TD_S}">{pipeline_row["project_name"]}</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(pipeline_row["act"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(pipeline_row["bud"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_var(pipeline_row["var"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_pct_var(pl_pct)}</td>
+                <td style="{TD_S}">{driver}</td>
+            </tr>"""
+
+        # Other row
         if other_items:
             other_act = sum(i["act"] for i in other_items)
             other_bud = sum(i["bud"] for i in other_items)
             other_var = other_act - other_bud
             other_pct = (other_var / abs(other_bud) * 100) if other_bud else 0
-            bg = "#f7fafc" if len(key_items) % 2 == 0 else "#ffffff"
+            row_idx = len(key_items) + (1 if pipeline_row else 0) + 1
+            bg = "#f7fafc" if row_idx % 2 == 0 else "#ffffff"
             html += f"""<tr style="background:{bg}; font-style:italic; color:#718096;">
                 <td style="{TD_S}" colspan="2">Other ({len(other_items)} items)</td>
                 <td style="{TD_S} text-align:right;">{fmt_m(other_act)}</td>
@@ -458,7 +527,7 @@ def main():
         st.caption("Unit: USD millions")
         copy_html_button(html, key=f"copy_var_{table_type}", title=title)
 
-        if key_items:
+        if key_items or pipeline_row:
             with st.expander(f"Edit Variance Drivers — {title}"):
                 updated_drivers = {}
                 for item in key_items:
@@ -466,6 +535,12 @@ def main():
                         item["project_name"],
                         value=saved_drivers.get(item["project_name"], ""),
                         key=f"driver_{table_type}_{item['project_name']}"
+                    )
+                if pipeline_row:
+                    updated_drivers["Credit Fund Pipelines"] = st.text_input(
+                        "Credit Fund Pipelines",
+                        value=saved_drivers.get("Credit Fund Pipelines", ""),
+                        key=f"driver_{table_type}_credit_fund_pipelines"
                     )
                 if st.button("Save Drivers", key=f"save_drivers_{table_type}"):
                     db.save_drivers(selected, table_type, {k: v for k, v in updated_drivers.items() if v})
