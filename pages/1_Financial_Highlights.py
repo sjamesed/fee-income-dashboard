@@ -456,6 +456,7 @@ def main():
         html += "</tbody></table>"
         st.markdown(html, unsafe_allow_html=True)
         st.caption("Unit: USD millions")
+        copy_html_button(html, key=f"copy_var_{table_type}", title=title)
 
         if key_items:
             with st.expander(f"Edit Variance Drivers — {title}"):
