@@ -370,11 +370,16 @@ def main():
                 "act": pipeline_act, "bud": pipeline_bud, "var": pipeline_var,
             }
 
-        # Split regular items by threshold
+        # Split regular items by threshold, then insert pipeline_row into key_items
         regular_sorted = sorted(regular_items, key=lambda x: abs(x["var"]), reverse=True)
         key_items = [i for i in regular_sorted if abs(i["var"]) >= VAR_THRESHOLD]
         small_items = [i for i in regular_sorted if abs(i["var"]) < VAR_THRESHOLD]
         other_items = small_items + force_other_set  # Other = below-threshold + forced
+
+        # Pipeline grouped row goes into key_items, sorted by |var|
+        if pipeline_row:
+            key_items.append(pipeline_row)
+            key_items.sort(key=lambda x: abs(x["var"]), reverse=True)
 
         saved_drivers = db.get_drivers(selected, table_type)
 
@@ -480,30 +485,13 @@ def main():
             <td style="{TD_S}"></td>
         </tr>"""
 
-        # Credit Fund Pipelines row
-        if pipeline_row:
-            row_idx = len(key_items) + 1
-            bg = "#f7fafc" if row_idx % 2 == 0 else "#ffffff"
-            pl_bud = pipeline_row["bud"]
-            pl_pct = (pipeline_row["var"] / abs(pl_bud) * 100) if pl_bud else 0
-            driver = saved_drivers.get("Credit Fund Pipelines", "")
-            html += f"""<tr style="background:{bg};">
-                <td style="{TD_S}">{pipeline_row["platform"]}</td>
-                <td style="{TD_S}">{pipeline_row["project_name"]}</td>
-                <td style="{TD_S} text-align:right;">{fmt_m(pipeline_row["act"])}</td>
-                <td style="{TD_S} text-align:right;">{fmt_m(pipeline_row["bud"])}</td>
-                <td style="{TD_S} text-align:right;">{fmt_var(pipeline_row["var"])}</td>
-                <td style="{TD_S} text-align:right;">{fmt_pct_var(pl_pct)}</td>
-                <td style="{TD_S}">{driver}</td>
-            </tr>"""
-
         # Other row
         if other_items:
             other_act = sum(i["act"] for i in other_items)
             other_bud = sum(i["bud"] for i in other_items)
             other_var = other_act - other_bud
             other_pct = (other_var / abs(other_bud) * 100) if other_bud else 0
-            row_idx = len(key_items) + (1 if pipeline_row else 0) + 1
+            row_idx = len(key_items) + 1
             bg = "#f7fafc" if row_idx % 2 == 0 else "#ffffff"
             html += f"""<tr style="background:{bg}; font-style:italic; color:#718096;">
                 <td style="{TD_S}" colspan="2">Other ({len(other_items)} items)</td>
