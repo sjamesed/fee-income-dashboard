@@ -264,13 +264,8 @@ def render_comment_section(db, key):
 
 
 def print_button():
-    import streamlit.components.v1 as components
-    components.html("""
-    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
-        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
-        🖨️ Print
-    </button>
-    """, height=40)
+    from src.print_view import print_button as _print_view
+    _print_view(title="Cash Flow")
 
 
 def main():

@@ -1,5 +1,5 @@
 @echo off
-cd /d "C:\Users\sjlee\OneDrive\GitHub\fee-income-dashboard"
+cd /d "C:\Users\sjlee\OneDrive\GitHub\projects\fee-income-dashboard"
 
 :: Always open browser
 start "" "http://localhost:8501"

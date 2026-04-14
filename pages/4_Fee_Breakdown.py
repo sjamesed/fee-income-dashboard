@@ -402,13 +402,8 @@ def export_button(df, filename="analysis_export.xlsx"):
 
 
 def print_button():
-    import streamlit.components.v1 as components
-    components.html("""
-    <button onclick="window.top.print()" style="background:#4a5568; color:white; border:none;
-        padding:6px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-family:Calibri,sans-serif;">
-        🖨️ Print
-    </button>
-    """, height=40)
+    from src.print_view import print_button as _print_view
+    _print_view(title="Fee Breakdown")
 
 
 def main():
@@ -648,8 +643,9 @@ def main():
         st.markdown(html, unsafe_allow_html=True)
         st.caption(f"Unit: {unit_label()}")
 
-        # Copy table button
-        full_html = html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
+        # Copy table button — strip scroll container & sticky positioning for clean clipboard paste
+        full_html = html.replace('max-height:70vh; overflow:auto; border:1px solid #cbd5e0;', '')
+        full_html = full_html.replace('max-height:70vh; overflow-y:auto; border:1px solid #cbd5e0;', '')
         full_html = full_html.replace('position:sticky; z-index:2;', '').replace('position:sticky; z-index:1;', '').replace('position:sticky; z-index:3;', '')
         full_html = full_html.replace('border-collapse:separate; border-spacing:0;', 'border-collapse:collapse;')
         ftp_title = f"Fee by Project (FY) — {label_a} vs {label_b}" if num_metrics_ftp == 2 else f"Fee by Project (FY) — {label_a}"

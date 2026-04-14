@@ -174,7 +174,7 @@ After the A5 workbook is finalized and the Revenue file's Summary_new template i
    db.save_snapshot_meta(snapshot, '<filename>')
    db.close()
    ```
-   Working directory: `C:/Users/sjlee/OneDrive/GitHub/fee-income-dashboard/`
+   Working directory: `C:/Users/sjlee/OneDrive/GitHub/projects/fee-income-dashboard/`
 
 2. **Present summary to user for review**:
    - Show FY26 Fcst total and compare with previous snapshot if available
@@ -183,7 +183,7 @@ After the A5 workbook is finalized and the Revenue file's Summary_new template i
 
 3. **On user approval, push to cloud**:
    ```bash
-   cd C:/Users/sjlee/OneDrive/GitHub/fee-income-dashboard
+   cd C:/Users/sjlee/OneDrive/GitHub/projects/fee-income-dashboard
    git add -A
    git commit -m "data: update {snapshot} from {filename}"
    git push origin main
