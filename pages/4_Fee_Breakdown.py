@@ -450,14 +450,21 @@ def main():
                 label_a = st.selectbox("Metric 1", option_labels,
                                         index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a")
             with col2:
-                label_b = st.selectbox("Metric 2", option_labels,
-                                        index=option_labels.index("FY26 Bud"), key="ftp_b")
+                selected_b_ftp = st.selectbox("Snapshot (Metric 2)", snapshots,
+                                               index=snapshots.index(selected), key="ftp_snap_b")
+                options_b_ftp = build_metric_options(selected_b_ftp)
+                option_labels_b_ftp = list(options_b_ftp.keys())
+                default_b_idx = option_labels_b_ftp.index(f"FY26 Fcst ({selected_b_ftp})") if f"FY26 Fcst ({selected_b_ftp})" in option_labels_b_ftp else 0
+                label_b = st.selectbox("Metric 2", option_labels_b_ftp,
+                                        index=default_b_idx, key="ftp_b")
         else:
+            selected_b_ftp = selected
+            options_b_ftp = options
             label_a = st.selectbox("Metric 1", option_labels,
                                     index=option_labels.index(f"FY26 Fcst ({selected})"), key="ftp_a_single")
 
         data_a = query_metric_by_fee_type(db, selected, options[label_a])
-        data_b = query_metric_by_fee_type(db, selected, options[label_b]) if num_metrics_ftp == 2 else []
+        data_b = query_metric_by_fee_type(db, selected_b_ftp, options_b_ftp[label_b]) if num_metrics_ftp == 2 else []
 
         # Build lookup: (platform, project) -> {fee_type: value}
         def build_ft_lookup(data):
@@ -715,10 +722,27 @@ def main():
                                          index=monthly_labels.index(f"FY26 Forecast ({selected})"),
                                          key="monthly_m1")
             with mc2:
-                m2_label = st.selectbox("Metric 2", monthly_labels,
-                                         index=monthly_labels.index("FY26 Budget"),
+                selected_b_md = st.selectbox("Snapshot (Metric 2)", snapshots,
+                                              index=snapshots.index(selected), key="md_snap_b")
+                n_b_md = get_snapshot_n_value(selected_b_md)
+                monthly_metrics_b = {
+                    "FY26 Actual": ("2026", "actual"),
+                    "FY26 Budget": ("2026", "budget"),
+                    f"FY26 Forecast ({selected_b_md})": ("2026", "forecast"),
+                    "FY25 Actual": ("2025", "actual"),
+                    "FY25 Budget": ("2025", "budget"),
+                    "FY24 Actual": ("2024", "actual"),
+                    "FY24 Budget": ("2024", "budget"),
+                    "FY23 Actual": ("2023", "actual"),
+                }
+                monthly_labels_b = list(monthly_metrics_b.keys())
+                m2_label = st.selectbox("Metric 2", monthly_labels_b,
+                                         index=monthly_labels_b.index("FY26 Budget"),
                                          key="monthly_m2")
         else:
+            selected_b_md = selected
+            n_b_md = n
+            monthly_metrics_b = monthly_metrics
             m1_label = st.selectbox("Metric 1", monthly_labels,
                                      index=monthly_labels.index(f"FY26 Forecast ({selected})"),
                                      key="monthly_m1_single")
@@ -726,30 +750,32 @@ def main():
         m1_year, pt1 = monthly_metrics[m1_label]
         months1 = [f"{m1_year}-{m:02d}" for m in range(1, 13)]
         if num_metrics_md == 2:
-            m2_year, pt2 = monthly_metrics[m2_label]
+            m2_year, pt2 = monthly_metrics_b[m2_label]
             months2 = [f"{m2_year}-{m:02d}" for m in range(1, 13)]
 
         # Project search
         search = st.text_input("Search project...", key="monthly_search")
 
-        def query_monthly(group_cols, months, year, pt, extra_where="", extra_params=()):
+        def query_monthly(group_cols, months, year, pt, extra_where="", extra_params=(), snapshot=None, n_val=None):
             """Query monthly data. For 'forecast' in current FY year, use actual for months 1..N and forecast for rest."""
+            snap = snapshot if snapshot is not None else selected
+            nv = n_val if n_val is not None else n
             gcols = ", ".join(group_cols)
             ph = ",".join(["?"] * len(months))
             if pt == "forecast" and year == "2026":
                 # Blend: actual for months 1..N, forecast for N+1..12
-                act_months = [f"{year}-{m:02d}" for m in range(1, n + 1)]
-                fcst_months = [f"{year}-{m:02d}" for m in range(n + 1, 13)]
+                act_months = [f"{year}-{m:02d}" for m in range(1, nv + 1)]
+                fcst_months = [f"{year}-{m:02d}" for m in range(nv + 1, 13)]
                 parts = []
                 params = []
                 if act_months:
                     ph_a = ",".join(["?"] * len(act_months))
                     parts.append(f"(snapshot = ? AND period IN ({ph_a}) AND period_type = 'actual'{extra_where})")
-                    params.extend([selected, *act_months, *extra_params])
+                    params.extend([snap, *act_months, *extra_params])
                 if fcst_months:
                     ph_f = ",".join(["?"] * len(fcst_months))
                     parts.append(f"(snapshot = ? AND period IN ({ph_f}) AND period_type = 'forecast'{extra_where})")
-                    params.extend([selected, *fcst_months, *extra_params])
+                    params.extend([snap, *fcst_months, *extra_params])
                 where = " OR ".join(parts)
                 return db.query(f"""
                     SELECT {gcols}, period, SUM(amount_usd) as value
@@ -762,11 +788,11 @@ def main():
                     FROM fee_income
                     WHERE snapshot = ? AND period IN ({ph}) AND period_type = ?{extra_where}
                     GROUP BY {gcols}, period
-                """, (selected, *months, pt, *extra_params))
+                """, (snap, *months, pt, *extra_params))
 
         if view_by == "Project":
             rows1 = query_monthly(["platform", "project_name"], months1, m1_year, pt1)
-            rows2 = query_monthly(["platform", "project_name"], months2, m2_year, pt2) if num_metrics_md == 2 else []
+            rows2 = query_monthly(["platform", "project_name"], months2, m2_year, pt2, snapshot=selected_b_md, n_val=n_b_md) if num_metrics_md == 2 else []
 
             pivot1 = {}
             pivot2 = {}
@@ -812,7 +838,7 @@ def main():
                 extra_params = (filter_proj,)
 
             rows1 = query_monthly(["platform", "project_name", "fee_type"], months1, m1_year, pt1, extra_where, extra_params)
-            rows2 = query_monthly(["platform", "project_name", "fee_type"], months2, m2_year, pt2, extra_where, extra_params) if num_metrics_md == 2 else []
+            rows2 = query_monthly(["platform", "project_name", "fee_type"], months2, m2_year, pt2, extra_where, extra_params, snapshot=selected_b_md, n_val=n_b_md) if num_metrics_md == 2 else []
 
             pivot1 = {}
             pivot2 = {}
