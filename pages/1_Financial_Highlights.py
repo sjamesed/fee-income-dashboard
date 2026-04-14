@@ -5,7 +5,7 @@ import io
 import json
 from pathlib import Path
 from src.db import FeeIncomeDB
-from src.queries import get_mtd_comparison, get_ytd_comparison, get_snapshot_n_value
+from src.queries import get_mtd_comparison, get_ytd_comparison, get_snapshot_n_value, get_fy_comparison, get_yoy_comparison
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 MONTH_NAMES = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
@@ -317,7 +317,190 @@ def main():
             st.success(f"Saved {len(rows_to_save)} watch list item(s).")
             st.rerun()
 
-    # ===== 2. P&L HIGHLIGHTS =====
+    # ===== 2. FEE REVENUE VARIANCE TABLES =====
+    st.markdown("---")
+    st.header("Fee Revenue Variance")
+
+    VAR_THRESHOLD = 0.2e6  # items below this are grouped as "Other"
+
+    def render_fee_variance_table(title, rows, act_key, bud_key, table_type, act_label, bud_label):
+        if not rows:
+            st.info(f"No data for {title}")
+            return
+
+        items = []
+        for r in rows:
+            act = r.get(act_key, 0) or 0
+            bud = r.get(bud_key, 0) or 0
+            var = act - bud
+            items.append({
+                "platform": r.get("platform", ""),
+                "project_name": r.get("project_name", ""),
+                "act": act, "bud": bud, "var": var,
+            })
+
+        items_sorted = sorted(items, key=lambda x: abs(x["var"]), reverse=True)
+        key_items = [i for i in items_sorted if abs(i["var"]) >= VAR_THRESHOLD]
+        other_items = [i for i in items_sorted if abs(i["var"]) < VAR_THRESHOLD]
+
+        saved_drivers = db.get_drivers(selected, table_type)
+
+        total_act = sum(i["act"] for i in items)
+        total_bud = sum(i["bud"] for i in items)
+        total_var = total_act - total_bud
+        total_pct = (total_var / abs(total_bud) * 100) if total_bud else 0
+
+        def fmt_m(v):
+            v_m = v / 1e6
+            if abs(v_m) < 0.005:
+                return "-"
+            if v_m < 0:
+                return f'<span style="color:#c53030;">({abs(v_m):.1f})</span>'
+            return f"{v_m:.1f}"
+
+        def fmt_var(v):
+            v_m = v / 1e6
+            if abs(v_m) < 0.005:
+                return "-"
+            color = "#38a169" if v_m > 0 else "#c53030"
+            if v_m < 0:
+                return f'<span style="color:{color};">({abs(v_m):.1f})</span>'
+            return f'<span style="color:{color};">+{v_m:.1f}</span>'
+
+        def fmt_pct_var(pct):
+            if abs(pct) < 0.05:
+                return "-"
+            color = "#38a169" if pct > 0 else "#c53030"
+            sign = "+" if pct > 0 else ""
+            if pct < 0:
+                return f'<span style="color:{color};">({abs(pct):.1f}%)</span>'
+            return f'<span style="color:{color};">{sign}{pct:.1f}%</span>'
+
+        def plain_m(v):
+            v_m = v / 1e6
+            if abs(v_m) < 0.005:
+                return "-"
+            if v_m < 0:
+                return f"({abs(v_m):.1f})"
+            return f"{v_m:.1f}"
+
+        def plain_var(v):
+            v_m = v / 1e6
+            if abs(v_m) < 0.005:
+                return "-"
+            if v_m < 0:
+                return f"({abs(v_m):.1f})"
+            return f"+{v_m:.1f}"
+
+        def plain_pct(pct):
+            if abs(pct) < 0.05:
+                return "-"
+            if pct < 0:
+                return f"({abs(pct):.1f}%)"
+            return f"+{pct:.1f}%"
+
+        TH_S = f"padding:6px 10px; border:1px solid #cbd5e0; background:{HEADER_COLOR}; color:white; font-weight:bold;"
+        TD_S = "padding:5px 10px; border:1px solid #cbd5e0;"
+        TOTAL_S = f"background:{HEADER_COLOR}; color:white; font-weight:bold;"
+
+        st.subheader(title)
+        html = f"""<table style="border-collapse:collapse; width:100%; font-size:12px; font-family:Calibri,sans-serif;">
+        <thead><tr>
+            <th style="{TH_S} text-align:left; width:18%;">Platform</th>
+            <th style="{TH_S} text-align:left; width:22%;">Project</th>
+            <th style="{TH_S} text-align:right; width:10%;">{act_label}</th>
+            <th style="{TH_S} text-align:right; width:10%;">{bud_label}</th>
+            <th style="{TH_S} text-align:right; width:10%;">Var($M)</th>
+            <th style="{TH_S} text-align:right; width:8%;">Var%</th>
+            <th style="{TH_S} text-align:left;">Driver</th>
+        </tr></thead><tbody>"""
+
+        for i, item in enumerate(key_items):
+            bg = "#f7fafc" if i % 2 == 0 else "#ffffff"
+            bud_v = item["bud"]
+            pct = (item["var"] / abs(bud_v) * 100) if bud_v else 0
+            driver = saved_drivers.get(item["project_name"], "")
+            html += f"""<tr style="background:{bg};">
+                <td style="{TD_S}">{item["platform"]}</td>
+                <td style="{TD_S}">{item["project_name"]}</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(item["act"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(item["bud"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_var(item["var"])}</td>
+                <td style="{TD_S} text-align:right;">{fmt_pct_var(pct)}</td>
+                <td style="{TD_S}">{driver}</td>
+            </tr>"""
+
+        if other_items:
+            other_act = sum(i["act"] for i in other_items)
+            other_bud = sum(i["bud"] for i in other_items)
+            other_var = other_act - other_bud
+            other_pct = (other_var / abs(other_bud) * 100) if other_bud else 0
+            bg = "#f7fafc" if len(key_items) % 2 == 0 else "#ffffff"
+            html += f"""<tr style="background:{bg}; font-style:italic; color:#718096;">
+                <td style="{TD_S}" colspan="2">Other ({len(other_items)} items)</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(other_act)}</td>
+                <td style="{TD_S} text-align:right;">{fmt_m(other_bud)}</td>
+                <td style="{TD_S} text-align:right;">{fmt_var(other_var)}</td>
+                <td style="{TD_S} text-align:right;">{fmt_pct_var(other_pct)}</td>
+                <td style="{TD_S}"></td>
+            </tr>"""
+
+        html += f"""<tr style="{TOTAL_S}">
+            <td style="{TD_S}" colspan="2">Total</td>
+            <td style="{TD_S} text-align:right;">{plain_m(total_act)}</td>
+            <td style="{TD_S} text-align:right;">{plain_m(total_bud)}</td>
+            <td style="{TD_S} text-align:right;">{plain_var(total_var)}</td>
+            <td style="{TD_S} text-align:right;">{plain_pct(total_pct)}</td>
+            <td style="{TD_S}"></td>
+        </tr>"""
+        html += "</tbody></table>"
+        st.markdown(html, unsafe_allow_html=True)
+        st.caption("Unit: USD millions")
+
+        if key_items:
+            with st.expander(f"Edit Variance Drivers — {title}"):
+                updated_drivers = {}
+                for item in key_items:
+                    updated_drivers[item["project_name"]] = st.text_input(
+                        item["project_name"],
+                        value=saved_drivers.get(item["project_name"], ""),
+                        key=f"driver_{table_type}_{item['project_name']}"
+                    )
+                if st.button("Save Drivers", key=f"save_drivers_{table_type}"):
+                    db.save_drivers(selected, table_type, {k: v for k, v in updated_drivers.items() if v})
+                    st.success("Saved!")
+                    st.rerun()
+
+    fy_rows = get_fy_comparison(db, selected)
+    mtd_rows = get_mtd_comparison(db, selected)
+    ytd_rows = get_ytd_comparison(db, selected)
+    yoy_rows = get_yoy_comparison(db, selected)
+
+    render_fee_variance_table(
+        f"FY26 Fcst vs Budget", fy_rows,
+        "fy_fcst", "fy_bud", "fy_bud",
+        "FY26 Fcst", "FY26 Bud",
+    )
+    st.markdown("")
+    render_fee_variance_table(
+        f"FY26 vs FY25", yoy_rows,
+        "fy26", "fy25", "fy_yoy",
+        "FY26 Fcst", "FY25 Act",
+    )
+    st.markdown("")
+    render_fee_variance_table(
+        f"MTD {month_name} Act vs Budget", mtd_rows,
+        "mtd_act", "mtd_bud", "mtd_bud",
+        "MTD Act", "MTD Bud",
+    )
+    st.markdown("")
+    render_fee_variance_table(
+        f"YTD Jan-{month_name} Act vs Budget", ytd_rows,
+        "ytd_act", "ytd_bud", "ytd_bud",
+        "YTD Act", "YTD Bud",
+    )
+
+    # ===== 3. P&L HIGHLIGHTS =====
     if pl_data:
         st.markdown("---")
         st.header("P&L Highlights")
